@@ -1,11 +1,11 @@
 # EarlyTSC
 
-Implementation of early time series classification algorithms. The aim is to produce a python package that provides interface to these methods conforming to scikit-learn standards.
+Implementation of early time series classification algorithms. The aim is to produce a python package that provides interface to these methods conforming to scikit-learn standards. This is done by keeping as much of the existing implementations intact as possible.
 
 The following algorithms are (planned to be) included:
 
 | Algorithm | Publication |
-| ---       |---------:|
+| --------- | ----------- |
 | ECTS | [ Z. z. Xing, J. Pei, and P. Yu (2011). “Early classification on time series”](https://doi.org/10.1007/s10115-011-0400-x) |
 | EDSC | [ Z. z. Xing, J. Pei, P. Yu, and K. Wang (2011). “Extracting interpretable featuresfor early classification on time series” ](https://doi.org/10.1137/1.9781611972818.22) |
 | RelClass | [N. Parrish, H. S. Anderson, M. R. Gupta, and D. Y. Hsiao (2013). “Classifying with confidence from incomplete information”](http://jmlr.org/papers/v14/parrish13a.html) |
