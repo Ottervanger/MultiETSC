@@ -1,0 +1,358 @@
+
+------------------------------------------------------------naive early stopping
+ Chebyshev bound
+ MinLength=5, MaxLength=64(0.5of 128)
+ BoundThreshod=3
+ Alpha=3
+
+ class= 0 with label=1
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.921434 -1.5816 -1.36508 -1.03443 -1.78546 -1.23525 -1.38639 -1.55319 -1.22151 -1.00114 -1.18164 -1.22766 -1.52005 -1.34573 1.08946 0.924822 0.549544 0.265085 0.974349 
+ segment Index=784
+ length=19
+ threshod=2.94128
+ recall=1
+ precision=1
+ fscore=1
+ training example index=7
+ starting position=13
+
+the recall of class 1 is:0.82
+the precision of class 1 is:0.845361
+ the averaged detection length 27.1512
+
+ class= 1 with label=2
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.859607 -0.936384 -1.15439 -0.236402 -0.286936 -0.771073 -0.308608 -0.693295 -0.0698767 0.129895 0.615791 -0.571974 -0.993184 0.333704 0.084558 0.0195934 0.206598 -0.147564 -0.575566 -0.135142 -0.0981474 0.279277 0.411213 0.416722 0.515656 0.946257 0.618716 0.27103 0.347143 -0.236817 
+ segment Index=1626
+ length=30
+ threshod=3.21191
+ recall=1
+ precision=1
+ fscore=1
+ training example index=16
+ starting position=41
+
+the recall of class 2 is:0.912752
+the precision of class 2 is:0.996337
+ the averaged detection length 53.5824
+
+ class= 2 with label=3
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.468628 -0.656389 -1.17383 -1.27338 -0.214881 2.80864 2.40768 
+ segment Index=3064
+ length=7
+ threshod=2.23962
+ recall=1
+ precision=1
+ fscore=1
+ training example index=25
+ starting position=13
+
+the recall of class 3 is:0.870861
+the precision of class 3 is:0.910035
+ the averaged detection length 25.0588
+0
+ the feature=-0.921434 -1.5816 -1.36508 -1.03443 -1.78546 -1.23525 -1.38639 -1.55319 -1.22151 -1.00114 -1.18164 -1.22766 -1.52005 -1.34573 1.08946 0.924822 0.549544 0.265085 0.974349 
+ segment Index=784
+ length=19
+ threshod=2.94128
+ recall=1
+ precision=1
+ fscore=1
+ training example index=7
+ starting position=13
+1
+ the feature=-0.859607 -0.936384 -1.15439 -0.236402 -0.286936 -0.771073 -0.308608 -0.693295 -0.0698767 0.129895 0.615791 -0.571974 -0.993184 0.333704 0.084558 0.0195934 0.206598 -0.147564 -0.575566 -0.135142 -0.0981474 0.279277 0.411213 0.416722 0.515656 0.946257 0.618716 0.27103 0.347143 -0.236817 
+ segment Index=1626
+ length=30
+ threshod=3.21191
+ recall=1
+ precision=1
+ fscore=1
+ training example index=16
+ starting position=41
+2
+ the feature=-0.468628 -0.656389 -1.17383 -1.27338 -0.214881 2.80864 2.40768 
+ segment Index=3064
+ length=7
+ threshod=2.23962
+ recall=1
+ precision=1
+ fscore=1
+ training example index=25
+ starting position=13
+ the total training time is 180.415 seconds
+
+the coverage   is:0.894444
+the accuracy  is:0.950311
+ the averaged detection length 35.0273
+the accuracy  is:0.878889
+ the averaged detection length 44.8411
+------------------------------------------------------------
+ Chebyshev bound
+ MinLength=5, MaxLength=64(0.5of 128)
+ BoundThreshod=3
+ Alpha=3
+
+ class= 0 with label=1
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.921434 -1.5816 -1.36508 -1.03443 -1.78546 -1.23525 -1.38639 -1.55319 -1.22151 -1.00114 -1.18164 -1.22766 -1.52005 -1.34573 1.08946 0.924822 0.549544 0.265085 0.974349 
+ segment Index=784
+ length=19
+ threshod=2.94128
+ recall=1
+ precision=1
+ fscore=1
+ training example index=7
+ starting position=13
+
+
+ class= 1 with label=2
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.859607 -0.936384 -1.15439 -0.236402 -0.286936 -0.771073 -0.308608 -0.693295 -0.0698767 0.129895 0.615791 -0.571974 -0.993184 0.333704 0.084558 0.0195934 0.206598 -0.147564 -0.575566 -0.135142 -0.0981474 0.279277 0.411213 0.416722 0.515656 0.946257 0.618716 0.27103 0.347143 -0.236817 
+ segment Index=1626
+ length=30
+ threshod=3.21191
+ recall=1
+ precision=1
+ fscore=1
+ training example index=16
+ starting position=41
+
+
+ class= 2 with label=3
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.468628 -0.656389 -1.17383 -1.27338 -0.214881 2.80864 2.40768 
+ segment Index=3064
+ length=7
+ threshod=2.23962
+ recall=1
+ precision=1
+ fscore=1
+ training example index=25
+ starting position=13
+
+0
+ the feature=-0.921434 -1.5816 -1.36508 -1.03443 -1.78546 -1.23525 -1.38639 -1.55319 -1.22151 -1.00114 -1.18164 -1.22766 -1.52005 -1.34573 1.08946 0.924822 0.549544 0.265085 0.974349 
+ segment Index=784
+ length=19
+ threshod=2.94128
+ recall=1
+ precision=1
+ fscore=1
+ training example index=7
+ starting position=13
+1
+ the feature=-0.859607 -0.936384 -1.15439 -0.236402 -0.286936 -0.771073 -0.308608 -0.693295 -0.0698767 0.129895 0.615791 -0.571974 -0.993184 0.333704 0.084558 0.0195934 0.206598 -0.147564 -0.575566 -0.135142 -0.0981474 0.279277 0.411213 0.416722 0.515656 0.946257 0.618716 0.27103 0.347143 -0.236817 
+ segment Index=1626
+ length=30
+ threshod=3.21191
+ recall=1
+ precision=1
+ fscore=1
+ training example index=16
+ starting position=41
+2
+ the feature=-0.468628 -0.656389 -1.17383 -1.27338 -0.214881 2.80864 2.40768 
+ segment Index=3064
+ length=7
+ threshod=2.23962
+ recall=1
+ precision=1
+ fscore=1
+ training example index=25
+ starting position=13
+ the total training time is 119.465 seconds
+
+the coverage   is:0.894444
+the accuracy  is:0.950311
+ the averaged detection length 35.0273
+the accuracy  is:0.878889
+ the averaged detection length 44.8411
+------------------------------------------------------------
+ Chebyshev bound
+ MinLength=5, MaxLength=64(0.5of 128)
+ BoundThreshod=3
+ Alpha=3
+
+ class= 0 with label=1
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.921434 -1.5816 -1.36508 -1.03443 -1.78546 -1.23525 -1.38639 -1.55319 -1.22151 -1.00114 -1.18164 -1.22766 -1.52005 -1.34573 1.08946 0.924822 0.549544 0.265085 0.974349 
+ segment Index=784
+ length=19
+ threshod=2.94128
+ recall=1
+ precision=1
+ fscore=1
+ training example index=7
+ starting position=13
+
+
+ class= 1 with label=2
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.859607 -0.936384 -1.15439 -0.236402 -0.286936 -0.771073 -0.308608 -0.693295 -0.0698767 0.129895 0.615791 -0.571974 -0.993184 0.333704 0.084558 0.0195934 0.206598 -0.147564 -0.575566 -0.135142 -0.0981474 0.279277 0.411213 0.416722 0.515656 0.946257 0.618716 0.27103 0.347143 -0.236817 
+ segment Index=1626
+ length=30
+ threshod=3.21191
+ recall=1
+ precision=1
+ fscore=1
+ training example index=16
+ starting position=41
+
+
+ class= 2 with label=3
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.468628 -0.656389 -1.17383 -1.27338 -0.214881 2.80864 2.40768 
+ segment Index=3064
+ length=7
+ threshod=2.23962
+ recall=1
+ precision=1
+ fscore=1
+ training example index=25
+ starting position=13
+
+0
+ the feature=-0.921434 -1.5816 -1.36508 -1.03443 -1.78546 -1.23525 -1.38639 -1.55319 -1.22151 -1.00114 -1.18164 -1.22766 -1.52005 -1.34573 1.08946 0.924822 0.549544 0.265085 0.974349 
+ segment Index=784
+ length=19
+ threshod=2.94128
+ recall=1
+ precision=1
+ fscore=1
+ training example index=7
+ starting position=13
+1
+ the feature=-0.859607 -0.936384 -1.15439 -0.236402 -0.286936 -0.771073 -0.308608 -0.693295 -0.0698767 0.129895 0.615791 -0.571974 -0.993184 0.333704 0.084558 0.0195934 0.206598 -0.147564 -0.575566 -0.135142 -0.0981474 0.279277 0.411213 0.416722 0.515656 0.946257 0.618716 0.27103 0.347143 -0.236817 
+ segment Index=1626
+ length=30
+ threshod=3.21191
+ recall=1
+ precision=1
+ fscore=1
+ training example index=16
+ starting position=41
+2
+ the feature=-0.468628 -0.656389 -1.17383 -1.27338 -0.214881 2.80864 2.40768 
+ segment Index=3064
+ length=7
+ threshod=2.23962
+ recall=1
+ precision=1
+ fscore=1
+ training example index=25
+ starting position=13
+ the total training time is 196.324 seconds
+
+the coverage   is:0.894444
+the accuracy  is:0.950311
+ the averaged detection length 35.0273
+the accuracy  is:0.878889
+ the averaged detection length 44.8411
+------------------------------------------------------------
+ Chebyshev bound
+ MinLength=5, MaxLength=64(0.5of 128)
+ BoundThreshod=3
+ Alpha=3
+
+ class= 0 with label=1
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.921434 -1.5816 -1.36508 -1.03443 -1.78546 -1.23525 -1.38639 -1.55319 -1.22151 -1.00114 -1.18164 -1.22766 -1.52005 -1.34573 1.08946 0.924822 0.549544 0.265085 0.974349 
+ segment Index=784
+ length=19
+ threshod=2.94128
+ recall=1
+ precision=1
+ fscore=1
+ training example index=7
+ starting position=13
+
+
+ class= 1 with label=2
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.859607 -0.936384 -1.15439 -0.236402 -0.286936 -0.771073 -0.308608 -0.693295 -0.0698767 0.129895 0.615791 -0.571974 -0.993184 0.333704 0.084558 0.0195934 0.206598 -0.147564 -0.575566 -0.135142 -0.0981474 0.279277 0.411213 0.416722 0.515656 0.946257 0.618716 0.27103 0.347143 -0.236817 
+ segment Index=1626
+ length=30
+ threshod=3.21191
+ recall=1
+ precision=1
+ fscore=1
+ training example index=16
+ starting position=41
+
+
+ class= 2 with label=3
+ The total Coverage Rate is1
+ the size of the final set=1
+0
+ the feature=-0.468628 -0.656389 -1.17383 -1.27338 -0.214881 2.80864 2.40768 
+ segment Index=3064
+ length=7
+ threshod=2.23962
+ recall=1
+ precision=1
+ fscore=1
+ training example index=25
+ starting position=13
+
+0
+ the feature=-0.921434 -1.5816 -1.36508 -1.03443 -1.78546 -1.23525 -1.38639 -1.55319 -1.22151 -1.00114 -1.18164 -1.22766 -1.52005 -1.34573 1.08946 0.924822 0.549544 0.265085 0.974349 
+ segment Index=784
+ length=19
+ threshod=2.94128
+ recall=1
+ precision=1
+ fscore=1
+ training example index=7
+ starting position=13
+1
+ the feature=-0.859607 -0.936384 -1.15439 -0.236402 -0.286936 -0.771073 -0.308608 -0.693295 -0.0698767 0.129895 0.615791 -0.571974 -0.993184 0.333704 0.084558 0.0195934 0.206598 -0.147564 -0.575566 -0.135142 -0.0981474 0.279277 0.411213 0.416722 0.515656 0.946257 0.618716 0.27103 0.347143 -0.236817 
+ segment Index=1626
+ length=30
+ threshod=3.21191
+ recall=1
+ precision=1
+ fscore=1
+ training example index=16
+ starting position=41
+2
+ the feature=-0.468628 -0.656389 -1.17383 -1.27338 -0.214881 2.80864 2.40768 
+ segment Index=3064
+ length=7
+ threshod=2.23962
+ recall=1
+ precision=1
+ fscore=1
+ training example index=25
+ starting position=13
+ the total training time is 204.609 seconds
+
+the coverage   is:0.894444
+the accuracy  is:0.950311
+ the averaged detection length 35.0273
+the accuracy  is:0.878889
+ the averaged detection length 44.8411
