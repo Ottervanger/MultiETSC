@@ -1,0 +1,310 @@
+
+------------------------------------------------------------
+ Chebyshev bound
+ MinLength=5, MaxLength=7(0.0460526of 152)
+ BoundThreshod=3
+ Alpha=3
+
+ class= 0 with label=-1
+ The total Coverage Rate is0.969072
+ the size of the final set=29
+0
+ the feature=-1.63316 -1.22472 -0.645541 -0.0464226 1.30526 
+ segment Index=747
+ length=5
+ threshod=0.38436
+ recall=0.14433
+ precision=1
+ fscore=0.252252
+ training example index=5
+ starting position=6
+1
+ the feature=-1.58329 -1.41549 -0.801002 -0.206219 1.21095 
+ segment Index=4446
+ length=5
+ threshod=0.42294
+ recall=0.134021
+ precision=1
+ fscore=0.236364
+ training example index=30
+ starting position=5
+2
+ the feature=-0.981347 -0.841016 -1.10241 -0.119028 1.21763 
+ segment Index=5216
+ length=5
+ threshod=0.404572
+ recall=0.185567
+ precision=0.947368
+ fscore=0.310345
+ training example index=35
+ starting position=35
+3
+ the feature=0.618668 0.634838 0.619208 0.677456 0.595909 0.747989 -0.273195 
+ segment Index=1325
+ length=7
+ threshod=0.468653
+ recall=0.206186
+ precision=0.952381
+ fscore=0.338983
+ training example index=9
+ starting position=10
+4
+ the feature=-0.76844 -1.18534 0.028136 2.72143 2.22388 
+ segment Index=3269
+ length=5
+ threshod=0.964399
+ recall=0.103093
+ precision=1
+ fscore=0.186916
+ training example index=22
+ starting position=12
+5
+ the feature=2.49728 1.25974 -1.25692 -0.773209 -1.02786 -0.873376 -0.969697 
+ segment Index=2214
+ length=7
+ threshod=0.523099
+ recall=0.123711
+ precision=1
+ fscore=0.220183
+ training example index=15
+ starting position=23
+6
+ the feature=-0.861599 -0.898289 -0.840421 -0.930749 -0.784536 -1.05746 0.00647477 
+ segment Index=5790
+ length=7
+ threshod=0.220651
+ recall=0.113402
+ precision=1
+ fscore=0.203704
+ training example index=39
+ starting position=95
+7
+ the feature=-0.87544 -1.05036 -0.767191 -1.29375 0.691541 2.46771 
+ segment Index=9126
+ length=6
+ threshod=0.777609
+ recall=0.0927835
+ precision=1
+ fscore=0.169811
+ training example index=62
+ starting position=11
+8
+ the feature=-0.905039 -1.26953 0.0286811 1.26331 0.87408 
+ segment Index=5069
+ length=5
+ threshod=0.317779
+ recall=0.113402
+ precision=1
+ fscore=0.203704
+ training example index=34
+ starting position=36
+9
+ the feature=-0.948954 -0.855272 -0.999868 -0.76844 -1.18534 0.028136 2.72143 
+ segment Index=3222
+ length=7
+ threshod=1.01998
+ recall=0.134021
+ precision=0.866667
+ fscore=0.232143
+ training example index=22
+ starting position=9
+10
+ the feature=-0.899443 -1.16556 -0.36843 1.10434 0.82191 
+ segment Index=5953
+ length=5
+ threshod=0.277882
+ recall=0.103093
+ precision=1
+ fscore=0.186916
+ training example index=40
+ starting position=32
+11
+ the feature=-1.58441 -0.317397 -1.19732 -0.652827 -0.956079 
+ segment Index=5810
+ length=5
+ threshod=0.64356
+ recall=0.0824742
+ precision=1
+ fscore=0.152381
+ training example index=39
+ starting position=37
+12
+ the feature=1.3928 0.123997 -1.24953 -0.883618 -1.08239 
+ segment Index=916
+ length=5
+ threshod=0.255476
+ recall=0.0927835
+ precision=1
+ fscore=0.169811
+ training example index=6
+ starting position=27
+13
+ the feature=-1.39723 -0.166921 1.20469 0.853907 1.02531 
+ segment Index=6912
+ length=5
+ threshod=0.37936
+ recall=0.0824742
+ precision=1
+ fscore=0.152381
+ training example index=46
+ starting position=103
+14
+ the feature=0.745198 0.711852 0.765348 0.677811 0.845211 -0.394068 
+ segment Index=13622
+ length=6
+ threshod=0.317
+ recall=0.0721649
+ precision=1
+ fscore=0.134615
+ training example index=92
+ starting position=97
+15
+ the feature=-1.39807 0.551123 -0.774022 0.0733465 -0.46905 
+ segment Index=10967
+ length=5
+ threshod=1.03835
+ recall=0.0618557
+ precision=1
+ fscore=0.116505
+ training example index=74
+ starting position=14
+16
+ the feature=1.24266 0.187369 2.63378 3.72246 -1.63755 
+ segment Index=13928
+ length=5
+ threshod=2.01638
+ recall=0.0515464
+ precision=1
+ fscore=0.0980392
+ training example index=94
+ starting position=15
+17
+ the feature=0.908838 0.951615 0.882046 1.01325 0.746055 -0.965342 -0.0267031 
+ segment Index=4682
+ length=7
+ threshod=0.337084
+ recall=0.0412371
+ precision=1
+ fscore=0.0792079
+ training example index=32
+ starting position=9
+18
+ the feature=-2.92044 -2.77729 -2.87618 -2.74117 -3.05398 -2.38563 1.02465 
+ segment Index=13886
+ length=7
+ threshod=2.25683
+ recall=0.0309278
+ precision=1
+ fscore=0.06
+ training example index=95
+ starting position=15
+19
+ the feature=0.776107 1.13339 0.218168 -0.910004 0.225369 
+ segment Index=12149
+ length=5
+ threshod=0.779945
+ recall=0.0824742
+ precision=0.666667
+ fscore=0.146789
+ training example index=82
+ starting position=12
+20
+ the feature=-0.894265 -0.970627 -0.69547 0.320472 0.66745 
+ segment Index=13353
+ length=5
+ threshod=0.184672
+ recall=0.0309278
+ precision=1
+ fscore=0.06
+ training example index=90
+ starting position=32
+21
+ the feature=0.925848 0.914635 0.980529 0.858077 1.03907 -0.146887 -0.133176 
+ segment Index=4246
+ length=7
+ threshod=0.192413
+ recall=0.0206186
+ precision=1
+ fscore=0.040404
+ training example index=29
+ starting position=11
+22
+ the feature=-1.46923 -1.45808 -1.45327 -1.47847 -0.802034 0.751583 1.55034 
+ segment Index=6136
+ length=7
+ threshod=0.0139686
+ recall=0.0103093
+ precision=1
+ fscore=0.0204082
+ training example index=42
+ starting position=3
+23
+ the feature=-0.951142 -0.970427 -0.863772 1.39333 2.00036 
+ segment Index=3564
+ length=5
+ threshod=0.00909193
+ recall=0.0103093
+ precision=1
+ fscore=0.0204082
+ training example index=24
+ starting position=11
+24
+ the feature=0.904876 0.893055 0.914224 0.856669 -0.0736369 
+ segment Index=2382
+ length=5
+ threshod=0.00290739
+ recall=0.0103093
+ precision=1
+ fscore=0.0204082
+ training example index=16
+ starting position=13
+25
+ the feature=-0.992688 -0.951819 0.841733 0.807738 0.374953 
+ segment Index=9636
+ length=5
+ threshod=0.00307252
+ recall=0.0103093
+ precision=1
+ fscore=0.0204082
+ training example index=65
+ starting position=15
+26
+ the feature=1.43024 0.998827 0.792193 0.649347 0.559181 0.518848 0.468838 
+ segment Index=10236
+ length=7
+ threshod=0.0774298
+ recall=0.0103093
+ precision=1
+ fscore=0.0204082
+ training example index=70
+ starting position=15
+27
+ the feature=-0.94882 -0.853825 -1.04081 0.377797 0.817082 
+ segment Index=10088
+ length=5
+ threshod=0.044556
+ recall=0.0103093
+ precision=1
+ fscore=0.0204082
+ training example index=68
+ starting position=23
+28
+ the feature=1.19782 -0.435103 -1.17277 -0.930913 -1.06597 
+ segment Index=10613
+ length=5
+ threshod=0.0287016
+ recall=0.0103093
+ precision=1
+ fscore=0.0204082
+ training example index=71
+ starting position=104
+
+
+ class= 1 with label=1
+------------------------------------------------------------
+ Chebyshev bound
+ MinLength=5, MaxLength=7(0.0460526of 152)
+ BoundThreshod=3
+ Alpha=3
+
+ class= 1 with label=1
