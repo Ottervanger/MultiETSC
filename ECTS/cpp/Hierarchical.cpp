@@ -27,110 +27,108 @@ double testing [ROWTESTING][DIMENSION]; //  testing data set
 double labelTesting[ROWTESTING] = {0}; // testing data class labels
 double predictedLabel[ROWTESTING] = {0}; // predicted label by the classifier
 int predictedLength[ROWTESTING] = {0}; // predicted length by the classifier
-int  TrainingIndex[ROWTRAINING][DIMENSION];//  store the 1NN for each space, no ranking tie
-double DisArray[ROWTRAINING][ROWTRAINING] = {0}; //  the pairwise distance array of full length
+int  trainingIndex[ROWTRAINING][DIMENSION];//  store the 1NN for each space, no ranking tie
+double disArray[ROWTRAINING][ROWTRAINING] = {0}; //  the pairwise distance array of full length
 int classDistri[NofClasses] = {0};
 double classSupport[NofClasses] = {0};
-int FullLengthClassificationStatus[ROWTRAINING];// 0 can not be classified correctly, 1 can be classified correctly
-int PredictionPrefix[ROWTRAINING];
-std::vector<std::set<int, std::less<int> >> NNSetList;// store the MNCS;
-std::vector<int> NNSetListLength;
-std::vector<int> NNSetListClassMap;// store the class label of the MNCS
+int fullLengthClassificationStatus[ROWTRAINING];// 0 can not be classified correctly, 1 can be classified correctly
+int predictionPrefix[ROWTRAINING];
+std::vector<std::set<int>> nnSetList;// store the MNCS;
+std::vector<int> nnSetListLength;
+std::vector<int> nnSetListClassMap;// store the class label of the MNCS
 int correct = 0; // the unlabeled sequence which is correctly classified.
 double classificationTime; // classification time of one instance
 double trainingTime; // classification time of one instance
 
 // functions in the same file
-void LoadData(const char * fileName, double Data[][DIMENSION], double Labels[], int len  );
+void loadData(const char * fileName, double Data[][DIMENSION], double Labels[], int len  );
 void getClassDis();
-void LoadDisArray(const char * fileName, double Data[ROWTRAINING][ROWTRAINING]  );
+void loadDisArray(const char * fileName, double Data[ROWTRAINING][ROWTRAINING]  );
 void LoadTrIndex(const char * fileName, int Data[ROWTRAINING][DIMENSION]  );
-std::set<int, std::less<int>> SetRNN(int l, std::set<int, std::less<int>>& s);
-std::set<int, std::less<int>> SetNN(int l, std::set<int, std::less<int>>& s);
-int NNConsistent(int l, std::set<int, std::less<int>>& s);
+std::set<int> setRNN(int l, std::set<int>& s);
+std::set<int> setNN(int l, std::set<int>& s);
+int nnConsistent(int l, std::set<int>& s);
 //void testUnion();
-int getMPL(std::set<int, std::less<int>>& s); // loose version
-int getMPL(std::set<int, std::less<int>>& s, int la, int lb); // loose version
-int getMPL2(std::set<int, std::less<int>>& setA, std::set<int, std::less<int>>& setB, int la, int lb);
-//void getMNCS(int onenode,double label, std::set<int,std::less<int>>& PreMNCS);
-int updateMPL(std::set<int, std::less<int>> s);
-//bool sharePrefix(   std::set<int, std::less<int> >& s1, std::set<int, std::less<int> >& s2, std::set<int, std::less<int> >& s3, int level        );
-void printSet(std::set<int, std::less<int> > & s);
-void printSetList(std::vector<std::set<int, std::less<int> >> & v) ;
+int getMPL(std::set<int>& s); // loose version
+int getMPL(std::set<int>& s, int la, int lb); // loose version
+int getMPL2(std::set<int>& setA, std::set<int>& setB, int la, int lb);
+//void getMNCS(int onenode,double label, std::set<int>& PreMNCS);
+int updateMPL(std::set<int> s);
+//bool sharePrefix(std::set<int>& s1, std::set<int>& s2, std::set<int>& s3, int level        );
+void printSet(std::set<int> & s);
+void printSetList(std::vector<std::set<int>> & v) ;
 int findMin( int data[], int len);
 void classification();
-double  mean(int data[], int len);
+double mean(int data[], int len);
 void report();
-double SetDis( std::set<int, std::less<int> > A, std::set<int, std::less<int> > B );
-std::vector<int> RankingArray(std::vector<std::set<int, std::less<int>>> & List);
-int GetMN(std::vector<std::set<int, std::less<int>>> & List, int ClusterIndex); // get the NN of cluster, if there is no MN, return -1, others , return the value;
+double SetDis( std::set<int> A, std::set<int> B );
+std::vector<int> RankingArray(std::vector<std::set<int>> & List);
+int GetMN(std::vector<std::set<int>> & List, int ClusterIndex); // get the NN of cluster, if there is no MN, return -1, others , return the value;
 
-int getMPLStrict(std::set<int, std::less<int>>& s, int la, int lb);
-int getMPLStrict(std::set<int, std::less<int>>& s);
-int updateMPLStrict(std::set<int, std::less<int>> s);
+int getMPLStrict(std::set<int>& s, int la, int lb);
+int getMPLStrict(std::set<int>& s);
+int updateMPLStrict(std::set<int> s);
 
-int getMPLTest(std::set<int, std::less<int>>& s, int la, int lb);
-int getMPLTest(std::set<int, std::less<int>>& s);
-int updateMPLTest(std::set<int, std::less<int>> s);
+int getMPLTest(std::set<int>& s, int la, int lb);
+int getMPLTest(std::set<int>& s);
+int updateMPLTest(std::set<int> s);
 
 void reportSynUCI();
 
 int main () {
     // load training data
-    LoadData(trainingFileName, training, labelTraining, ROWTRAINING);
+    loadData(trainingFileName, training, labelTraining, ROWTRAINING);
     getClassDis();
-    LoadDisArray(DisArrayFileName, DisArray  );
-    LoadTrIndex(trainingIndexFileName, TrainingIndex  );
+    loadDisArray(DisArrayFileName, disArray);
+    LoadTrIndex(trainingIndexFileName, trainingIndex);
     // compute the full length classification status, 0 incorrect, 1 correct
     clock_t t3, t4;
 
     for (int i = 0; i < ROWTRAINING; i++) {
-        int NNofi = TrainingIndex[i][DIMENSION - 1];
+        int NNofi = trainingIndex[i][DIMENSION - 1];
         if (labelTraining[i] == labelTraining[NNofi]) {
-            FullLengthClassificationStatus[i] = 1;
+            fullLengthClassificationStatus[i] = 1;
         }
     }
 
     // intialize the prediction prefix
     for (int i = 0; i < ROWTRAINING; i++) {
-        PredictionPrefix[i] = DIMENSION;
-
+        predictionPrefix[i] = DIMENSION;
     }
 
     // simple RNN method
     t3 = clock();
     // simple RNN method
     for (int i = 0; i < ROWTRAINING; i++) {
-        std::set<int, std::less<int> >  s;
+        std::set<int>  s;
         s.insert(i);
 
         if (strictversion == 0) {
-            PredictionPrefix[i] = getMPL(s);
+            predictionPrefix[i] = getMPL(s);
         } else {
-
-            PredictionPrefix[i] = getMPLStrict(s);
+            predictionPrefix[i] = getMPLStrict(s);
         }
-        // PredictionPrefix[i]=getMPLTest(s);
+        // predictionPrefix[i]=getMPLTest(s);
     }
 
     int latticeLevel = 1;
     //std::cout << "bi-roots level\n";
 
-    std::vector<std::set<int, std::less<int> >> biRoots; // is a std::vector of std::sets
+    std::vector<std::set<int>> biRoots; // is a std::vector of std::sets
     std::vector<int> biRootsLength;// the length of the node
-    std::vector<double> SetLabel;// -,1,2,3,4,5,6,   0 means no label
+    std::vector<double> setLabel;// -,1,2,3,4,5,6,   0 means no label
     // initial the length to L
-    std::vector<int> CurrentNew;
-    std::vector<int> NextNew;
+    std::vector<int> currentNew;
+    std::vector<int> nextNew;
 
     bool UsedInBiRoots[ROWTRAINING] = {0}; // 0 not used, 1 used
 
     for (int i = 0; i < ROWTRAINING; i++) {
         if (UsedInBiRoots[i] == 0) {
-            int NNofi = TrainingIndex[i][DIMENSION - 1];
+            int NNofi = trainingIndex[i][DIMENSION - 1];
             // get bi-root
-            if (TrainingIndex[NNofi][DIMENSION - 1] == i ) {
-                std::set<int, std::less<int> > temp;
+            if (trainingIndex[NNofi][DIMENSION - 1] == i ) {
+                std::set<int> temp;
                 temp.insert(i);
                 temp.insert(NNofi);
 
@@ -140,31 +138,29 @@ int main () {
                         tempL = updateMPL(temp);
                     } else {
                         tempL = updateMPLStrict(temp);
-
                     }
 
                     //  tempL=updateMPLTest(temp);
                     biRootsLength.push_back(tempL);
-                    SetLabel.push_back(labelTraining[NNofi]);
+                    setLabel.push_back(labelTraining[NNofi]);
                     biRoots.push_back(temp);
-                    CurrentNew.push_back(biRoots.size() - 1);
+                    currentNew.push_back(biRoots.size() - 1);
 
                 } else { // unpure group
                     biRootsLength.push_back(0);
 
-                    SetLabel.push_back(0);
+                    setLabel.push_back(0);
                     biRoots.push_back(temp);
-                    CurrentNew.push_back(biRoots.size() - 1);
-
+                    currentNew.push_back(biRoots.size() - 1);
                 }
 
                 UsedInBiRoots[i] = 1;
                 UsedInBiRoots[NNofi] = 1;
             } else { // single element std::set
-                std::set<int, std::less<int> > temp;
+                std::set<int> temp;
                 temp.insert(i);
-                biRootsLength.push_back(PredictionPrefix[i]);
-                SetLabel.push_back(labelTraining[i]);
+                biRootsLength.push_back(predictionPrefix[i]);
+                setLabel.push_back(labelTraining[i]);
                 biRoots.push_back(temp);
             }
         }
@@ -174,65 +170,55 @@ int main () {
     latticeLevel = 2;
     int mergedPair = 0;
 
-    std::vector<std::set<int, std::less<int> >> NNSetListCurrent = biRoots;
-    std::vector<int> NNSetListCurrentLength = biRootsLength;
-    std::vector<double> NNSetListCurrentLabel = SetLabel;
+    std::vector<std::set<int>> nnSetListCurrent = biRoots;
+    std::vector<int> nnSetListCurrentLength = biRootsLength;
+    std::vector<double> nnSetListCurrentLabel = setLabel;
 
-    std::vector<std::set<int, std::less<int> >> NNSetListNext;
-    std::vector<int> NNSetListNextLength;
-    std::vector<double> NNSetListNextLabel;
+    std::vector<std::set<int>> nnSetListNext;
+    std::vector<int> nnSetListNextLength;
+    std::vector<double> nnSetListNextLabel;
 
-    while (NNSetListCurrent.size() > 1) {
-        //std::cout << latticeLevel << std::endl;
-        //std::cout << "number " << NNSetListCurrent.size()<< std::endl;
+    while (nnSetListCurrent.size() > 1) {
         mergedPair = 0;
-        NNSetListNext.clear();
-        NNSetListNextLength.clear();
-        NNSetListNextLabel.clear();
-        NextNew.clear();
+        nnSetListNext.clear();
+        nnSetListNextLength.clear();
+        nnSetListNextLabel.clear();
+        nextNew.clear();
 
         std::vector<int> status;
-        for (int i = 0; i < NNSetListCurrent.size(); i++) {
+        for (int i = 0; i < nnSetListCurrent.size(); i++) {
             status.push_back(0);
         }
 
-        // std::vector<int> CurrentRankingArray= RankingArray(NNSetListCurrent);
-
-        for (int i = 0; i < CurrentNew.size(); i++) {
-
-            int tempi = CurrentNew[i];
-
+        for (int i = 0; i < currentNew.size(); i++) {
+            int tempi = currentNew[i];
             if (status[tempi] == 0) {
-
                 std::vector<int> pair;
-                int MNofi = GetMN(NNSetListCurrent, tempi); // get the NN of cluster, if there is no MN, return -1, others , return the value
+                int MNofi = GetMN(nnSetListCurrent, tempi); // get the NN of cluster, if there is no MN, return -1, others , return the value
                 if (MNofi != -1) {
 
                     pair.push_back(tempi);
                     pair.push_back(MNofi);
 
                     // test if they are of the same label
+                    double label1 = nnSetListCurrentLabel[pair[0]];
+                    double label2 = nnSetListCurrentLabel[pair[1]];
 
-                    double label1 = NNSetListCurrentLabel[pair[0]];
-                    double label2 = NNSetListCurrentLabel[pair[1]];
+                    std::set<int> tempSet;
 
-                    std::set<int, std::less<int>> tempSet;
-
-                    std::set<int, std::less<int>> setA = NNSetListCurrent[pair[0]];
-                    std::set<int, std::less<int>> setB = NNSetListCurrent[pair[1]];
+                    std::set<int> setA = nnSetListCurrent[pair[0]];
+                    std::set<int> setB = nnSetListCurrent[pair[1]];
 
                     // merge two std::set
 
-                    std::set<int, std::less<int> > ::iterator a;
+                    std::set<int> ::iterator a;
                     for (a = setA.begin(); a != setA.end(); a++) {
                         tempSet.insert(*a);
-
                     }
 
-                    std::set<int, std::less<int> > ::iterator b;
+                    std::set<int> ::iterator b;
                     for (b = setB.begin(); b != setB.end(); b++) {
                         tempSet.insert(*b);
-
                     }
 
                     if (label1 != 0 && label2 != 0 && label1 == label2 ) {
@@ -240,108 +226,94 @@ int main () {
 
                         if (setA.size() > 1 && setB.size() > 1) {
                             if (strictversion == 0) {
-                                tempLength = getMPL(tempSet, NNSetListCurrentLength[pair[0]], NNSetListCurrentLength[pair[1]]);
-
+                                tempLength = getMPL(tempSet, nnSetListCurrentLength[pair[0]], nnSetListCurrentLength[pair[1]]);
                             } else {
-
-                                tempLength = getMPLStrict(tempSet, NNSetListCurrentLength[pair[0]], NNSetListCurrentLength[pair[1]]);
-
+                                tempLength = getMPLStrict(tempSet, nnSetListCurrentLength[pair[0]], nnSetListCurrentLength[pair[1]]);
                             }
-
-                            // tempLength=getMPLTest(tempSet,NNSetListCurrentLength[pair[0]],NNSetListCurrentLength[pair[1]]);
+                            // tempLength=getMPLTest(tempSet,nnSetListCurrentLength[pair[0]],nnSetListCurrentLength[pair[1]]);
                         } else {
                             if (strictversion == 0) {
                                 tempLength = getMPL(tempSet);
                             } else {
-
                                 tempLength = getMPLStrict(tempSet);
-
                             }
-
                         }
 
                         // update the length
 
-                        std::set<int, std::less<int> > ::iterator jj;
+                        std::set<int> ::iterator jj;
                         for (jj = tempSet.begin(); jj != tempSet.end(); jj++) {
-                            if (PredictionPrefix[*jj] > tempLength) {
-                                PredictionPrefix[*jj] = tempLength;
-
+                            if (predictionPrefix[*jj] > tempLength) {
+                                predictionPrefix[*jj] = tempLength;
                             }
-
                         }
 
-                        NNSetListNextLength.push_back(tempLength);
-                        NNSetListNext.push_back(tempSet);
-                        NextNew.push_back(NNSetListNext.size() - 1);
+                        nnSetListNextLength.push_back(tempLength);
+                        nnSetListNext.push_back(tempSet);
+                        nextNew.push_back(nnSetListNext.size() - 1);
 
-                        NNSetListNextLabel.push_back(label1);
+                        nnSetListNextLabel.push_back(label1);
                         mergedPair++;
                         status[pair[0]] = 1;
                         status[pair[1]] = 1;
 
                     } else { // the pair is not pure
+                        nnSetListNextLength.push_back(0);
+                        nnSetListNext.push_back(tempSet);
+                        nextNew.push_back(nnSetListNext.size() - 1);
 
-                        NNSetListNextLength.push_back(0);
-                        NNSetListNext.push_back(tempSet);
-                        NextNew.push_back(NNSetListNext.size() - 1);
-
-                        NNSetListNextLabel.push_back(0);
+                        nnSetListNextLabel.push_back(0);
                         status[pair[0]] = 1;
                         status[pair[1]] = 1;
-
                     }
-
                 }
-
             }// end if
-
         }// end for
 
         if (mergedPair > 0) {
 
             //std::cout << "Merged pair" << mergedPair << std::endl;
 
-            for (int k = 0; k < NNSetListCurrent.size(); k++) {
+            for (int k = 0; k < nnSetListCurrent.size(); k++) {
 
                 if (status[k] == 0) {
 
-                    NNSetListNext.push_back(NNSetListCurrent[k]);
-                    NNSetListNextLength.push_back(NNSetListCurrentLength[k]);
-                    NNSetListNextLabel.push_back(NNSetListCurrentLabel[k]);
+                    nnSetListNext.push_back(nnSetListCurrent[k]);
+                    nnSetListNextLength.push_back(nnSetListCurrentLength[k]);
+                    nnSetListNextLabel.push_back(nnSetListCurrentLabel[k]);
 
                 }
             }// end for
 
-            NNSetListCurrent.clear();
-            for (int kk = 0; kk < NNSetListNext.size(); kk++) {
-                NNSetListCurrent.push_back(NNSetListNext[kk]);
+            nnSetListCurrent.clear();
+            for (int kk = 0; kk < nnSetListNext.size(); kk++) {
+                nnSetListCurrent.push_back(nnSetListNext[kk]);
 
             }
-            NNSetListNext.clear();
+            nnSetListNext.clear();
 
-            NNSetListCurrentLength.clear();
-            for (int kk = 0; kk < NNSetListNextLength.size(); kk++) {
-                NNSetListCurrentLength.push_back(NNSetListNextLength[kk]);
-
-            }
-            NNSetListNextLength.clear();
-
-            NNSetListCurrentLabel.clear();
-            for (int kk = 0; kk < NNSetListNextLabel.size(); kk++) {
-                NNSetListCurrentLabel.push_back(NNSetListNextLabel[kk]);
+            nnSetListCurrentLength.clear();
+            for (int kk = 0; kk < nnSetListNextLength.size(); kk++) {
+                nnSetListCurrentLength.push_back(nnSetListNextLength[kk]);
 
             }
-            NNSetListNextLabel.clear();
+            nnSetListNextLength.clear();
 
-            // update CurrentNew and NextNew
-
-            CurrentNew.clear();
-            for (int kk = 0; kk < NextNew.size(); kk++) {
-                CurrentNew.push_back(NextNew[kk]);
+            nnSetListCurrentLabel.clear();
+            for (int kk = 0; kk < nnSetListNextLabel.size(); kk++) {
+                nnSetListCurrentLabel.push_back(nnSetListNextLabel[kk]);
 
             }
-            NextNew.clear();
+            nnSetListNextLabel.clear();
+
+            // update currentNew and nextNew
+
+            currentNew.clear();
+            for (int kk = 0; kk < nextNew.size(); kk++) {
+                currentNew.push_back(nextNew[kk]);
+
+            }
+            nextNew.clear();
 
             latticeLevel++;
 
@@ -354,11 +326,11 @@ int main () {
     // end of hueristic algorithm
     t4 = clock();
     trainingTime = (double)(t4 - t3) / CLOCKS_PER_SEC  ;
-    //std::cout << "\PredictionPrefix\n";
+    //std::cout << "\predictionPrefix\n";
 
     /*
     for (int i = 0; i < ROWTRAINING; i++) {
-        std::cout << "\ninstance " << i + 1 << " :" << PredictionPrefix[i] << " ";
+        std::cout << "\ninstance " << i + 1 << " :" << predictionPrefix[i] << " ";
     }
     */
 
@@ -367,7 +339,7 @@ int main () {
     reportSynUCI();
 }// end main
 
-void LoadData(const char * fileName, double Data[][DIMENSION], double Labels[], int len  ) {
+void loadData(const char * fileName, double Data[][DIMENSION], double Labels[], int len  ) {
     std::ifstream inputFile( fileName, std::ifstream::in);
     if ( !inputFile ) {
         std::cerr << "file could not be opened" << std::endl;
@@ -388,7 +360,7 @@ void LoadData(const char * fileName, double Data[][DIMENSION], double Labels[], 
     inputFile.close();
 }
 
-void LoadDisArray(const char * fileName, double Data[ROWTRAINING][ROWTRAINING]  ) {
+void loadDisArray(const char * fileName, double Data[ROWTRAINING][ROWTRAINING]  ) {
 
     std::ifstream inputFile( fileName, std::ifstream::in);
     if ( !inputFile ) {
@@ -415,74 +387,57 @@ void LoadTrIndex(const char * fileName, int Data[ROWTRAINING][DIMENSION]  ) {
         exit(1);
     } // end if
 
-    int row = 0;
-    int col = 0;
     while ( !inputFile.eof() ) {
-        for ( row = 0; row < ROWTRAINING; row++)
-            for ( col = 0; col < DIMENSION; col++) {
-
+        for (int row = 0; row < ROWTRAINING; row++) {
+            for (int col = 0; col < DIMENSION; col++) {
                 inputFile >> Data[row][col];
-
             }
-
+        }
     }
-
     inputFile.close();
 }
 
 void getClassDis() {
     for (int i = 0; i < NofClasses; i++) {
-
         classDistri[i] = find(labelTraining, Classes[i], ROWTRAINING );
         std::cout << "\n" << "Class " << i << ": " << classDistri[i] << "\n";
         classSupport[i] = classDistri[i] * MinimalSupport;
-
     }
-
 }
 
-std::set<int, std::less<int>> SetRNN(int l, std::set<int, std::less<int>>& s) { // find a std::set's RNN on prefix l
-    std::set<int, std::less<int>> index;
+std::set<int> setRNN(int l, std::set<int>& s) { // find a set's RNN on prefix l
+    std::set<int> index;
 
-    std::set<int, std::less<int> >::iterator i;
+    std::set<int>::iterator i;
     for (i = s.begin(); i != s.end(); i++) {
         int element = *i;
-
         for (int j = 0; j < ROWTRAINING; j++) {
-            if (TrainingIndex[j][l - 1] == element && s.count(j) == 0) {
+            if (trainingIndex[j][l - 1] == element && s.count(j) == 0) {
                 index.insert(j);
             }
-
         }
-
     }
-
     return index;
-
 }
 
-std::set<int, std::less<int>> SetNN(int l, std::set<int, std::less<int>>& s) {
-    std::set<int, std::less<int>> index;
+std::set<int> setNN(int l, std::set<int>& s) {
+    std::set<int> index;
 
-    std::set<int, std::less<int> >::iterator i;
+    std::set<int>::iterator i;
     for (i = s.begin(); i != s.end(); i++) {
         int element = *i;
-
-        int NNofelement = TrainingIndex[element][l - 1];
+        int NNofelement = trainingIndex[element][l - 1];
         index.insert(NNofelement);
-
     }
-
     return index;
-
 }
-int NNConsistent(int l, std::set<int, std::less<int>>& s) { // return 1, if it is NN consistent, return 0, if not
-    std::set<int, std::less<int> >::iterator i;
+int nnConsistent(int l, std::set<int>& s) { // return 1, if it is NN consistent, return 0, if not
+    std::set<int>::iterator i;
     int consistent = 1;
     for (i = s.begin(); i != s.end(); i++) {
         int element = *i;
 
-        int NNofelement = TrainingIndex[element][l - 1]; // get the NN
+        int NNofelement = trainingIndex[element][l - 1]; // get the NN
 
         if (s.count(NNofelement) == 0) {
             consistent = 0;
@@ -496,13 +451,13 @@ int NNConsistent(int l, std::set<int, std::less<int>>& s) { // return 1, if it i
 
 }
 
-int getMPL(std::set<int, std::less<int>>& s) {
+int getMPL(std::set<int>& s) {
 
     int MPL = DIMENSION;
 
-    std::set<int, std::less<int> > ::iterator i;
+    std::set<int> ::iterator i;
     if (s.size() == 1) { // simple RNN Method
-        std::set<int, std::less<int>> LastRNN = SetRNN(DIMENSION, s); // get full length RNN
+        std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
 
         int FirstElement = *(s.begin());
         double label = labelTraining[FirstElement];
@@ -511,11 +466,11 @@ int getMPL(std::set<int, std::less<int>>& s) {
         else {labelIndex = label - 1;}
 
         // get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S.
-        std::set<int, std::less<int>> LastUsefulRNN;
+        std::set<int> LastUsefulRNN;
         for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
             int element = *i;
 
-            if ( FullLengthClassificationStatus[element] == 1) {
+            if ( fullLengthClassificationStatus[element] == 1) {
 
                 LastUsefulRNN.insert(element);
 
@@ -527,17 +482,17 @@ int getMPL(std::set<int, std::less<int>>& s) {
 
         if (Support >= classSupport[labelIndex]) {
             if (LastUsefulRNN.size() > 0) {
-                std::set<int, std::less<int>> PreviousRNN;
+                std::set<int> PreviousRNN;
                 for (int le = DIMENSION - 1; le >= 1; le--) {
 
-                    PreviousRNN = SetRNN(le, s);
+                    PreviousRNN = setRNN(le, s);
 
-                    std::set<int, std::less<int>> PreviousUsefulRNN;
+                    std::set<int> PreviousUsefulRNN;
 
                     for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
                         int element = *i;
 
-                        if (FullLengthClassificationStatus[element] == 1) {
+                        if (fullLengthClassificationStatus[element] == 1) {
 
                             PreviousUsefulRNN.insert(element);
 
@@ -570,7 +525,7 @@ int getMPL(std::set<int, std::less<int>>& s) {
         }
 
     } else { // super-sequence Method
-        std::set<int, std::less<int>> LastRNN = SetRNN(DIMENSION, s); // get full length RNN
+        std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
 
         int FirstElement = *(s.begin());
         double label = labelTraining[FirstElement];
@@ -579,11 +534,11 @@ int getMPL(std::set<int, std::less<int>>& s) {
         else {labelIndex = label - 1;}
 
         // get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S.
-        std::set<int, std::less<int>> LastUsefulRNN;
+        std::set<int> LastUsefulRNN;
         for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
             int element = *i;
 
-            if (FullLengthClassificationStatus[element] == 1) {
+            if (fullLengthClassificationStatus[element] == 1) {
 
                 LastUsefulRNN.insert(element);
 
@@ -595,21 +550,21 @@ int getMPL(std::set<int, std::less<int>>& s) {
 
         if (Support >= classSupport[labelIndex]) {
 
-            std::set<int, std::less<int>> PreviousRNN;
+            std::set<int> PreviousRNN;
             for (int le = DIMENSION - 1; le >= 1; le--) {
-                if (NNConsistent(le, s) == 0) {
+                if (nnConsistent(le, s) == 0) {
                     MPL = le + 1;
                     break;
                 } else {
 
-                    PreviousRNN = SetRNN(le, s);
+                    PreviousRNN = setRNN(le, s);
 
-                    std::set<int, std::less<int>> PreviousUsefulRNN;
+                    std::set<int> PreviousUsefulRNN;
 
                     for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
                         int element = *i;
 
-                        if ( FullLengthClassificationStatus[element] == 1) {
+                        if ( fullLengthClassificationStatus[element] == 1) {
 
                             PreviousUsefulRNN.insert(element);
 
@@ -645,13 +600,13 @@ int getMPL(std::set<int, std::less<int>>& s) {
 
 }
 
-int getMPLStrict(std::set<int, std::less<int>>& s) {
+int getMPLStrict(std::set<int>& s) {
 
     int MPL = DIMENSION;
 
-    std::set<int, std::less<int> > ::iterator i;
+    std::set<int> ::iterator i;
     if (s.size() == 1) { // simple RNN Method
-        std::set<int, std::less<int>> LastRNN = SetRNN(DIMENSION, s); // get full length RNN
+        std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
 
         int FirstElement = *(s.begin());
         double label = labelTraining[FirstElement];
@@ -660,11 +615,11 @@ int getMPLStrict(std::set<int, std::less<int>>& s) {
         else {labelIndex = label - 1;}
 
         // get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S.
-        std::set<int, std::less<int>> LastUsefulRNN;
+        std::set<int> LastUsefulRNN;
         for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
             int element = *i;
 
-            if ( FullLengthClassificationStatus[element] == 1) {
+            if ( fullLengthClassificationStatus[element] == 1) {
 
                 LastUsefulRNN.insert(element);
 
@@ -675,13 +630,13 @@ int getMPLStrict(std::set<int, std::less<int>>& s) {
         int Support = s.size() + LastUsefulRNN.size();
         if (Support >= classSupport[labelIndex]) {
             if (LastUsefulRNN.size() > 0) {
-                std::set<int, std::less<int>> PreviousRNN;
+                std::set<int> PreviousRNN;
                 for (int le = DIMENSION - 1; le >= 1; le--) {
-                    PreviousRNN = SetRNN(le, s);
-                    std::set<int, std::less<int>> PreviousUsefulRNN;
+                    PreviousRNN = setRNN(le, s);
+                    std::set<int> PreviousUsefulRNN;
                     for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
                         int element = *i;
-                        if (FullLengthClassificationStatus[element] == 1) {
+                        if (fullLengthClassificationStatus[element] == 1) {
                             PreviousUsefulRNN.insert(element);
                         }
                     }
@@ -702,7 +657,7 @@ int getMPLStrict(std::set<int, std::less<int>>& s) {
             MPL = DIMENSION;
         }
     } else { // super-sequence Method
-        std::set<int, std::less<int>> LastRNN = SetRNN(DIMENSION, s); // get full length RNN
+        std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
         int FirstElement = *(s.begin());
         double label = labelTraining[FirstElement];
         int labelIndex = 0;
@@ -711,13 +666,13 @@ int getMPLStrict(std::set<int, std::less<int>>& s) {
         // compute the support of the sequence
         int Support = s.size() + LastRNN.size();
         if (Support >= classSupport[labelIndex]) {
-            std::set<int, std::less<int>> PreviousRNN;
+            std::set<int> PreviousRNN;
             for (int le = DIMENSION - 1; le >= 1; le--) {
-                if (NNConsistent(le, s) == 0) {
+                if (nnConsistent(le, s) == 0) {
                     MPL = le + 1;
                     break;
                 } else {
-                    PreviousRNN = SetRNN(le, s);
+                    PreviousRNN = setRNN(le, s);
                     if ( LastRNN == PreviousRNN) {
                         PreviousRNN.clear();
                     } else {
@@ -733,14 +688,14 @@ int getMPLStrict(std::set<int, std::less<int>>& s) {
     return MPL;
 }
 
-int updateMPL(std::set<int, std::less<int>> s) {
+int updateMPL(std::set<int> s) {
 
     int length = getMPL(s);
 
-    std::set<int, std::less<int> > ::iterator jj;
+    std::set<int> ::iterator jj;
     for (jj = s.begin(); jj != s.end(); jj++) {
-        if (PredictionPrefix[*jj] > length) {
-            PredictionPrefix[*jj] = length;
+        if (predictionPrefix[*jj] > length) {
+            predictionPrefix[*jj] = length;
 
         }
 
@@ -750,22 +705,22 @@ int updateMPL(std::set<int, std::less<int>> s) {
 
 }
 
-int updateMPLStrict(std::set<int, std::less<int>> s) {
+int updateMPLStrict(std::set<int> s) {
 
     int length = getMPLStrict(s);
 
-    std::set<int, std::less<int> > ::iterator jj;
+    std::set<int> ::iterator jj;
     for (jj = s.begin(); jj != s.end(); jj++) {
-        if (PredictionPrefix[*jj] > length) {
-            PredictionPrefix[*jj] = length;
+        if (predictionPrefix[*jj] > length) {
+            predictionPrefix[*jj] = length;
         }
     }
     return length;
 }
 
-bool sharePrefix(   std::set<int, std::less<int> >& s1, std::set<int, std::less<int> >& s2, std::set<int, std::less<int> >& s3, int level        ) {
+bool sharePrefix(   std::set<int>& s1, std::set<int>& s2, std::set<int>& s3, int level        ) {
 
-    std::set<int, std::less<int> > ::iterator i, j;
+    std::set<int> ::iterator i, j;
     bool SharePrefix = 1;
     int count = 0;
     for ( count = 0, i = s1.begin(), j = s2.begin(); count < level - 2; count++, i++, j++) {
@@ -778,7 +733,7 @@ bool sharePrefix(   std::set<int, std::less<int> >& s1, std::set<int, std::less<
 
     if (SharePrefix == 1) {
         std::set_union(s1.begin(), s1.end(), s2.begin(), s2.end(),
-                       std::insert_iterator<std::set<int, std::less<int> >> (s3, s3.begin()) );
+                       std::insert_iterator<std::set<int>> (s3, s3.begin()) );
         /*std::cout << "Merged std::set:\n";
         for (i=s3.begin();i!=s3.end();i++) {
             std::cout <<(*i)<< " ";
@@ -793,21 +748,21 @@ bool sharePrefix(   std::set<int, std::less<int> >& s1, std::set<int, std::less<
     }
 
 }
-void printSetList(std::vector<std::set<int, std::less<int> >> & v) {
+void printSetList(std::vector<std::set<int>> & v) {
     std::cout << "\n";
 
     for (int i = 0; i < v.size(); i++) {
         std::cout << "Set " << i << ":";
 
-        std::set<int, std::less<int> > temp = v[i];
+        std::set<int> temp = v[i];
         //printSet(temp);
 
     }
 
 }
 
-void printSet(std::set<int, std::less<int> > & s) {
-    std::set<int, std::less<int> >::iterator i;
+void printSet(std::set<int> & s) {
+    std::set<int>::iterator i;
     for (i = s.begin(); i != s.end(); i++)
         std::cout << *i << " ";
     std::cout << std::endl;
@@ -847,8 +802,8 @@ int findNN(int index, int len) {
 
 void classification() {
 
-    LoadData(testingFileName, testing, labelTesting, ROWTESTING);
-    int startfrom = findMin( PredictionPrefix, ROWTRAINING);
+    loadData(testingFileName, testing, labelTesting, ROWTESTING);
+    int startfrom = findMin( predictionPrefix, ROWTRAINING);
     std::cout << "\n Start from: " << startfrom << std::endl;
 
     clock_t t1, t2;
@@ -864,7 +819,7 @@ void classification() {
 
             // std::cout << "\n instance " << i << " 's NN is " << tempNN << " at length " << j;
 
-            if (PredictionPrefix[tempNN] <= j) {
+            if (predictionPrefix[tempNN] <= j) {
 
                 predictedLabel[i] = labelTraining[tempNN];
                 predictedLength[i] = j;
@@ -923,7 +878,7 @@ void report() {
 
     ss << "Heuristic Algorithm Report\n";
     ss << "The averaged predicted length of testing data is " << mean(predictedLength, ROWTESTING) << "\n";
-    ss << "The averaged prediction prefix of training data is " << mean(PredictionPrefix, ROWTRAINING) << "\n";
+    ss << "The averaged prediction prefix of training data is " << mean(predictionPrefix, ROWTRAINING) << "\n";
     ss << "accuracy: " << double(correct) / ROWTESTING << "\n";
     ss << "mean classification time" << classificationTime / ROWTESTING << "s\n";
     ss << "training time           " << trainingTime << "s\n";
@@ -954,16 +909,16 @@ void report() {
     outputFile.close();
 }
 
-double SetDis( std::set<int, std::less<int> > A, std::set<int, std::less<int> > B ) {
+double SetDis( std::set<int> A, std::set<int> B ) {
 
     double minimal = 10000000;
 
-    std::set<int, std::less<int> > :: iterator iA;
-    std::set<int, std::less<int> > :: iterator iB;
+    std::set<int> :: iterator iA;
+    std::set<int> :: iterator iB;
 
     for ( iA = A.begin(); iA != A.end(); iA++) {
         for (iB = B.begin(); iB != B.end(); iB++) {
-            double temp = DisArray[*iA][*iB];
+            double temp = disArray[*iA][*iB];
             //std::cout << "dis " << temp << std::endl;
             if (minimal > temp) {
                 minimal = temp;
@@ -973,7 +928,7 @@ double SetDis( std::set<int, std::less<int> > A, std::set<int, std::less<int> > 
     return minimal;
 }
 
-std::vector<int> RankingArray(std::vector<std::set<int, std::less<int>>> & List) {
+std::vector<int> RankingArray(std::vector<std::set<int>> & List) {
     std::vector<int> result;
     for (int i = 0; i < List.size(); i++) {
         double Mindis = 100000;
@@ -992,7 +947,7 @@ std::vector<int> RankingArray(std::vector<std::set<int, std::less<int>>> & List)
     return result;
 }
 
-int GetMN(std::vector<std::set<int, std::less<int>>> & List, int ClusterIndex) { // get the NN of cluster, if there is no MN, return -1, others , return the value
+int GetMN(std::vector<std::set<int>> & List, int ClusterIndex) { // get the NN of cluster, if there is no MN, return -1, others , return the value
     // find the NN of ClusterIndex
     double Mindis = 100000;
     int NN = -1;
@@ -1026,7 +981,7 @@ int GetMN(std::vector<std::set<int, std::less<int>>> & List, int ClusterIndex) {
     else {return -1;}
 
 }
-int getMPL(std::set<int, std::less<int>>& s, int la, int lb) {
+int getMPL(std::set<int>& s, int la, int lb) {
     int startFrom = 0;
 
     if (la <= lb)
@@ -1036,9 +991,9 @@ int getMPL(std::set<int, std::less<int>>& s, int la, int lb) {
 
     int MPL = DIMENSION;
 
-    std::set<int, std::less<int> > ::iterator i;
+    std::set<int> ::iterator i;
 
-    std::set<int, std::less<int>> LastRNN = SetRNN(DIMENSION, s); // get full length RNN
+    std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
 
     int FirstElement = *(s.begin());
     double label = labelTraining[FirstElement];
@@ -1047,11 +1002,11 @@ int getMPL(std::set<int, std::less<int>>& s, int la, int lb) {
     else {labelIndex = label - 1;}
 
     // get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S.
-    std::set<int, std::less<int>> LastUsefulRNN;
+    std::set<int> LastUsefulRNN;
     for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
         int element = *i;
 
-        if (FullLengthClassificationStatus[element] == 1) {
+        if (fullLengthClassificationStatus[element] == 1) {
 
             LastUsefulRNN.insert(element);
 
@@ -1060,21 +1015,21 @@ int getMPL(std::set<int, std::less<int>>& s, int la, int lb) {
     }
     // compute the support of the sequence
     int Support = s.size() + LastUsefulRNN.size();
-    std::set<int, std::less<int>> PreviousRNN;
-    std::set<int, std::less<int>> PreviousUsefulRNN;
+    std::set<int> PreviousRNN;
+    std::set<int> PreviousUsefulRNN;
     if (Support >= classSupport[labelIndex]) {
         for (int le = startFrom - 1; le >= 1; le--) {
-            if (NNConsistent(le, s) == 0) {
+            if (nnConsistent(le, s) == 0) {
                 MPL = le + 1;
                 break;
             } else {
 
-                PreviousRNN = SetRNN(le, s);
+                PreviousRNN = setRNN(le, s);
 
                 for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
                     int element = *i;
 
-                    if ( FullLengthClassificationStatus[element] == 1) {
+                    if ( fullLengthClassificationStatus[element] == 1) {
 
                         PreviousUsefulRNN.insert(element);
 
@@ -1110,7 +1065,7 @@ int getMPL(std::set<int, std::less<int>>& s, int la, int lb) {
 
 }
 
-int getMPLStrict(std::set<int, std::less<int>>& s, int la, int lb) {
+int getMPLStrict(std::set<int>& s, int la, int lb) {
     int startFrom = 0;
 
     if (la <= lb)
@@ -1119,10 +1074,7 @@ int getMPLStrict(std::set<int, std::less<int>>& s, int la, int lb) {
         startFrom = la;
 
     int MPL = DIMENSION;
-
-    std::set<int, std::less<int> > ::iterator i;
-
-    std::set<int, std::less<int>> LastRNN = SetRNN(DIMENSION, s); // get full length RNN
+    std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
 
     int FirstElement = *(s.begin());
     double label = labelTraining[FirstElement];
@@ -1132,43 +1084,33 @@ int getMPLStrict(std::set<int, std::less<int>>& s, int la, int lb) {
 
     // compute the support of the sequence
     int Support = s.size() + LastRNN.size();
-    std::set<int, std::less<int>> PreviousRNN;
+    std::set<int> PreviousRNN;
 
     if (Support >= classSupport[labelIndex]) {
         for (int le = startFrom - 1; le >= 1; le--) {
-            if (NNConsistent(le, s) == 0) {
+            if (nnConsistent(le, s) == 0) {
                 MPL = le + 1;
                 break;
             } else {
-
-                PreviousRNN = SetRNN(le, s);
-
+                PreviousRNN = setRNN(le, s);
                 if ( LastRNN == PreviousRNN) {
-
                     PreviousRNN.clear();
-
                 } else {
                     /*printSet(s);
                     printSet(PreviousUsefulRNN);
                     std::cout << "Support=" << support << "\n";*/
                     MPL = le + 1;
                     break;
-
                 }
-
             }// end of else
-
         }// end of for
-
     } else {
         MPL = DIMENSION;
     }
-
     return MPL;
-
 }
 
-int getMPLTest(std::set<int, std::less<int>>& s, int la, int lb) {
+int getMPLTest(std::set<int>& s, int la, int lb) {
     int startFrom = 0;
 
     if (la <= lb)
@@ -1178,9 +1120,8 @@ int getMPLTest(std::set<int, std::less<int>>& s, int la, int lb) {
 
     int MPL = DIMENSION;
 
-    std::set<int, std::less<int> > ::iterator i;
     if (s.size() == 1) { // simple RNN Method
-        std::set<int, std::less<int>> LastRNN = SetRNN(DIMENSION, s); // get full length RNN
+        std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
 
         int FirstElement = *(s.begin());
         double label = labelTraining[FirstElement];
@@ -1193,10 +1134,10 @@ int getMPLTest(std::set<int, std::less<int>>& s, int la, int lb) {
 
         if (Support >= classSupport[labelIndex]) {
             if (LastRNN.size() > 0) {
-                std::set<int, std::less<int>> PreviousRNN;
+                std::set<int> PreviousRNN;
                 for (int le = DIMENSION - 1; le >= 1; le--) {
 
-                    PreviousRNN = SetRNN(le, s);
+                    PreviousRNN = setRNN(le, s);
 
                     if (  LastRNN == PreviousRNN ) {
 
@@ -1211,13 +1152,15 @@ int getMPLTest(std::set<int, std::less<int>>& s, int la, int lb) {
 
                 }// end of for
 
-            } else {MPL = DIMENSION;}
+            } else {
+                MPL = DIMENSION;
+            }
         } else {
             MPL = DIMENSION;
         }
 
     } else { // super-sequence Method
-        std::set<int, std::less<int>> LastRNN = SetRNN(DIMENSION, s); // get full length RNN
+        std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
 
         int FirstElement = *(s.begin());
         double label = labelTraining[FirstElement];
@@ -1227,17 +1170,17 @@ int getMPLTest(std::set<int, std::less<int>>& s, int la, int lb) {
 
         // compute the support of the sequence
         int Support = s.size() + LastRNN.size();
-        std::set<int, std::less<int>> PreviousRNN;
+        std::set<int> PreviousRNN;
 
         if (Support >= classSupport[labelIndex]) {
             for (int le = startFrom - 1; le >= 1; le--) {
-                if (NNConsistent(le, s) == 0) {
+                if (nnConsistent(le, s) == 0) {
                     MPL = le + 1;
                     break;
                 }
                 /*
                 else {
-                    PreviousRNN = SetRNN(le, s);
+                    PreviousRNN = setRNN(le, s);
                     if ( LastRNN == PreviousRNN) {
                         PreviousRNN.clear();
                     } else {
@@ -1258,13 +1201,13 @@ int getMPLTest(std::set<int, std::less<int>>& s, int la, int lb) {
     return MPL;
 }
 
-int getMPLTest(std::set<int, std::less<int>>& s) {
+int getMPLTest(std::set<int>& s) {
 
     int MPL = DIMENSION;
 
-    std::set<int, std::less<int> > ::iterator i;
+    std::set<int> ::iterator i;
     if (s.size() == 1) { // simple RNN Method
-        std::set<int, std::less<int>> LastRNN = SetRNN(DIMENSION, s); // get full length RNN
+        std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
 
         int FirstElement = *(s.begin());
         double label = labelTraining[FirstElement];
@@ -1277,31 +1220,26 @@ int getMPLTest(std::set<int, std::less<int>>& s) {
 
         if (Support >= classSupport[labelIndex]) {
             if (LastRNN.size() > 0) {
-                std::set<int, std::less<int>> PreviousRNN;
+                std::set<int> PreviousRNN;
                 for (int le = DIMENSION - 1; le >= 1; le--) {
 
-                    PreviousRNN = SetRNN(le, s);
-
+                    PreviousRNN = setRNN(le, s);
                     if (  LastRNN == PreviousRNN ) {
-
                         PreviousRNN.clear();
-
                     } else {
-
                         MPL = le + 1;
                         break;
-
                     }
-
                 }// end of for
-
-            } else {MPL = DIMENSION;}
+            } else {
+                MPL = DIMENSION;
+            }
         } else {
             MPL = DIMENSION;
         }
 
     } else { // super-sequence Method
-        std::set<int, std::less<int>> LastRNN = SetRNN(DIMENSION, s); // get full length RNN
+        std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
 
         int FirstElement = *(s.begin());
         double label = labelTraining[FirstElement];
@@ -1313,9 +1251,9 @@ int getMPLTest(std::set<int, std::less<int>>& s) {
         int Support = s.size() + LastRNN.size();
 
         if (Support >= classSupport[labelIndex]) {
-            std::set<int, std::less<int>> PreviousRNN;
+            std::set<int> PreviousRNN;
             for (int le = DIMENSION - 1; le >= 1; le--) {
-                if (NNConsistent(le, s) == 0) {
+                if (nnConsistent(le, s) == 0) {
                     MPL = le + 1;
                     break;
                 }
@@ -1327,12 +1265,12 @@ int getMPLTest(std::set<int, std::less<int>>& s) {
     return MPL;
 }
 
-int updateMPLTest(std::set<int, std::less<int>> s) {
+int updateMPLTest(std::set<int> s) {
     int length = getMPLTest(s);
-    std::set<int, std::less<int> > ::iterator jj;
+    std::set<int> ::iterator jj;
     for (jj = s.begin(); jj != s.end(); jj++) {
-        if (PredictionPrefix[*jj] > length) {
-            PredictionPrefix[*jj] = length;
+        if (predictionPrefix[*jj] > length) {
+            predictionPrefix[*jj] = length;
         }
     }
     return length;
