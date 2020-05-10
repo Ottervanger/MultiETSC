@@ -10,29 +10,17 @@
 #include <time.h>
 #include <limits>
 
-
-
 #include "DataSetInformation.h"
 #include "Euclidean.h"
 #include "minValue.h"
 #include "find.h"
 
-
-
-
-
-
-
-
-
-
 using namespace std;
-
 
 // ALgorithm parameters: minimal support
 double MinimalSupport=0;
 
-int strictversion=1; // 1 strict veresion , 0 loose version
+int strictversion=0; // 1 strict veresion , 0 loose version
 
 // global variable
 double training[ROWTRAINING][DIMENSION]; // training data set
@@ -53,8 +41,6 @@ vector<int> NNSetListClassMap;// store the class label of the MNCS
 int correct=0; // the unlabeled sequence which is correctly classified.
 double classificationTime; // classification time of one instance
 double trainingTime; // classification time of one instance
-
-
 
 // functions in the same file
 void LoadData(const char * fileName, double Data[][DIMENSION], double Labels[], int len  );
@@ -85,7 +71,6 @@ int getMPLStrict(set<int,less<int>>& s,int la, int lb);
 int getMPLStrict(set<int,less<int>>& s);
 int updateMPLStrict(set<int,less<int>> s);
 
-
 int getMPLTest(set<int,less<int>>& s,int la, int lb);
 int getMPLTest(set<int,less<int>>& s);
 int updateMPLTest(set<int,less<int>> s);
@@ -94,7 +79,6 @@ void reportSynUCI();
 
 int main ()
 {
-  
 
     // load training data
 	LoadData(trainingFileName, training,labelTraining, ROWTRAINING);
@@ -103,20 +87,16 @@ int main ()
     LoadTrIndex(trainingIndexFileName, TrainingIndex  );
     // compute the full length classification status, 0 incorrect, 1 correct
     clock_t t3, t4;
-   
 
     for (int i=0;i<ROWTRAINING;i++)
     {
-       
+
 	   int NNofi=TrainingIndex[i][DIMENSION-1];
-	  
 
        if (labelTraining[i]==labelTraining[NNofi])
 	   {
 	      FullLengthClassificationStatus[i]=1;
 	   }
-
-	 
 
    }
 
@@ -125,17 +105,16 @@ int main ()
    for (int i=0;i<ROWTRAINING;i++)
    {
 	   PredictionPrefix[i]=DIMENSION;
-	  
+
    }
-   
-  
+
    // simple RNN method
 
     t3 = clock();
     // simple RNN method
    for (int i=0;i<ROWTRAINING;i++)
    {
-	   
+
 	   set<int, less<int> >  s;
 	   s.insert(i);
 
@@ -145,15 +124,14 @@ int main ()
        }
        else
        {
-       
+
            PredictionPrefix[i]=getMPLStrict(s);
-       
+
        }
-	   
+
       // PredictionPrefix[i]=getMPLTest(s);
-	  
+
    }
-  
 
    int latticeLevel=1;
    //cout<<"bi-roots level\n";
@@ -164,13 +142,9 @@ int main ()
    // initial the length to L
    vector<int> CurrentNew;
    vector<int> NextNew;
-   
-   
+
    bool UsedInBiRoots[ROWTRAINING]={0}; // 0 not used, 1 used
 
-  
-   
-    
    for (int i=0;i<ROWTRAINING;i++)
    {
       if (UsedInBiRoots[i]==0)
@@ -182,9 +156,9 @@ int main ()
            set<int, less<int> > temp;
 		   temp.insert(i);
 		   temp.insert(NNofi);
-            
+
            if (labelTraining[i]==labelTraining[NNofi])
-           
+
            {
                int tempL;
               if (strictversion==0)
@@ -194,7 +168,7 @@ int main ()
                else
                  {
                    tempL=updateMPLStrict(temp);
-               
+
                  }
 
              //  tempL=updateMPLTest(temp);
@@ -203,20 +177,18 @@ int main ()
                SetLabel.push_back(labelTraining[NNofi]);
                biRoots.push_back(temp);
                CurrentNew.push_back(biRoots.size()-1);
-              
-               
+
            }
            else // unpure group
            {
-             
+
              biRootsLength.push_back(0); 
-               
+
              SetLabel.push_back(0);
              biRoots.push_back(temp);
              CurrentNew.push_back(biRoots.size()-1);
-           
+
            }
-		   
 
            UsedInBiRoots[i]=1;
 		   UsedInBiRoots[NNofi]=1;
@@ -228,35 +200,24 @@ int main ()
           biRootsLength.push_back(PredictionPrefix[i]);
           SetLabel.push_back(labelTraining[i]);
           biRoots.push_back(temp);
-        
+
         }
-	  
-	  
+
 	  }
-   
-   
-   
+
    } // end for
-
-    
-   
-
 
   // Heuristic algorithm
      latticeLevel=2;
 	 int mergedPair=0;
-	 
+
      vector<set<int, less<int> >> NNSetListCurrent=biRoots;
      vector<int> NNSetListCurrentLength=biRootsLength;
      vector<double> NNSetListCurrentLabel=SetLabel;
-  
-     
 
      vector<set<int, less<int> >> NNSetListNext;
      vector<int> NNSetListNextLength;
      vector<double> NNSetListNextLabel;
-      
-       
 
 //
      while(NNSetListCurrent.size()>1)
@@ -269,7 +230,6 @@ int main ()
          NNSetListNextLabel.clear();
          NextNew.clear();
 
-
 		 vector<int> status;
 		 for(int i=0;i<NNSetListCurrent.size();i++)
 		 {
@@ -277,57 +237,49 @@ int main ()
 		 }
 
 		// vector<int> CurrentRankingArray= RankingArray(NNSetListCurrent);
-	    
+
 		 for (int i=0;i<CurrentNew.size();i++)
 
 		 {
-		    
+
              int tempi=CurrentNew[i];
 
-            
-             
              if (status[tempi]==0)
 			{
-				
+
                vector<int> pair;
                int MNofi=GetMN(NNSetListCurrent,tempi); // get the NN of cluster, if there is no MN, return -1, others , return the value
                if (MNofi!=-1)
-				
+
                {
-               
+
                    pair.push_back(tempi);
 				   pair.push_back(MNofi);
 
-                   
 				  // test if they are of the same label
-
 
 					double label1=NNSetListCurrentLabel[pair[0]];
 					double label2=NNSetListCurrentLabel[pair[1]];
 
-					
-					
 					   set<int, less<int>> tempSet;
 
                        set<int, less<int>> setA=NNSetListCurrent[pair[0]];
 					   set<int, less<int>> setB=NNSetListCurrent[pair[1]];
-                        
+
                        // merge two set
 
                        set<int, less<int> > ::iterator a;
                        for (a=setA.begin(); a!=setA.end(); a++)
                        {
                          tempSet.insert(*a);
-                       
-                       
+
                        }
-                       
+
                        set<int, less<int> > ::iterator b;
                        for (b=setB.begin(); b!=setB.end(); b++)
                        {
                          tempSet.insert(*b);
-                       
-                       
+
                        }
 
 				      if(label1!=0 && label2!=0 && label1==label2 )
@@ -337,18 +289,16 @@ int main ()
                           if (setA.size()>1 && setB.size()>1)
                            {
                              if (strictversion==0)
-                               
+
                               {
                                   tempLength=getMPL(tempSet,NNSetListCurrentLength[pair[0]],NNSetListCurrentLength[pair[1]]);
 
-                                 
                               }
                               else
                               {
-                              
+
                                 tempLength=getMPLStrict(tempSet,NNSetListCurrentLength[pair[0]],NNSetListCurrentLength[pair[1]]);
-                              
-                              
+
                               }
 
                                // tempLength=getMPLTest(tempSet,NNSetListCurrentLength[pair[0]],NNSetListCurrentLength[pair[1]]);
@@ -356,167 +306,123 @@ int main ()
                            else
                            {
                               if (strictversion==0)
-                               
+
                               {
                                   tempLength=getMPL(tempSet);
                               }
                               else
                               {
-                              
+
                                 tempLength=getMPLStrict(tempSet);
-                              
-                              
+
                               }
-                              
-                           
+
                            }
 
-                          
                            // update the length
-                            
+
                                   set<int, less<int> > ::iterator jj;
                                   for (jj=tempSet.begin(); jj!=tempSet.end(); jj++)
 	                              {
 	                                    if (PredictionPrefix[*jj]>tempLength)
 			                            {
 			                                PredictionPrefix[*jj]=tempLength;
-                            			
+
 			                            }
-                            	  
-                            	  
-                            	  
+
 	                              }
-                                                     
+
                             NNSetListNextLength.push_back(tempLength);
 						    NNSetListNext.push_back(tempSet);
                             NextNew.push_back(NNSetListNext.size()-1);
-                           
 
                             NNSetListNextLabel.push_back(label1);
 						    mergedPair++;
 						    status[pair[0]]=1;
 						    status[pair[1]]=1;
 
-
-    					
 					    } 
                     else  // the pair is not pure
                     {
-                    
+
                             NNSetListNextLength.push_back(0);
 						    NNSetListNext.push_back(tempSet);
                             NextNew.push_back(NNSetListNext.size()-1);
-                           
+
                             NNSetListNextLabel.push_back(0);
                             status[pair[0]]=1;
 						    status[pair[1]]=1;
-						   
-                    
-                    
-                    
-                    }
-               
-               
-               
-               }
-				
-					
 
-				    
-				
+                    }
+
+               }
 
 				}// end if
-		 
+
 		 }// end for
-       
 
 		 if (mergedPair>0)
 		 {
 
-
 			 //cout<<"Merged pair"<<mergedPair<<endl;
 
-            
 		    for (int k=0;k<NNSetListCurrent.size();k++)
 			 {
-			 
+
 				if (status[k]==0)
 				{
-				   
+
 				   NNSetListNext.push_back(NNSetListCurrent[k]);
                    NNSetListNextLength.push_back(NNSetListCurrentLength[k]);
 				   NNSetListNextLabel.push_back(NNSetListCurrentLabel[k]);
-				
+
 				}
 			 }// end for
-            
-              
-			
+
 			NNSetListCurrent.clear();
 		    for (int kk=0;kk<NNSetListNext.size();kk++)
 		     { 
 				 NNSetListCurrent.push_back(NNSetListNext[kk]);
-		         
+
 			 }
             NNSetListNext.clear();
-
-
-           
-           
-            
-
-
-
-
-
 
             NNSetListCurrentLength.clear();
             for (int kk=0;kk<NNSetListNextLength.size();kk++)
 		     { 
 				 NNSetListCurrentLength.push_back(NNSetListNextLength[kk]);
-		         
+
 			 }
             NNSetListNextLength.clear();
-
-            
 
             NNSetListCurrentLabel.clear();
             for (int kk=0;kk<NNSetListNextLabel.size();kk++)
 		     { 
 				 NNSetListCurrentLabel.push_back(NNSetListNextLabel[kk]);
-		         
+
 			 }
             NNSetListNextLabel.clear();
 
-           
            // update CurrentNew and NextNew
 
             CurrentNew.clear();
             for (int kk=0;kk<NextNew.size();kk++)
 		     { 
 				 CurrentNew.push_back(NextNew[kk]);
-		         
+
 			 }
             NextNew.clear();  
 
-
             latticeLevel++;
-		 
-		 
-		 
+
 		 }
 		 else
 		 {
 		    break;
-		 
+
 		 }
 
-		
-
-	 
-	 
 	 }// end while
-
 
   // end of hueristic algorithm
     t4 = clock();
@@ -525,24 +431,18 @@ int main ()
    for (int i=0;i<ROWTRAINING;i++)
    {
        cout<<"\ninstance "<<i+1<<" :"<<PredictionPrefix[i]<<" ";
-   
-   
+
    }
-   
+
     classification();
 	report();
 reportSynUCI();
-    
 
 }// end main
 
-
-   
-
-
 void LoadData(const char * fileName, double Data[][DIMENSION], double Labels[],int len  )
 {
-    
+
 	ifstream inputFile( fileName, ios::in);
 	if ( !inputFile )
 	{
@@ -568,24 +468,16 @@ void LoadData(const char * fileName, double Data[][DIMENSION], double Labels[],i
 					inputFile>>Data[row][col-1];
 				}
 			}
-			
+
 	}
 
 	inputFile.close();
 
-	
-
-
-
-
-
-
 }
-
 
 void LoadDisArray(const char * fileName, double Data[ROWTRAINING][ROWTRAINING]  )
 {
-   
+
 	ifstream inputFile( fileName, ios::in);
 	if ( !inputFile )
 	{
@@ -601,12 +493,10 @@ void LoadDisArray(const char * fileName, double Data[ROWTRAINING][ROWTRAINING]  
 			for ( col=0; col < ROWTRAINING; col++)
 			{
 
-				
-				
 					inputFile>>Data[row][col];
-				
+
 			}
-			
+
 	}
 
 	inputFile.close();
@@ -614,7 +504,7 @@ void LoadDisArray(const char * fileName, double Data[ROWTRAINING][ROWTRAINING]  
 
 void LoadTrIndex(const char * fileName, int Data[ROWTRAINING][DIMENSION]  )
 {
-   
+
 	ifstream inputFile( fileName, ios::in);
 	if ( !inputFile )
 	{
@@ -630,42 +520,27 @@ void LoadTrIndex(const char * fileName, int Data[ROWTRAINING][DIMENSION]  )
 			for ( col=0; col < DIMENSION; col++)
 			{
 
-				
-				
 					inputFile>>Data[row][col];
-				
+
 			}
-			
+
 	}
 
 	inputFile.close();
 }
 
-
-
 void getClassDis()
 {
    for (int i=0; i<NofClasses;i++)
    {  
-	 
-   
+
        classDistri[i]=find(labelTraining, Classes[i], ROWTRAINING );
        cout<<"\n"<<"Class "<<i<<": "<< classDistri[i]<<"\n";
 	   classSupport[i]= classDistri[i]*MinimalSupport;
-   
+
    }
 
-  
-
-
 }
-
-
-
-
-
-
-
 
 set<int,less<int>> SetRNN(int l, set<int,less<int>>& s) // find a set's RNN on prefix l
 {
@@ -682,20 +557,12 @@ set<int,less<int>> SetRNN(int l, set<int,less<int>>& s) // find a set's RNN on p
 		   {
 		     index.insert(j);
 		   }
-	   
-	   
-	   
-	   
+
 	   }
-	
-	
+
 	}
 
-	 
 	return index;
-
-	
-
 
 }
 
@@ -710,16 +577,10 @@ set<int,less<int>> SetNN(int l, set<int,less<int>>& s)
 
 	   int NNofelement=TrainingIndex[element][l-1];
 		index.insert(NNofelement);
-		   
-	   
-	   
+
 	}
 
-	 
 	return index;
-
-	
-
 
 }
 int NNConsistent(int l, set<int,less<int>>& s)// return 1, if it is NN consistent, return 0, if not
@@ -731,42 +592,30 @@ int NNConsistent(int l, set<int,less<int>>& s)// return 1, if it is NN consisten
       int element=*i;
 
 	  int NNofelement=TrainingIndex[element][l-1]; // get the NN
-  
+
       if (s.count(NNofelement)==0)
 	  {
 		  consistent=0;
 		  break;
-	  
-	  }
-  
-  
-  }
 
+	  }
+
+  }
 
  return consistent;
 
 }
 
-
-
-
-
-
-
 int getMPL(set<int,less<int>>& s)
 { 
-    
+
   int MPL=DIMENSION;
 
   set<int, less<int> > ::iterator i;
   if (s.size()==1) // simple RNN Method
   {
     set<int,less<int>> LastRNN=SetRNN(DIMENSION,s); // get full length RNN
-    
-	
-             
-	
-    
+
 	int FirstElement=*(s.begin());
 	double label=labelTraining[FirstElement];
     int labelIndex=0;
@@ -774,7 +623,6 @@ int getMPL(set<int,less<int>>& s)
 	   {labelIndex=1;}
 	else
 	   {labelIndex=label-1;}
-
 
 	// get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S. 
     set<int,less<int>> LastUsefulRNN;
@@ -784,17 +632,14 @@ int getMPL(set<int,less<int>>& s)
 
 		if ( FullLengthClassificationStatus[element]==1)
 		{
-		
+
 		   LastUsefulRNN.insert(element);
-		
+
 		}
-	
-	
-	
+
 	}
 	// compute the support of the sequence
 	int Support=s.size()+LastUsefulRNN.size();
-	
 
 	if (Support>=classSupport[labelIndex])
 	{
@@ -803,13 +648,10 @@ int getMPL(set<int,less<int>>& s)
            set<int,less<int>> PreviousRNN;
 	      for (int le=DIMENSION-1;le>=1;le--)
 		  {
-		     
 
              PreviousRNN=SetRNN(le,s);
-			  
 
              set<int,less<int>> PreviousUsefulRNN;
-
 
 		     for (i=PreviousRNN.begin(); i!=PreviousRNN.end(); i++)
 				{
@@ -817,55 +659,35 @@ int getMPL(set<int,less<int>>& s)
 
 					if (FullLengthClassificationStatus[element]==1)
 					{
-					
-					   PreviousUsefulRNN.insert(element);
-					   
-					
-					}
-				
-				
-				
-				}
-            
 
+					   PreviousUsefulRNN.insert(element);
+
+					}
+
+				}
 
 			 if (  LastUsefulRNN==PreviousUsefulRNN )
 			 {
-				 
 
-                
                    // CurrentUsefulRNN=PreviousUsefulRNN;
 
-                    
-
-                  
 			         PreviousRNN.clear();
 			        PreviousUsefulRNN.clear();
-				 
-				
-			  
+
 			 }
 			 else
 			 { 
                  /*printSet(s);
                  printSet(PreviousUsefulRNN);
                  cout<<"Support="<<support<<"\n";*/
-				 
+
 				 MPL=le+1;
                  break;
-			 
-			 
+
 			 }
 
-		  
-		  
-		  
-		  
 		  }// end of for
-	   
-	   
-	   
-	   
+
 	   }
 	   else
 	   {MPL=DIMENSION;}
@@ -875,15 +697,11 @@ int getMPL(set<int,less<int>>& s)
 	  MPL=DIMENSION;
 	}
 
-  
-  
-  
   }
   else // super-sequence Method
   {
     set<int,less<int>> LastRNN=SetRNN(DIMENSION,s); // get full length RNN
-	
-    
+
 	int FirstElement=*(s.begin());
 	double label=labelTraining[FirstElement];
     int labelIndex=0;
@@ -891,7 +709,6 @@ int getMPL(set<int,less<int>>& s)
 	   {labelIndex=1;}
 	else
 	   {labelIndex=label-1;}
-
 
 	// get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S. 
     set<int,less<int>> LastUsefulRNN;
@@ -901,20 +718,18 @@ int getMPL(set<int,less<int>>& s)
 
 		if (FullLengthClassificationStatus[element]==1)
 		{
-		
+
 		  LastUsefulRNN.insert(element);
-		
+
 		}
-	
-	
-	
+
 	}
 	// compute the support of the sequence
 	int Support=s.size()+LastUsefulRNN.size();
 
 	if (Support>=classSupport[labelIndex])
 	{
-       
+
         set<int,less<int>> PreviousRNN;
 		for (int le=DIMENSION-1;le>=1;le--)
 		  {
@@ -925,17 +740,10 @@ int getMPL(set<int,less<int>>& s)
 			 }
 			 else
 			 {
-			  
-			  
-			  
-			  
-			  
-			
 
              PreviousRNN=SetRNN(le,s);
 
              set<int,less<int>> PreviousUsefulRNN;
-
 
 		     for (i=PreviousRNN.begin(); i!=PreviousRNN.end(); i++)
 				{
@@ -943,25 +751,19 @@ int getMPL(set<int,less<int>>& s)
 
 					if ( FullLengthClassificationStatus[element]==1)
 					{
-					
+
 					   PreviousUsefulRNN.insert(element);
-					   
-					
+
 					}
-				
-				
-				
+
 				}
 
 			 if ( LastUsefulRNN==PreviousUsefulRNN)
 			 {
-				 
-				   
+
 			         PreviousRNN.clear();
 			        PreviousUsefulRNN.clear();
-				 
-				 
-			  
+
 			 }
 			 else
 			 { 
@@ -970,69 +772,35 @@ int getMPL(set<int,less<int>>& s)
                  cout<<"Support="<<support<<"\n";*/
 				 MPL=le+1;
                  break;
-			 
-			 
+
 			 }
 
-		  
 			 }// end of else
-		  
-		  
+
 		  }// end of for
-	   
-	   
-	   
-	   
-	   
+
 	}
 	else
 	{
 	  MPL=DIMENSION;
 	}
 
-  
-  
-  
   }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   return MPL;
-  
-  
+
   }
-
-
-
-
-
 
 int getMPLStrict(set<int,less<int>>& s)
 { 
-    
+
   int MPL=DIMENSION;
 
   set<int, less<int> > ::iterator i;
   if (s.size()==1) // simple RNN Method
   {
     set<int,less<int>> LastRNN=SetRNN(DIMENSION,s); // get full length RNN
-    
-	
-             
-	
-    
+
 	int FirstElement=*(s.begin());
 	double label=labelTraining[FirstElement];
     int labelIndex=0;
@@ -1040,7 +808,6 @@ int getMPLStrict(set<int,less<int>>& s)
 	   {labelIndex=1;}
 	else
 	   {labelIndex=label-1;}
-
 
 	// get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S. 
     set<int,less<int>> LastUsefulRNN;
@@ -1050,17 +817,14 @@ int getMPLStrict(set<int,less<int>>& s)
 
 		if ( FullLengthClassificationStatus[element]==1)
 		{
-		
+
 		   LastUsefulRNN.insert(element);
-		
+
 		}
-	
-	
-	
+
 	}
 	// compute the support of the sequence
 	int Support=s.size()+LastUsefulRNN.size();
-	
 
 	if (Support>=classSupport[labelIndex])
 	{
@@ -1069,13 +833,10 @@ int getMPLStrict(set<int,less<int>>& s)
            set<int,less<int>> PreviousRNN;
 	      for (int le=DIMENSION-1;le>=1;le--)
 		  {
-		     
 
              PreviousRNN=SetRNN(le,s);
-			  
 
              set<int,less<int>> PreviousUsefulRNN;
-
 
 		     for (i=PreviousRNN.begin(); i!=PreviousRNN.end(); i++)
 				{
@@ -1083,55 +844,35 @@ int getMPLStrict(set<int,less<int>>& s)
 
 					if (FullLengthClassificationStatus[element]==1)
 					{
-					
-					   PreviousUsefulRNN.insert(element);
-					   
-					
-					}
-				
-				
-				
-				}
-            
 
+					   PreviousUsefulRNN.insert(element);
+
+					}
+
+				}
 
 			 if (  LastUsefulRNN==PreviousUsefulRNN )
 			 {
-				 
 
-                
                    // CurrentUsefulRNN=PreviousUsefulRNN;
 
-                    
-
-                  
 			         PreviousRNN.clear();
 			        PreviousUsefulRNN.clear();
-				 
-				
-			  
+
 			 }
 			 else
 			 { 
                  /*printSet(s);
                  printSet(PreviousUsefulRNN);
                  cout<<"Support="<<support<<"\n";*/
-				 
+
 				 MPL=le+1;
                  break;
-			 
-			 
+
 			 }
 
-		  
-		  
-		  
-		  
 		  }// end of for
-	   
-	   
-	   
-	   
+
 	   }
 	   else
 	   {MPL=DIMENSION;}
@@ -1141,15 +882,11 @@ int getMPLStrict(set<int,less<int>>& s)
 	  MPL=DIMENSION;
 	}
 
-  
-  
-  
   }
   else // super-sequence Method
   {
     set<int,less<int>> LastRNN=SetRNN(DIMENSION,s); // get full length RNN
-	
-    
+
 	int FirstElement=*(s.begin());
 	double label=labelTraining[FirstElement];
     int labelIndex=0;
@@ -1158,15 +895,12 @@ int getMPLStrict(set<int,less<int>>& s)
 	else
 	   {labelIndex=label-1;}
 
-
-	
-    
 	// compute the support of the sequence
 	int Support=s.size()+LastRNN.size();
 
 	if (Support>=classSupport[labelIndex])
 	{
-       
+
         set<int,less<int>> PreviousRNN;
 		for (int le=DIMENSION-1;le>=1;le--)
 		  {
@@ -1177,86 +911,43 @@ int getMPLStrict(set<int,less<int>>& s)
 			 }
 			 else
 			 {
-			  
-			  
-			  
-			  
-			  
-			
 
              PreviousRNN=SetRNN(le,s);
 
-           
 			 if ( LastRNN==PreviousRNN)
 			 {
-				 
-				   
+
 			         PreviousRNN.clear();
-			     
-				 
-				 
-			  
+
 			 }
 			 else
 			 { 
-				 
+
 				 MPL=le+1;
                  break;
-			 
-			 
+
 			 }
 
-		  
 			 }// end of else
-		  
-		  
+
 		  }// end of for
-	   
-	   
-	   
-	   
-	   
+
 	}
 	else
 	{
 	  MPL=DIMENSION;
 	}
 
-  
-  
-  
   }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   return MPL;
-  
-  
+
   }
-
-
-
-
-
-
 
 int updateMPL(set<int,less<int>> s)
 {
- 
+
       int length= getMPL(s);
-    
 
 	  set<int, less<int> > ::iterator jj;
       for (jj=s.begin(); jj!=s.end(); jj++)
@@ -1264,27 +955,19 @@ int updateMPL(set<int,less<int>> s)
 	        if (PredictionPrefix[*jj]>length)
 			{
 			    PredictionPrefix[*jj]=length;
-			
+
 			}
-	  
-	  
-	  
-	
-   
+
        }
 
   return length;
 
-
 }
 
-
- 
 int updateMPLStrict(set<int,less<int>> s)
 {
- 
+
       int length= getMPLStrict(s);
-    
 
 	  set<int, less<int> > ::iterator jj;
       for (jj=s.begin(); jj!=s.end(); jj++)
@@ -1292,26 +975,19 @@ int updateMPLStrict(set<int,less<int>> s)
 	        if (PredictionPrefix[*jj]>length)
 			{
 			    PredictionPrefix[*jj]=length;
-			
+
 			}
-	  
-	  
-	  
-	
-   
+
        }
 
   return length;
 
-
 }
 
-   
-  
 bool sharePrefix(   set<int, less<int> >& s1, set<int, less<int> >& s2, set<int, less<int> >& s3, int level        )
 
 {
-    
+
  set<int, less<int> > ::iterator i,j;
  bool SharePrefix=1;
  int count=0;
@@ -1322,10 +998,9 @@ bool sharePrefix(   set<int, less<int> >& s1, set<int, less<int> >& s2, set<int,
 	   SharePrefix=0;
 	   break;
    }
- 
+
  }
-      
-  
+
 if (SharePrefix==1)
  {
     set_union(s1.begin(), s1.end(), s2.begin(), s2.end(),
@@ -1341,16 +1016,16 @@ if (SharePrefix==1)
  else
 
  {
-	 
+
 	//cout<<"\n can not merge";
 	 return SharePrefix;
- 
+
  }
- 
+
 }
 void printSetList(vector<set<int, less<int> >> & v) 
 { cout<<"\n";
-   
+
    for (int i=0;i<v.size();i++)
    {
 	   cout<<"Set "<<i<<":";
@@ -1358,29 +1033,19 @@ void printSetList(vector<set<int, less<int> >> & v)
       set<int, less<int> > temp=v[i];
 	  //printSet(temp);
 
-   
-   
-   
-   
-   
    }
 
- 
- 
- 
- 
 }
 
 void printSet(set<int, less<int> > & s)
  {
- 
+
 	 set<int, less<int> > :: iterator i;
 
 	 for (i=s.begin();i!=s.end();i++)
 		 cout<<*i<<" ";
 	 cout<<endl;
- 
- 
+
  }
 int findMin( int data[], int len)
 {
@@ -1390,14 +1055,11 @@ int findMin( int data[], int len)
    if (data[i]<Min)
    {
 	   Min=data[i];
-   
+
    }
- 
- 
+
  }
  return Min;
-
-
 
 }
 
@@ -1407,7 +1069,6 @@ int findNN(int index,int len)
 
    double Mindis=100000;
 
-
    for (int i=0;i<ROWTRAINING;i++)
    {
 	  double tempdis=Euclidean( testing[index], training[i], len );
@@ -1416,12 +1077,11 @@ int findNN(int index,int len)
 		  {
 		     Mindis=tempdis;
 			 indexOfNN=i;
-		  
+
 		  }
-	   
+
 	}
-	   
-	   
+
 	  return indexOfNN;
 }
 
@@ -1435,25 +1095,21 @@ void classification()
   clock_t t1, t2;
 
   t1 = clock();
-  
+
   cout<<(double)t1;
-
-
-
-
 
   for (int i=0;i<ROWTESTING;i++)
   {
        for (int j=startfrom;j<=DIMENSION;j++)
 	   {
-	      
+
 	      int tempNN=findNN(i,j);
 
          // cout<<"\n instance "<<i<<" 's NN is "<<tempNN<<" at length "<<j;
 
 		  if (PredictionPrefix[tempNN]<=j)
 		  {
-		    
+
 			predictedLabel[i]=labelTraining[tempNN];
 			predictedLength[i]=j;
 
@@ -1462,18 +1118,14 @@ void classification()
             else
             {
            cout<<"\n instance "<<i<<" ("<<labelTesting[i]<<")  is missed classified by instance "<<tempNN+1 <<" at length "<<predictedLength[i] <<"as  "<<predictedLabel[i];
-            
+
             }
 
-			
 		    break; // can be classified.
 		  }
-	   
-	   
+
 	   }
-  
-  
-  
+
   }
 
   t2 = clock();
@@ -1481,10 +1133,7 @@ void classification()
 
   classificationTime = (double)(t2 - t1)/CLOCKS_PER_SEC  ;
 
-  
 }
-
-
 
 double  mean(int data[], int len)
 {   
@@ -1496,41 +1145,31 @@ double  mean(int data[], int len)
 
 	return sum/len;
 
-
 }
-
-
-
-
 
 void reportSynUCI()
 {
-   for (int i=0;i<6;i++)
+   for (int i=0;i<NofClasses;i++)
    {
        double sum=0; correct=0;
        for(int j=i*50;j<i*50+50;j++)
        {
-       
+
           sum=sum+predictedLength[j];
           if (predictedLabel[j]==i+1)
           {
              correct++;
           }
-       
-       
+
        }
        cout<<"Prediction length of class "<<i<<" is "<<sum/50<<endl;
        cout<<"Accuracy of class "<<i<<" is "<<(double)correct/50<<endl;
-   
-   
+
    }
-   
+
   /* cout<<"predictedLabel"<<endl;
    for (int i=0;i<300;i++)
    {cout<<predictedLabel[i]<<" ";}*/
-   
-
-
 
 }
 void report()
@@ -1554,7 +1193,7 @@ void report()
       int FP=0, TP=0, TC=0,FC=0;
       for (int i=0;i<ROWTESTING;i++)
       {
-      
+
          if (predictedLabel[i]==+1 &&labelTesting[i]==-1)
          {
              FP++;
@@ -1569,13 +1208,12 @@ void report()
          { TC++;}
          else
          { FC++;}
-      
-      
+
       }
-      
+
       double FPRate=(double)FP/FC;
       double TPRate=(double)TP/TC;
-      
+
       cout<<"FalsePostive: "<<FPRate<<"\n";
       cout<<"True Postive: "<<TPRate<<"\n";
 
@@ -1598,7 +1236,7 @@ void report()
 	  outputFile.close();
 
     /*
-     
+
 if NofClasses==2
 disp(['True positive Rate ',num2str( double(TP)/classDistri(1) )   ])
 disp(['The false positive rates ',num2str(double(FP)/classDistri(2)   )])
@@ -1608,103 +1246,75 @@ for i=1:NofClasses
    temp= length(find(labelTesting==Classes(i)));
 disp([num2str(Classes(i)), ': ', num2str(countingClass(i)/temp)])
 end */
-  
-  
-  
-  
-  }
 
+  }
 
 double SetDis( set<int, less<int> > A, set<int, less<int> > B )
 {
 
- 
 	  double minimal=10000000;
-
-	  
 
      set<int, less<int> > :: iterator iA;
 	 set<int, less<int> > :: iterator iB;
 
 	  for ( iA=A.begin();iA!=A.end();iA++)
-		  
+
 	  {
 		  for (iB=B.begin();iB!=B.end();iB++)
 		  {
 
 		    double temp=DisArray[*iA][*iB];
 			//cout<<"dis "<<temp<<endl;
-			
+
             if (minimal>temp)
             {
                minimal=temp;
-            
+
             }
-		  
+
 		  }
-	  
+
 	  }
 
 	  return minimal;
 
-	  
-	
 }
-
-
-
-
-
-
-
-
-
-
-
 
 vector<int> RankingArray(vector<set<int,less<int>>> & List)
 
 {
-   
+
 	vector<int> result;
 
 	for (int i=0;i<List.size();i++)
     {
 	    double Mindis=100000;
 		int MinIndex=-1;
-		
+
 		for (int j=0;j<List.size();j++)
 		{
 		  if(j!=i)
 		  {
 		     double tempdis= SetDis( List[i], List[j]);
-		  
+
 		      if(tempdis<Mindis)
 			  {
 			      Mindis=tempdis;
                   MinIndex=j;
 
 			  }
-		  
-		  
+
 		  }
 
-
 		 } // end for inside
-	
-	
+
 	result.push_back(MinIndex);
-	
-	
-	
+
 	}// endfor outside
 
   return result;
 
 }
-
-
-
 
 int GetMN(vector<set<int,less<int>>> & List, int ClusterIndex) // get the NN of cluster, if there is no MN, return -1, others , return the value
 {
@@ -1713,12 +1323,12 @@ int GetMN(vector<set<int,less<int>>> & List, int ClusterIndex) // get the NN of 
 	int NN=-1;
    for (int i=0;i<List.size();i++)
    {
-       
+
       if (i!=ClusterIndex)
       {
-      
+
             double tempdis= SetDis( List[ClusterIndex], List[i]);
-		  
+
 		      if(tempdis<Mindis)
 			  {
 			      Mindis=tempdis;
@@ -1726,8 +1336,7 @@ int GetMN(vector<set<int,less<int>>> & List, int ClusterIndex) // get the NN of 
 
 			  }
       }
-   
-   
+
    }
 
    // find the NN of MinIndex
@@ -1736,12 +1345,12 @@ int GetMN(vector<set<int,less<int>>> & List, int ClusterIndex) // get the NN of 
 	int MinIndex=-1;
      for (int i=0;i<List.size();i++)
    {
-       
+
       if (i!=NN)
       {
-      
+
             double tempdis= SetDis( List[NN], List[i]);
-		  
+
 		      if(tempdis<Mindis)
 			  {
 			      Mindis=tempdis;
@@ -1749,16 +1358,13 @@ int GetMN(vector<set<int,less<int>>> & List, int ClusterIndex) // get the NN of 
 
 			  }
       }
-   
-   
+
    }
 
   if (MinIndex==ClusterIndex)
   {return NN;}
   else
   {return -1;}
-
-
 
 }
 int getMPL(set<int,less<int>>& s,int la, int lb)
@@ -1775,8 +1381,7 @@ int getMPL(set<int,less<int>>& s,int la, int lb)
   set<int, less<int> > ::iterator i;
 
     set<int,less<int>> LastRNN=SetRNN(DIMENSION,s); // get full length RNN
-	
-    
+
 	int FirstElement=*(s.begin());
 	double label=labelTraining[FirstElement];
     int labelIndex=0;
@@ -1784,7 +1389,6 @@ int getMPL(set<int,less<int>>& s,int la, int lb)
 	   {labelIndex=1;}
 	else
 	   {labelIndex=label-1;}
-
 
 	// get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S. 
     set<int,less<int>> LastUsefulRNN;
@@ -1794,13 +1398,11 @@ int getMPL(set<int,less<int>>& s,int la, int lb)
 
 		if (FullLengthClassificationStatus[element]==1)
 		{
-		
+
 		   LastUsefulRNN.insert(element);
-		
+
 		}
-	
-	
-	
+
 	}
 	// compute the support of the sequence
 	int Support=s.size()+LastUsefulRNN.size();
@@ -1817,17 +1419,8 @@ int getMPL(set<int,less<int>>& s,int la, int lb)
 			 }
 			 else
 			 {
-			  
-			  
-			  
-			  
-			  
-			 
 
              PreviousRNN=SetRNN(le,s);
-
-           
-
 
 		     for (i=PreviousRNN.begin(); i!=PreviousRNN.end(); i++)
 				{
@@ -1835,24 +1428,19 @@ int getMPL(set<int,less<int>>& s,int la, int lb)
 
 					if ( FullLengthClassificationStatus[element]==1)
 					{
-					
+
 					   PreviousUsefulRNN.insert(element);
-					   
-					
+
 					}
-				
-				
-				
+
 				}
 
 			 if ( LastUsefulRNN==PreviousUsefulRNN)
 			 {
-				 
+
 				    PreviousRNN.clear();
 			        PreviousUsefulRNN.clear();
-				 
-				 
-			  
+
 			 }
 			 else
 			 { 
@@ -1861,57 +1449,24 @@ int getMPL(set<int,less<int>>& s,int la, int lb)
                  cout<<"Support="<<support<<"\n";*/
 				 MPL=le+1;
                  break;
-			 
-			 
+
 			 }
 
-		  
 			 }// end of else
-		  
-		  
+
 		  }// end of for
-	   
-	   
-	   
-	   
-	   
+
 	}
 	else
 	{
 	  MPL=DIMENSION;
 	}
 
-  
-  
-  
   //}
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   return MPL;
-  
-
-
 
 }
-
-
-
-
-
-
 
 int getMPLStrict(set<int,less<int>>& s,int la, int lb)
 {
@@ -1925,11 +1480,9 @@ int getMPLStrict(set<int,less<int>>& s,int la, int lb)
   int MPL=DIMENSION;
 
   set<int, less<int> > ::iterator i;
-  
- 
+
     set<int,less<int>> LastRNN=SetRNN(DIMENSION,s); // get full length RNN
-	
-    
+
 	int FirstElement=*(s.begin());
 	double label=labelTraining[FirstElement];
     int labelIndex=0;
@@ -1941,7 +1494,7 @@ int getMPLStrict(set<int,less<int>>& s,int la, int lb)
 	// compute the support of the sequence
 	int Support=s.size()+LastRNN.size();
     set<int,less<int>> PreviousRNN;
-   
+
 	if (Support>=classSupport[labelIndex])
 	{
 		for (int le=startFrom-1;le>=1;le--)
@@ -1953,27 +1506,14 @@ int getMPLStrict(set<int,less<int>>& s,int la, int lb)
 			 }
 			 else
 			 {
-			  
-			  
-			  
-			  
-			  
-			 
 
              PreviousRNN=SetRNN(le,s);
 
-           
-
-
-
 			 if ( LastRNN==PreviousRNN)
 			 {
-				 
+
 				    PreviousRNN.clear();
-			      
-				 
-				 
-			  
+
 			 }
 			 else
 			 { 
@@ -1982,43 +1522,22 @@ int getMPLStrict(set<int,less<int>>& s,int la, int lb)
                  cout<<"Support="<<support<<"\n";*/
 				 MPL=le+1;
                  break;
-			 
-			 
+
 			 }
 
-		  
 			 }// end of else
-		  
-		  
+
 		  }// end of for
-	   
-	   
-	   
-	   
-	   
+
 	}
 	else
 	{
 	  MPL=DIMENSION;
 	}
 
-  
-  
-  
-
-      
-
-
   return MPL;
-  
-
-
 
 }
-
-
-
-
 
 int getMPLTest(set<int,less<int>>& s,int la, int lb)
 {
@@ -2036,10 +1555,6 @@ int getMPLTest(set<int,less<int>>& s,int la, int lb)
   {
     set<int,less<int>> LastRNN=SetRNN(DIMENSION,s); // get full length RNN
 
-	
-             
-	
-    
 	int FirstElement=*(s.begin());
 	double label=labelTraining[FirstElement];
     int labelIndex=0;
@@ -2048,11 +1563,8 @@ int getMPLTest(set<int,less<int>>& s,int la, int lb)
 	else
 	   {labelIndex=label-1;}
 
-
-	
 	// compute the support of the sequence
 	int Support=s.size()+LastRNN.size();
-	
 
 	if (Support>=classSupport[labelIndex])
 	{
@@ -2062,36 +1574,25 @@ int getMPLTest(set<int,less<int>>& s,int la, int lb)
 	      set<int,less<int>> PreviousRNN;
            for (int le=DIMENSION-1;le>=1;le--)
 		  {
-		   
 
              PreviousRNN=SetRNN(le,s);
-			  
+
 			 if (  LastRNN==PreviousRNN )
 			 {
-				 
-				   
+
 			         PreviousRNN.clear();
-			       
+
 			 }
 			 else
 			 { 
-                
-				 
+
 				 MPL=le+1;
                  break;
-			 
-			 
+
 			 }
 
-		  
-		  
-		  
-		  
 		  }// end of for
-	   
-	   
-	   
-	   
+
 	   }
 	   else
 	   {MPL=DIMENSION;}
@@ -2101,15 +1602,11 @@ int getMPLTest(set<int,less<int>>& s,int la, int lb)
 	  MPL=DIMENSION;
 	}
 
-  
-  
-  
   }
   else // super-sequence Method
   {
     set<int,less<int>> LastRNN=SetRNN(DIMENSION,s); // get full length RNN
-	
-    
+
 	int FirstElement=*(s.begin());
 	double label=labelTraining[FirstElement];
     int labelIndex=0;
@@ -2121,7 +1618,7 @@ int getMPLTest(set<int,less<int>>& s,int la, int lb)
 	// compute the support of the sequence
 	int Support=s.size()+LastRNN.size();
     set<int,less<int>> PreviousRNN;
-   
+
 	if (Support>=classSupport[labelIndex])
 	{
 		for (int le=startFrom-1;le>=1;le--)
@@ -2143,8 +1640,6 @@ int getMPLTest(set<int,less<int>>& s,int la, int lb)
     //         PreviousRNN=SetRNN(le,s);
 
     //       
-
-
 
 			 //if ( LastRNN==PreviousRNN)
 			 //{
@@ -2168,66 +1663,31 @@ int getMPLTest(set<int,less<int>>& s,int la, int lb)
 
 		  //
 			 //}// end of else
-		  
-		  
+
 		  }// end of for
-	   
-	   
-	   
-	   
-	   
+
 	}
 	else
 	{
 	  MPL=DIMENSION;
 	}
 
-  
-  
-  
   }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   return MPL;
-  
-
-
 
 }
 
-
-
-
-
-
-
 int getMPLTest(set<int,less<int>>& s)
 { 
-    
+
   int MPL=DIMENSION;
 
   set<int, less<int> > ::iterator i;
   if (s.size()==1) // simple RNN Method
   {
     set<int,less<int>> LastRNN=SetRNN(DIMENSION,s); // get full length RNN
-    
-	
-             
-	
-    
+
 	int FirstElement=*(s.begin());
 	double label=labelTraining[FirstElement];
     int labelIndex=0;
@@ -2236,11 +1696,8 @@ int getMPLTest(set<int,less<int>>& s)
 	else
 	   {labelIndex=label-1;}
 
-
-	
 	// compute the support of the sequence
 	int Support=s.size()+LastRNN.size();
-	
 
 	if (Support>=classSupport[labelIndex])
 	{
@@ -2249,42 +1706,25 @@ int getMPLTest(set<int,less<int>>& s)
            set<int,less<int>> PreviousRNN;
 	      for (int le=DIMENSION-1;le>=1;le--)
 		  {
-		     
 
              PreviousRNN=SetRNN(le,s);
-			  
-
-
 
 			 if (  LastRNN==PreviousRNN )
 			 {
-				 
 
 			         PreviousRNN.clear();
-			       
-				 
-				
-			  
+
 			 }
 			 else
 			 { 
-                
-				 
+
 				 MPL=le+1;
                  break;
-			 
-			 
+
 			 }
 
-		  
-		  
-		  
-		  
 		  }// end of for
-	   
-	   
-	   
-	   
+
 	   }
 	   else
 	   {MPL=DIMENSION;}
@@ -2294,15 +1734,11 @@ int getMPLTest(set<int,less<int>>& s)
 	  MPL=DIMENSION;
 	}
 
-  
-  
-  
   }
   else // super-sequence Method
   {
     set<int,less<int>> LastRNN=SetRNN(DIMENSION,s); // get full length RNN
-	
-    
+
 	int FirstElement=*(s.begin());
 	double label=labelTraining[FirstElement];
     int labelIndex=0;
@@ -2311,15 +1747,12 @@ int getMPLTest(set<int,less<int>>& s)
 	else
 	   {labelIndex=label-1;}
 
-
-	
-    
 	// compute the support of the sequence
 	int Support=s.size()+LastRNN.size();
 
 	if (Support>=classSupport[labelIndex])
 	{
-       
+
         set<int,less<int>> PreviousRNN;
 		for (int le=DIMENSION-1;le>=1;le--)
 		  {
@@ -2335,7 +1768,6 @@ int getMPLTest(set<int,less<int>>& s)
 			 // 
 			 // 
 			 // 
-			
 
     //         PreviousRNN=SetRNN(le,s);
 
@@ -2361,53 +1793,25 @@ int getMPLTest(set<int,less<int>>& s)
 
 		  //
 			 //}// end of else
-		  
-		  
+
 		  }// end of for
-	   
-	   
-	   
-	   
-	   
+
 	}
 	else
 	{
 	  MPL=DIMENSION;
 	}
 
-  
-  
-  
   }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   return MPL;
-  
-  
+
   }
-
-
-
-
 
   int updateMPLTest(set<int,less<int>> s)
 {
- 
+
       int length= getMPLTest(s);
-    
 
 	  set<int, less<int> > ::iterator jj;
       for (jj=s.begin(); jj!=s.end(); jj++)
@@ -2415,19 +1819,11 @@ int getMPLTest(set<int,less<int>>& s)
 	        if (PredictionPrefix[*jj]>length)
 			{
 			    PredictionPrefix[*jj]=length;
-			
+
 			}
-	  
-	  
-	  
-	
-   
+
        }
 
   return length;
 
-
 }
-
-
-  
