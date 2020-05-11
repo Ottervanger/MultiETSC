@@ -114,7 +114,7 @@ int main () {
     int latticeLevel = 1;
     //std::cout << "bi-roots level\n";
 
-    std::vector<std::set<int>> biRoots; // is a std::vector of std::sets
+    std::vector<std::set<int>> biRoots; // is a vector of sets
     std::vector<int> biRootsLength;// the length of the node
     std::vector<double> setLabel;// -,1,2,3,4,5,6,   0 means no label
     // initial the length to L
@@ -209,7 +209,7 @@ int main () {
                     std::set<int> setA = nnSetListCurrent[pair[0]];
                     std::set<int> setB = nnSetListCurrent[pair[1]];
 
-                    // merge two std::set
+                    // merge two sets
 
                     std::set<int> ::iterator a;
                     for (a = setA.begin(); a != setA.end(); a++) {
@@ -271,47 +271,36 @@ int main () {
         }// end for
 
         if (mergedPair > 0) {
-
-            //std::cout << "Merged pair" << mergedPair << std::endl;
-
             for (int k = 0; k < nnSetListCurrent.size(); k++) {
-
                 if (status[k] == 0) {
-
                     nnSetListNext.push_back(nnSetListCurrent[k]);
                     nnSetListNextLength.push_back(nnSetListCurrentLength[k]);
                     nnSetListNextLabel.push_back(nnSetListCurrentLabel[k]);
-
                 }
             }// end for
 
             nnSetListCurrent.clear();
             for (int kk = 0; kk < nnSetListNext.size(); kk++) {
                 nnSetListCurrent.push_back(nnSetListNext[kk]);
-
             }
             nnSetListNext.clear();
 
             nnSetListCurrentLength.clear();
             for (int kk = 0; kk < nnSetListNextLength.size(); kk++) {
                 nnSetListCurrentLength.push_back(nnSetListNextLength[kk]);
-
             }
             nnSetListNextLength.clear();
 
             nnSetListCurrentLabel.clear();
             for (int kk = 0; kk < nnSetListNextLabel.size(); kk++) {
                 nnSetListCurrentLabel.push_back(nnSetListNextLabel[kk]);
-
             }
             nnSetListNextLabel.clear();
 
             // update currentNew and nextNew
-
             currentNew.clear();
             for (int kk = 0; kk < nextNew.size(); kk++) {
                 currentNew.push_back(nextNew[kk]);
-
             }
             nextNew.clear();
 
@@ -326,13 +315,6 @@ int main () {
     // end of hueristic algorithm
     t4 = clock();
     trainingTime = (double)(t4 - t3) / CLOCKS_PER_SEC  ;
-    //std::cout << "\predictionPrefix\n";
-
-    /*
-    for (int i = 0; i < ROWTRAINING; i++) {
-        std::cout << "\ninstance " << i + 1 << " :" << predictionPrefix[i] << " ";
-    }
-    */
 
     classification();
     report();
@@ -375,7 +357,6 @@ void loadDisArray(const char * fileName, double Data[ROWTRAINING][ROWTRAINING]  
             }
         }
     }
-
     inputFile.close();
 }
 
@@ -420,17 +401,6 @@ std::set<int> setRNN(int l, std::set<int>& s) { // find a set's RNN on prefix l
     return index;
 }
 
-std::set<int> setNN(int l, std::set<int>& s) {
-    std::set<int> index;
-
-    std::set<int>::iterator i;
-    for (i = s.begin(); i != s.end(); i++) {
-        int element = *i;
-        int NNofelement = trainingIndex[element][l - 1];
-        index.insert(NNofelement);
-    }
-    return index;
-}
 int nnConsistent(int l, std::set<int>& s) { // return 1, if it is NN consistent, return 0, if not
     std::set<int>::iterator i;
     int consistent = 1;
@@ -442,17 +412,12 @@ int nnConsistent(int l, std::set<int>& s) { // return 1, if it is NN consistent,
         if (s.count(NNofelement) == 0) {
             consistent = 0;
             break;
-
         }
-
     }
-
     return consistent;
-
 }
 
 int getMPL(std::set<int>& s) {
-
     int MPL = DIMENSION;
 
     std::set<int> ::iterator i;
@@ -696,13 +661,9 @@ int updateMPL(std::set<int> s) {
     for (jj = s.begin(); jj != s.end(); jj++) {
         if (predictionPrefix[*jj] > length) {
             predictionPrefix[*jj] = length;
-
         }
-
     }
-
     return length;
-
 }
 
 int updateMPLStrict(std::set<int> s) {
@@ -716,56 +677,6 @@ int updateMPLStrict(std::set<int> s) {
         }
     }
     return length;
-}
-
-bool sharePrefix(   std::set<int>& s1, std::set<int>& s2, std::set<int>& s3, int level        ) {
-
-    std::set<int> ::iterator i, j;
-    bool SharePrefix = 1;
-    int count = 0;
-    for ( count = 0, i = s1.begin(), j = s2.begin(); count < level - 2; count++, i++, j++) {
-        if ((*i) != (*j)) {
-            SharePrefix = 0;
-            break;
-        }
-
-    }
-
-    if (SharePrefix == 1) {
-        std::set_union(s1.begin(), s1.end(), s2.begin(), s2.end(),
-                       std::insert_iterator<std::set<int>> (s3, s3.begin()) );
-        /*std::cout << "Merged std::set:\n";
-        for (i=s3.begin();i!=s3.end();i++) {
-            std::cout <<(*i)<< " ";
-        }
-        std::cout << "\n";*/
-        return SharePrefix;
-    } else {
-
-        //std::cout << "\n can not merge";
-        return SharePrefix;
-
-    }
-
-}
-void printSetList(std::vector<std::set<int>> & v) {
-    std::cout << "\n";
-
-    for (int i = 0; i < v.size(); i++) {
-        std::cout << "Set " << i << ":";
-
-        std::set<int> temp = v[i];
-        //printSet(temp);
-
-    }
-
-}
-
-void printSet(std::set<int> & s) {
-    std::set<int>::iterator i;
-    for (i = s.begin(); i != s.end(); i++)
-        std::cout << *i << " ";
-    std::cout << std::endl;
 }
 
 int findMin( int data[], int len) {
@@ -926,25 +837,6 @@ double SetDis( std::set<int> A, std::set<int> B ) {
         }
     }
     return minimal;
-}
-
-std::vector<int> RankingArray(std::vector<std::set<int>> & List) {
-    std::vector<int> result;
-    for (int i = 0; i < List.size(); i++) {
-        double Mindis = 100000;
-        int MinIndex = -1;
-        for (int j = 0; j < List.size(); j++) {
-            if (j != i) {
-                double tempdis = SetDis( List[i], List[j]);
-                if (tempdis < Mindis) {
-                    Mindis = tempdis;
-                    MinIndex = j;
-                }
-            }
-        } // end for inside
-        result.push_back(MinIndex);
-    }// endfor outside
-    return result;
 }
 
 int GetMN(std::vector<std::set<int>> & List, int ClusterIndex) { // get the NN of cluster, if there is no MN, return -1, others , return the value
@@ -1170,7 +1062,6 @@ int getMPLTest(std::set<int>& s, int la, int lb) {
 
         // compute the support of the sequence
         int Support = s.size() + LastRNN.size();
-        std::set<int> PreviousRNN;
 
         if (Support >= classSupport[labelIndex]) {
             for (int le = startFrom - 1; le >= 1; le--) {
@@ -1178,20 +1069,6 @@ int getMPLTest(std::set<int>& s, int la, int lb) {
                     MPL = le + 1;
                     break;
                 }
-                /*
-                else {
-                    PreviousRNN = setRNN(le, s);
-                    if ( LastRNN == PreviousRNN) {
-                        PreviousRNN.clear();
-                    } else {
-                        printSet(s);
-                        printSet(PreviousUsefulRNN);
-                        std::cout << "Support=" << support << "\n";
-                        MPL = le + 1;
-                        break;
-                    }
-                }// end of else
-                */
             }// end of for
 
         } else {
@@ -1204,8 +1081,6 @@ int getMPLTest(std::set<int>& s, int la, int lb) {
 int getMPLTest(std::set<int>& s) {
 
     int MPL = DIMENSION;
-
-    std::set<int> ::iterator i;
     if (s.size() == 1) { // simple RNN Method
         std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
 
@@ -1237,7 +1112,6 @@ int getMPLTest(std::set<int>& s) {
         } else {
             MPL = DIMENSION;
         }
-
     } else { // super-sequence Method
         std::set<int> LastRNN = setRNN(DIMENSION, s); // get full length RNN
 
@@ -1251,7 +1125,6 @@ int getMPLTest(std::set<int>& s) {
         int Support = s.size() + LastRNN.size();
 
         if (Support >= classSupport[labelIndex]) {
-            std::set<int> PreviousRNN;
             for (int le = DIMENSION - 1; le >= 1; le--) {
                 if (nnConsistent(le, s) == 0) {
                     MPL = le + 1;
@@ -1263,15 +1136,4 @@ int getMPLTest(std::set<int>& s) {
         }
     }
     return MPL;
-}
-
-int updateMPLTest(std::set<int> s) {
-    int length = getMPLTest(s);
-    std::set<int> ::iterator jj;
-    for (jj = s.begin(); jj != s.end(); jj++) {
-        if (predictionPrefix[*jj] > length) {
-            predictionPrefix[*jj] = length;
-        }
-    }
-    return length;
 }
