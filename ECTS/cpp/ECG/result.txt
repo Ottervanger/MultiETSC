@@ -745,3 +745,13 @@ Average time of classifying one instance 0.00578 seconds
 Training Time 0.797 seconds 
 FalsePostive: 0.138889
 True Postive: 0.90625
+
+Loose Version
+Heuristic Algorithm Report
+The averaged predicted length of testing data is 57.71
+The averaged prediction prefix of training data is 57.37
+accuracy: 0.89
+mean classification time0.00075697s
+training time           0.054911s
+false postive rate: 0.138889
+true postive rate: 0.90625

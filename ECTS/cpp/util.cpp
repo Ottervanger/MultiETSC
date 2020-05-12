@@ -8,8 +8,8 @@ namespace util {
 
 // load data in UCR format to the 2d vector 'data' with corresponding 'labels'
 void readUCRData(const char * file,
-                 std::vector<std::vector<double> > data,
-                 std::vector<int> labels) {
+                 std::vector<std::vector<double> > &data,
+                 std::vector<int> &labels) {
     std::ifstream ifs(file);
     if (ifs.fail()) {
         std::cerr << "File \'" << file << "\' could not be opened" << std::endl;
