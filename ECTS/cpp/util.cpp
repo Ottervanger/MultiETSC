@@ -7,12 +7,12 @@
 namespace util {
 
 // load data in UCR format to the 2d vector 'data' with corresponding 'labels'
-void readUCRData(const char * fileName,
+void readUCRData(const char * file,
                  std::vector<std::vector<double> > data,
                  std::vector<int> labels) {
-    std::ifstream inputFile(fileName);
-    if (inputFile.fail()) {
-        std::cerr << "File \'" << fileName << "\' could not be opened" << std::endl;
+    std::ifstream ifs(file);
+    if (ifs.fail()) {
+        std::cerr << "File \'" << file << "\' could not be opened" << std::endl;
         exit(1);
     }
 
@@ -20,14 +20,16 @@ void readUCRData(const char * fileName,
     // double type of labels for compatibility with original files
     double label;
     std::vector<double> row;
-    while (inputFile >> label) {
+    while (ifs >> label) {
+    	// the first value of each row is the label
         labels.push_back((int)label);
-        std::getline(inputFile, line);
+        // the remaining values are the time series
+        std::getline(ifs, line);
         std::stringstream ss(line);
-        row.clear();
         double v;
         while (ss >> v) row.push_back(v);
         data.push_back(row);
+        row.clear();
     }
 }
 
