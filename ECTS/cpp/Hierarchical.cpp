@@ -9,6 +9,7 @@
 #include <vector>
 #include <time.h>
 #include <limits>
+#include <numeric>
 
 #include "DataSetInformation.h"
 #include "Euclidean.h"
@@ -316,7 +317,12 @@ int main () {
     t4 = clock();
     trainingTime = (double)(t4 - t3) / CLOCKS_PER_SEC  ;
 
+    clock_t t;
+    t = clock();
+
     classification();
+
+    classificationTime = ((double)(clock() - t))/CLOCKS_PER_SEC;
     report();
     reportSynUCI();
 }// end main
@@ -711,47 +717,50 @@ int findNN(int index, int len) {
     return indexOfNN;
 }
 
-void classification() {
 
+// used globals:
+// 
+// testingFileName
+// testing
+// labelTesting
+// ROWTESTING
+// ROWTRAINING
+// predictionPrefix
+// DIMENSION
+// predictedLabel
+// labelTraining
+// predictedLength
+// labelTesting
+// correct
+
+void classification() {
     loadData(testingFileName, testing, labelTesting, ROWTESTING);
     int startfrom = findMin( predictionPrefix, ROWTRAINING);
     std::cout << "\n Start from: " << startfrom << std::endl;
 
-    clock_t t1, t2;
-
-    t1 = clock();
-
-    std::cout << (double)t1;
-
+    // for each instance
     for (int i = 0; i < ROWTESTING; i++) {
+        // for each observation
+        // start from the smallest mimimum prefix in the train data
         for (int j = startfrom; j <= DIMENSION; j++) {
-
+            // find the nearest neigbour of i in j-prefix space
             int tempNN = findNN(i, j);
 
-            // std::cout << "\n instance " << i << " 's NN is " << tempNN << " at length " << j;
-
+            // trigger mechanism
             if (predictionPrefix[tempNN] <= j) {
-
+                // label instance i
                 predictedLabel[i] = labelTraining[tempNN];
+                // record earliness
                 predictedLength[i] = j;
 
-                if (predictedLabel[i] == labelTesting[i]) {correct++;}
-                else {
-                    // std::cout << "\n instance " << i << " (" << labelTesting[i] << ")  is missed classified by instance " << tempNN + 1 << " at length " << predictedLength[i] << "as  " << predictedLabel[i];
+                // check if correct
+                if (predictedLabel[i] == labelTesting[i]) {
+                    correct++;
                 }
-
-                break; // can be classified.
+                break;
             }
-
         }
-
     }
-
-    t2 = clock();
-    std::cout << "\n finish time: " << (double)t2 << std::endl;
-
-    classificationTime = (double)(t2 - t1) / CLOCKS_PER_SEC  ;
-
 }
 
 inline double mean(int data[], int len) {
