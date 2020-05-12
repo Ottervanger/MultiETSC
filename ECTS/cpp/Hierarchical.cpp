@@ -765,17 +765,20 @@ double  mean(int data[], int len) {
 }
 
 void reportSynUCI() {
+    int magic_number = 50;
+    // This is one of the most convoluted pieces of code I have ever layed my eyes upon
     for (int i = 0; i < NofClasses; i++) {
-        double sum = 0; correct = 0;
-        for (int j = i * 50; j < i * 50 + 50; j++) {
+        double sum = 0; 
+        int l_correct = 0;
+        for (int j = i * magic_number; j < i * magic_number + magic_number; j++) {
 
             sum = sum + predictedLength[j];
-            if (predictedLabel[j] == i + 1) {
-                correct++;
+            if (predictedLabel[j] == i + 1) { 
+                l_correct++;
             }
         }
-        std::cout << "Prediction length of class " << i << " is " << sum / 50 << std::endl;
-        std::cout << "Accuracy of class " << i << " is " << (double)correct / 50 << std::endl;
+        std::cout << "Prediction length of class " << i << " is " << sum / magic_number << std::endl;
+        std::cout << "Accuracy of class " << i << " is " << (double)l_correct / magic_number << std::endl;
     }
 }
 
