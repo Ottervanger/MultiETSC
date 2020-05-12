@@ -10,6 +10,7 @@
 #include <time.h>
 #include <limits>
 #include <numeric>
+#include <cassert>
 
 #include "DataSetInformation.h"
 #include "Euclidean.h"
@@ -43,7 +44,6 @@ double classificationTime; // classification time of one instance
 double trainingTime; // classification time of one instance
 
 // functions in the same file
-void loadData(const char * fileName, double Data[][ECG::DIMENSION], double Labels[], int len  );
 void getClassDis();
 void loadDisArray(const char * fileName, double Data[ECG::ROWTRAINING][ECG::ROWTRAINING]  );
 void LoadTrIndex(const char * fileName, int Data[ECG::ROWTRAINING][ECG::DIMENSION]  );
@@ -77,7 +77,18 @@ int updateMPLTest(std::set<int> s);
 
 int main () {
     // load training data
-    loadData(ECG::trainingFileName, training, labelTraining, ECG::ROWTRAINING);
+    std::vector<std::vector<double> > data;
+    std::vector<int> labels;
+    util::readUCRData(ECG::trainingFileName, data, labels);
+
+    for (int i = 0; i < data.size(); i++) {
+        labelTraining[i] = labels[i];
+        for (int j = 0; j < data[i].size(); j++) {
+            training[i][j] = data[i][j];
+        }
+    }
+
+
     getClassDis();
     loadDisArray(ECG::DisArrayFileName, disArray);
     LoadTrIndex(ECG::trainingIndexFileName, trainingIndex);
@@ -303,7 +314,7 @@ int main () {
 
     }// end while
 
-    // end of hueristic algorithm
+    // end of heuristic algorithm
     t4 = clock();
     trainingTime = (double)(t4 - t3) / CLOCKS_PER_SEC  ;
 
@@ -314,31 +325,7 @@ int main () {
 
     classificationTime = ((double)(clock() - t))/CLOCKS_PER_SEC;
     report();
-    std::vector<std::vector<double> > data;
-    std::vector<int> labels;
-    util::readUCRData("ECG/ECG200_TEST", data, labels);
 }// end main
-
-void loadData(const char * fileName, double Data[][ECG::DIMENSION], double Labels[], int len  ) {
-    std::ifstream inputFile( fileName, std::ifstream::in);
-    if ( !inputFile ) {
-        std::cerr << "file could not be opened" << std::endl;
-        exit(1);
-    }
-
-    while ( !inputFile.eof() ) {
-        for (int row = 0; row < len; row++) {
-            for (int col = 0; col < ECG::DIMENSION + 1; col++) {
-                if (col == 0) {
-                    inputFile >> Labels[row];
-                } else {
-                    inputFile >> Data[row][col - 1];
-                }
-            }
-        }
-    }
-    inputFile.close();
-}
 
 void loadDisArray(const char * fileName, double Data[ECG::ROWTRAINING][ECG::ROWTRAINING]  ) {
 
@@ -726,7 +713,18 @@ int findNN(int index, int len) {
 // correct
 
 void classification() {
-    loadData(ECG::testingFileName, testing, labelTesting, ECG::ROWTESTING);
+    std::vector<std::vector<double> > data;
+    std::vector<int> labels;
+    util::readUCRData(ECG::testingFileName, data, labels);
+
+    for (int i = 0; i < data.size(); i++) {
+        labelTesting[i] = labels[i];
+        for (int j = 0; j < data[i].size(); j++) {
+            testing[i][j] = data[i][j];
+        }
+    }
+
+
     int startfrom = findMin( predictionPrefix, ECG::ROWTRAINING);
     std::cout << "\n Start from: " << startfrom << std::endl;
 
