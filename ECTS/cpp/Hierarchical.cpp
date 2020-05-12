@@ -15,6 +15,7 @@
 #include "Euclidean.h"
 #include "minValue.h"
 #include "find.h"
+#include "util.h"
 
 // ALgorithm parameters: minimal support
 double MinimalSupport = 0;
@@ -324,10 +325,13 @@ int main () {
 
     classificationTime = ((double)(clock() - t))/CLOCKS_PER_SEC;
     report();
+    std::vector<std::vector<double> > data;
+    std::vector<int> labels;
+    util::readUCRData("ECG/ECG200_TEST", data, labels);
     reportSynUCI();
 }// end main
 
-void loadData(const char * fileName, double Data[][DIMENSION], double Labels[], int len  ) {
+void loadData(const char * fileName, double Data[][ECG::DIMENSION], double Labels[], int len  ) {
     std::ifstream inputFile( fileName, std::ifstream::in);
     if ( !inputFile ) {
         std::cerr << "file could not be opened" << std::endl;
