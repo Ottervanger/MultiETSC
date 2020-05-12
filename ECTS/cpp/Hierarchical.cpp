@@ -754,14 +754,8 @@ void classification() {
 
 }
 
-double  mean(int data[], int len) {
-    double sum = 0;
-    for (int i = 0; i < len; i++) {
-        sum = sum + data[i];
-    }
-
-    return sum / len;
-
+inline double mean(int data[], int len) {
+    return std::accumulate(data, data+len, 0.0) / len;
 }
 
 void reportSynUCI() {
