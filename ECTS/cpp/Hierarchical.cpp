@@ -75,8 +75,6 @@ int getMPLTest(std::set<int>& s, int la, int lb);
 int getMPLTest(std::set<int>& s);
 int updateMPLTest(std::set<int> s);
 
-void reportSynUCI();
-
 int main () {
     // load training data
     loadData(ECG::trainingFileName, training, labelTraining, ECG::ROWTRAINING);
@@ -328,7 +326,6 @@ int main () {
     std::vector<std::vector<double> > data;
     std::vector<int> labels;
     util::readUCRData("ECG/ECG200_TEST", data, labels);
-    reportSynUCI();
 }// end main
 
 void loadData(const char * fileName, double Data[][ECG::DIMENSION], double Labels[], int len  ) {
@@ -769,24 +766,6 @@ void classification() {
 
 inline double mean(int data[], int len) {
     return std::accumulate(data, data+len, 0.0) / len;
-}
-
-void reportSynUCI() {
-    int magic_number = 50;
-    // This is one of the most convoluted pieces of code I have ever layed my eyes upon
-    for (int i = 0; i < ECG::NofClasses; i++) {
-        double sum = 0; 
-        int l_correct = 0;
-        for (int j = i * magic_number; j < i * magic_number + magic_number; j++) {
-
-            sum = sum + predictedLength[j];
-            if (predictedLabel[j] == i + 1) { 
-                l_correct++;
-            }
-        }
-        std::cout << "Prediction length of class " << i << " is " << sum / magic_number << std::endl;
-        std::cout << "Accuracy of class " << i << " is " << (double)l_correct / magic_number << std::endl;
-    }
 }
 
 void report() {
