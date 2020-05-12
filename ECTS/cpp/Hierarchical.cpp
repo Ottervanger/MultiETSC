@@ -205,21 +205,12 @@ int main () {
                     double label2 = nnSetListCurrentLabel[pair[1]];
 
                     std::set<int> tempSet;
-
                     std::set<int> setA = nnSetListCurrent[pair[0]];
                     std::set<int> setB = nnSetListCurrent[pair[1]];
 
-                    // merge two sets
-
-                    std::set<int> ::iterator a;
-                    for (a = setA.begin(); a != setA.end(); a++) {
-                        tempSet.insert(*a);
-                    }
-
-                    std::set<int> ::iterator b;
-                    for (b = setB.begin(); b != setB.end(); b++) {
-                        tempSet.insert(*b);
-                    }
+                    std::merge(setA.begin(), setA.end(),
+                               setB.begin(), setB.end(),
+                               std::inserter(tempSet, tempSet.begin()));
 
                     if (label1 != 0 && label2 != 0 && label1 == label2 ) {
                         int tempLength;
