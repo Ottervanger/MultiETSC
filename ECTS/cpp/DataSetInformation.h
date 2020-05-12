@@ -15,6 +15,8 @@
 
 
 // ECG dataset
+namespace ECG {
+
 const int DIMENSION=96; // length of time series
 const int ROWTRAINING=100;  // size of training data
 const int ROWTESTING=100;  // size of testing data
@@ -27,6 +29,7 @@ const int NofClasses=2;
 const int Classes[]={1,-1};
 const char* ResultfileName="ECG/result.txt";
 
+} // namespace ECG
 
 
 // Gun Point
