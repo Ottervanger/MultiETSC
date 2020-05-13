@@ -10,6 +10,7 @@
 #include "math.h"
 
 using namespace std;
+using namespace ECG;
 
 double training[ROWTRAINING][DIMENSION]; // training data set
 double labelTraining[ROWTRAINING] = {0}; // training data class labels
