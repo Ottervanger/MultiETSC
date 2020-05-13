@@ -15,7 +15,6 @@
 #include "DataSetInformation.h"
 #include "Euclidean.h"
 #include "minValue.h"
-#include "find.h"
 #include "util.h"
 
 // ALgorithm parameters: minimal support
@@ -44,7 +43,7 @@ double classificationTime; // classification time of one instance
 double trainingTime; // classification time of one instance
 
 // functions in the same file
-void getClassDis();
+void getClassDis(double *labels);
 void loadDisArray(const char * fileName, double Data[ECG::ROWTRAINING][ECG::ROWTRAINING]  );
 void LoadTrIndex(const char * fileName, int Data[ECG::ROWTRAINING][ECG::DIMENSION]  );
 std::set<int> setRNN(int l, std::set<int>& s);
@@ -89,7 +88,7 @@ int main () {
     }
 
 
-    getClassDis();
+    getClassDis(labelTraining);
     loadDisArray(ECG::DisArrayFileName, disArray);
     LoadTrIndex(ECG::trainingIndexFileName, trainingIndex);
     // compute the full length classification status, 0 incorrect, 1 correct
@@ -363,9 +362,19 @@ void LoadTrIndex(const char * fileName, int Data[ECG::ROWTRAINING][ECG::DIMENSIO
     inputFile.close();
 }
 
-void getClassDis() {
+// used globals:
+//
+// ECG::NofClasses
+// ECG::ROWTRAINING
+// ECG::Classes
+// labelTraining
+// classDistri
+// classSupport
+// MinimalSupport
+
+void getClassDis(double *labels) {
     for (int i = 0; i < ECG::NofClasses; i++) {
-        classDistri[i] = find(labelTraining, ECG::Classes[i], ECG::ROWTRAINING );
+        classDistri[i] = std::count(labels, labels+ECG::ROWTRAINING, ECG::Classes[i]);
         std::cout << "\n" << "Class " << i << ": " << classDistri[i] << "\n";
         classSupport[i] = classDistri[i] * MinimalSupport;
     }
