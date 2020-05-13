@@ -755,3 +755,23 @@ mean classification time0.00075697s
 training time           0.054911s
 false postive rate: 0.138889
 true postive rate: 0.90625
+
+Loose Version
+Heuristic Algorithm Report
+av. pred. len. test:  57.71
+av. pred. len. train: 57.37
+accuracy: 0.89
+av. classification time 0.00076254s
+          training time 0.055087s
+FP rate: 0.138889
+TP rate: 0.90625
+
+Loose Version
+Heuristic Algorithm Report
+av. pred. len. test:  57.71
+av. pred. len. train: 57.37
+accuracy: 0.89
+av. classification time 0.00077577s
+          training time 0.054955s
+FP rate: 0.138889
+TP rate: 0.90625
