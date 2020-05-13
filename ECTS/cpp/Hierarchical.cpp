@@ -5,6 +5,7 @@
 #include <string>
 #include <math.h>
 #include <set>
+#include <map>
 #include <algorithm>
 #include <vector>
 #include <time.h>
@@ -18,7 +19,7 @@
 #include "util.h"
 
 // ALgorithm parameters: minimal support
-double MinimalSupport = 0;
+const double MIN_SUPPORT = 0;
 
 int strictversion = 0; // 1 strict veresion , 0 loose version
 
@@ -31,8 +32,7 @@ double predictedLabel[ECG::ROWTESTING] = {0}; // predicted label by the classifi
 int predictedLength[ECG::ROWTESTING] = {0}; // predicted length by the classifier
 int  trainingIndex[ECG::ROWTRAINING][ECG::DIMENSION];//  store the 1NN for each space, no ranking tie
 double disArray[ECG::ROWTRAINING][ECG::ROWTRAINING] = {0}; //  the pairwise distance array of full length
-int classDistri[ECG::NofClasses] = {0};
-double classSupport[ECG::NofClasses] = {0};
+std::vector<double> classSupport;
 int fullLengthClassificationStatus[ECG::ROWTRAINING];// 0 can not be classified correctly, 1 can be classified correctly
 int predictionPrefix[ECG::ROWTRAINING];
 std::vector<std::set<int>> nnSetList;// store the MNCS;
@@ -43,7 +43,6 @@ double classificationTime; // classification time of one instance
 double trainingTime; // classification time of one instance
 
 // functions in the same file
-void getClassDis(double *labels);
 void loadDisArray(const char * fileName, double Data[ECG::ROWTRAINING][ECG::ROWTRAINING]  );
 void LoadTrIndex(const char * fileName, int Data[ECG::ROWTRAINING][ECG::DIMENSION]  );
 std::set<int> setRNN(int l, std::set<int>& s);
@@ -74,11 +73,22 @@ int getMPLTest(std::set<int>& s, int la, int lb);
 int getMPLTest(std::set<int>& s);
 int updateMPLTest(std::set<int> s);
 
+
+// changes classSupport to contain label frequency times minimalSupport for each label
+void computeClassSupport(const std::vector<int> labels, std::vector<double> &classSupport, const double minimalSupport) {
+    std::map<int, int> labelCount;
+    for (int label : labels)
+        labelCount[label]++;
+    for (auto c : labelCount)
+        classSupport.push_back(c.second * minimalSupport);
+}
+
 int main () {
     // load training data
     std::vector<std::vector<double> > data;
     std::vector<int> labels;
     util::readUCRData(ECG::trainingFileName, data, labels);
+    computeClassSupport(labels, classSupport, MIN_SUPPORT);
 
     for (int i = 0; i < data.size(); i++) {
         labelTraining[i] = labels[i];
@@ -87,8 +97,6 @@ int main () {
         }
     }
 
-
-    getClassDis(labelTraining);
     loadDisArray(ECG::DisArrayFileName, disArray);
     LoadTrIndex(ECG::trainingIndexFileName, trainingIndex);
     // compute the full length classification status, 0 incorrect, 1 correct
@@ -360,24 +368,6 @@ void LoadTrIndex(const char * fileName, int Data[ECG::ROWTRAINING][ECG::DIMENSIO
         }
     }
     inputFile.close();
-}
-
-// used globals:
-//
-// ECG::NofClasses
-// ECG::ROWTRAINING
-// ECG::Classes
-// labelTraining
-// classDistri
-// classSupport
-// MinimalSupport
-
-void getClassDis(double *labels) {
-    for (int i = 0; i < ECG::NofClasses; i++) {
-        classDistri[i] = std::count(labels, labels+ECG::ROWTRAINING, ECG::Classes[i]);
-        std::cout << "\n" << "Class " << i << ": " << classDistri[i] << "\n";
-        classSupport[i] = classDistri[i] * MinimalSupport;
-    }
 }
 
 std::set<int> setRNN(int l, std::set<int>& s) { // find a set's RNN on prefix l
