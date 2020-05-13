@@ -26,6 +26,7 @@
 
 
 using namespace std;
+using namespace ECG;
 
 
 // ALgorithm parameters: minimal support
