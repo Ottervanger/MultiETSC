@@ -765,12 +765,14 @@ void report() {
         ss << "\nLoose Version\n";
     }
 
-    ss << "Heuristic Algorithm Report\n";
-    ss << "The averaged predicted length of testing data is " << mean(predictedLength, ECG::ROWTESTING) << "\n";
-    ss << "The averaged prediction prefix of training data is " << mean(predictionPrefix, ECG::ROWTRAINING) << "\n";
-    ss << "accuracy: " << double(correct) / ECG::ROWTESTING << "\n";
-    ss << "mean classification time" << classificationTime / ECG::ROWTESTING << "s\n";
-    ss << "training time           " << trainingTime << "s\n";
+    double plTest  = mean(predictedLength,  ECG::ROWTESTING);
+    double plTrain = mean(predictionPrefix, ECG::ROWTRAINING);
+    double acc = double(correct) / ECG::ROWTESTING;
+
+    // test consistency
+    assert(plTest  == 57.71);
+    assert(plTrain == 57.37);
+    assert(acc == 0.89);
 
     // compute the false positive  and true positve
     int FP = 0, TP = 0, TC = 0, FC = 0;
@@ -788,11 +790,19 @@ void report() {
     double FPRate = (double)FP / FC;
     double TPRate = (double)TP / TC;
 
-    ss << "false postive rate: " << FPRate << "\n";
-    ss << "true postive rate: " << TPRate << "\n";
+    ss << "Heuristic Algorithm Report\n"
+       << "av. pred. len. test:  " << plTest  << "\n"
+       << "av. pred. len. train: " << plTrain << "\n"
+       << "accuracy: " << acc << "\n"
+       << "av. classification time " << classificationTime / ECG::ROWTESTING << "s\n"
+       << "          training time " << trainingTime << "s\n"
+       << "FP rate: " << FPRate << "\n"
+       << "TP rate: " << TPRate << "\n";
 
+    // write output to console
     std::cout << ss.str();
 
+    // write output to file
     std::ofstream outputFile(ECG::ResultfileName, std::ofstream::out | std::ofstream::app);
     outputFile << ss.str();
     outputFile.close();
