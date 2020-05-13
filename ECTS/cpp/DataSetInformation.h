@@ -20,14 +20,14 @@ namespace ECG {
 const int DIMENSION=96; // length of time series
 const int ROWTRAINING=100;  // size of training data
 const int ROWTESTING=100;  // size of testing data
-const char* trainingFileName="ECG/ECG200_TRAIN";
-const char* testingFileName="ECG/ECG200_TEST";
-const char* trainingIndexFileName="ECG/Index_Train";
-const char* testingIndexFileName="ECG/Test_Traing";
-const char* DisArrayFileName="ECG/DisArray";
+const char* trainingFileName="/data/UCR/ECG200/ECG200_TRAIN.tsv";
+const char* testingFileName="/data/UCR/ECG200/ECG200_TEST.tsv";
+const char* trainingIndexFileName="/tmp/ECG/Index_Train";
+const char* testingIndexFileName="/tmp/ECG/Test_Traing";
+const char* DisArrayFileName="/tmp/ECG/DisArray";
 const int NofClasses=2;
 const int Classes[]={1,-1};
-const char* ResultfileName="ECG/result.txt";
+const char* ResultfileName="/tmp/ECG/result.txt";
 
 } // namespace ECG
 

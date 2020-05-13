@@ -10,8 +10,7 @@ dir:
 	mkdir -p bin
 
 test: ects
+	mkdir /tmp/ECG
 	bin/index
 	bin/ects
-	rm ECG/DisArray
-	rm ECG/Index_Train
-	rm ECG/result.txt
+	rm -r /tmp/ECG
