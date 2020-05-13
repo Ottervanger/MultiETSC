@@ -1,8 +1,14 @@
 all: ects
-	./main
 
-ects:
-	g++ Hierarchical.cpp Euclidean.cpp minValue.cpp util.cpp -o main
+ects: index
+	g++ Hierarchical.cpp Euclidean.cpp minValue.cpp util.cpp -o bin/ects
 
-disc:
-	g++ Discretization.cpp find.cpp Euclidean.cpp minValue.cpp util.cpp -o main
+index:
+	g++ IndexBuilding.cpp Euclidean.cpp minValue.cpp -o bin/index
+
+test: ects
+	bin/index
+	bin/ects
+	rm ECG/DisArray
+	rm ECG/Index_Train
+	rm ECG/result.txt
