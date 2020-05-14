@@ -15,6 +15,11 @@ template<typename T>
 void readDMatrix(const char * file,
                  std::vector<std::vector<T> > &data);
 
+// save tab separated data from file to 2d vector
+template<typename T>
+void saveMatrix(const char * file,
+                const std::vector<std::vector<T> > &data);
+
 } // namespace util
 
 #endif  // ECTS_UTIL_H_

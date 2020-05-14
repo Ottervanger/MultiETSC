@@ -7,12 +7,12 @@
 namespace util {
 
 // load data in UCR format to the 2d vector 'data' with corresponding 'labels'
-void readUCRData(const char * file,
+void readUCRData(const char * f,
                  std::vector<std::vector<double> > &data,
                  std::vector<int> &labels) {
-    std::ifstream ifs(file);
+    std::ifstream ifs(f);
     if (ifs.fail()) {
-        std::cerr << "File \'" << file << "\' could not be opened" << std::endl;
+        std::cerr << "File \'" << f << "\' could not be opened for reading" << std::endl;
         exit(1);
     }
 
@@ -34,14 +34,14 @@ void readUCRData(const char * file,
 }
 
 
-template void readDMatrix(const char * file, std::vector<std::vector<int> > &data);
-template void readDMatrix(const char * file, std::vector<std::vector<double> > &data);
+template void readDMatrix(const char * f, std::vector<std::vector<int> > &data);
+template void readDMatrix(const char * f, std::vector<std::vector<double> > &data);
 
 template<typename T>
-void readDMatrix(const char * file, std::vector<std::vector<T> > &data) {
-    std::ifstream ifs(file);
+void readDMatrix(const char * f, std::vector<std::vector<T> > &data) {
+    std::ifstream ifs(f);
     if (ifs.fail()) {
-        std::cerr << "File \'" << file << "\' could not be opened" << std::endl;
+        std::cerr << "File \'" << f << "\' could not be opened for reading" << std::endl;
         exit(1);
     }
     std::string line;
@@ -52,6 +52,23 @@ void readDMatrix(const char * file, std::vector<std::vector<T> > &data) {
         while (ss >> v) row.push_back(v);
         data.push_back(row);
         row.clear();
+    }
+}
+
+template void saveMatrix(const char * f, const std::vector<std::vector<int> > &data);
+template void saveMatrix(const char * f, const std::vector<std::vector<double> > &data);
+
+template<typename T>
+void saveMatrix(const char * f, const std::vector<std::vector<T> > &data) {
+    std::ofstream ofs(f);
+    if (ofs.fail()) {
+        std::cerr << "File \'" << f << "\' could not be opened for writing" << std::endl;
+        exit(1);
+    }
+    for (auto r : data) {
+        for (T v : r)
+            ofs << v << "\t";
+        ofs << std::endl;
     }
 }
 
