@@ -14,7 +14,6 @@
 #include <cassert>
 
 #include "DataSetInformation.h"
-#include "Euclidean.h"
 #include "minValue.h"
 #include "util.h"
 
@@ -641,6 +640,17 @@ int findMin( int data[], int len) {
 
 }
 
+double Euclidean(double * a, double * b, int length) {
+    double ret = 0;
+    for (int i = 0; i < length; i++) {
+        double dist = a[i] - b[i];
+        ret += dist * dist;
+    }
+    // since we only use the distance to order 
+    // we can leave out taking the root
+    return ret;
+}
+
 int findNN(int index, int len) {
     int indexOfNN = -1;
 
@@ -772,6 +782,9 @@ void report() {
     outputFile.close();
 }
 
+
+// Computes the set distance: min distance between two items each
+// of a different set, based on the full len
 double SetDis( std::set<int> A, std::set<int> B ) {
 
     double minimal = 10000000;
@@ -782,7 +795,6 @@ double SetDis( std::set<int> A, std::set<int> B ) {
     for ( iA = A.begin(); iA != A.end(); iA++) {
         for (iB = B.begin(); iB != B.end(); iB++) {
             double temp = disArray[*iA][*iB];
-            //std::cout << "dis " << temp << std::endl;
             if (minimal > temp) {
                 minimal = temp;
             }
