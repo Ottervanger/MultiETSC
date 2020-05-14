@@ -1,9 +1,5 @@
 #include "util.h"
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
-
 namespace util {
 
 // load data in UCR format to the 2d vector 'data' with corresponding 'labels'
@@ -21,7 +17,7 @@ void readUCRData(const char * file,
     double label;
     std::vector<double> row;
     while (ifs >> label) {
-    	// the first value of each row is the label
+        // the first value of each row is the label
         labels.push_back((int)label);
         // the remaining values are the time series
         std::getline(ifs, line);
