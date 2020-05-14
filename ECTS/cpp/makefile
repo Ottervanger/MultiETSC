@@ -10,7 +10,6 @@ dir:
 	mkdir -p bin
 
 test: ects
-	mkdir /tmp/ECG
+	mkdir -p /tmp/ECG
 	bin/index
 	bin/ects
-	rm -r /tmp/ECG

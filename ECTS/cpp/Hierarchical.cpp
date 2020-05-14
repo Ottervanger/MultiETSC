@@ -30,8 +30,8 @@ double testing [ECG::ROWTESTING][ECG::DIMENSION]; //  testing data set
 double labelTesting[ECG::ROWTESTING] = {0}; // testing data class labels
 double predictedLabel[ECG::ROWTESTING] = {0}; // predicted label by the classifier
 int predictedLength[ECG::ROWTESTING] = {0}; // predicted length by the classifier
-int  trainingIndex[ECG::ROWTRAINING][ECG::DIMENSION];//  store the 1NN for each space, no ranking tie
-double disArray[ECG::ROWTRAINING][ECG::ROWTRAINING] = {0}; //  the pairwise distance array of full length
+std::vector<std::vector<int> > trainingIndex;//  store the 1NN for each space, no ranking tie
+std::vector<std::vector<double> > disArray; //  the pairwise distance array of full length
 std::vector<double> classSupport;
 int fullLengthClassificationStatus[ECG::ROWTRAINING];// 0 can not be classified correctly, 1 can be classified correctly
 int predictionPrefix[ECG::ROWTRAINING];
@@ -43,8 +43,6 @@ double classificationTime; // classification time of one instance
 double trainingTime; // classification time of one instance
 
 // functions in the same file
-void loadDisArray(const char * fileName, double Data[ECG::ROWTRAINING][ECG::ROWTRAINING]  );
-void LoadTrIndex(const char * fileName, int Data[ECG::ROWTRAINING][ECG::DIMENSION]  );
 std::set<int> setRNN(int l, std::set<int>& s);
 std::set<int> setNN(int l, std::set<int>& s);
 int nnConsistent(int l, std::set<int>& s);
@@ -75,7 +73,9 @@ int updateMPLTest(std::set<int> s);
 
 
 // changes classSupport to contain label frequency times minimalSupport for each label
-void computeClassSupport(const std::vector<int> labels, std::vector<double> &classSupport, const double minimalSupport) {
+void computeClassSupport(const std::vector<int> labels,
+                         std::vector<double> &classSupport,
+                         const double minimalSupport) {
     std::map<int, int> labelCount;
     for (int label : labels)
         labelCount[label]++;
@@ -97,17 +97,20 @@ int main () {
         }
     }
 
-    loadDisArray(ECG::DisArrayFileName, disArray);
-    LoadTrIndex(ECG::trainingIndexFileName, trainingIndex);
+    util::readDMatrix(ECG::DisArrayFileName, disArray);
+    util::readDMatrix(ECG::trainingIndexFileName, trainingIndex);
     // compute the full length classification status, 0 incorrect, 1 correct
     clock_t t3, t4;
 
+    int count = 0;
     for (int i = 0; i < ECG::ROWTRAINING; i++) {
         int NNofi = trainingIndex[i][ECG::DIMENSION - 1];
         if (labelTraining[i] == labelTraining[NNofi]) {
             fullLengthClassificationStatus[i] = 1;
+            count++;
         }
     }
+    std::cout << "fullNN correct: " << count << std::endl;
 
     // intialize the prediction prefix
     for (int i = 0; i < ECG::ROWTRAINING; i++) {
@@ -126,11 +129,9 @@ int main () {
         } else {
             predictionPrefix[i] = getMPLStrict(s);
         }
-        // predictionPrefix[i]=getMPLTest(s);
     }
 
     int latticeLevel = 1;
-    //std::cout << "bi-roots level\n";
 
     std::vector<std::set<int>> biRoots; // is a vector of sets
     std::vector<int> biRootsLength;// the length of the node
@@ -333,42 +334,6 @@ int main () {
     classificationTime = ((double)(clock() - t))/CLOCKS_PER_SEC;
     report();
 }// end main
-
-void loadDisArray(const char * fileName, double Data[ECG::ROWTRAINING][ECG::ROWTRAINING]  ) {
-
-    std::ifstream inputFile( fileName, std::ifstream::in);
-    if ( !inputFile ) {
-        std::cerr << "file could not be opened" << std::endl;
-        exit(1);
-    } // end if
-
-    while ( !inputFile.eof() ) {
-        for (int row = 0; row < ECG::ROWTRAINING; row++) {
-            for (int col = 0; col < ECG::ROWTRAINING; col++) {
-                inputFile >> Data[row][col];
-            }
-        }
-    }
-    inputFile.close();
-}
-
-void LoadTrIndex(const char * fileName, int Data[ECG::ROWTRAINING][ECG::DIMENSION]  ) {
-
-    std::ifstream inputFile( fileName, std::ifstream::in);
-    if ( !inputFile ) {
-        std::cerr << "file could not be opened" << std::endl;
-        exit(1);
-    } // end if
-
-    while ( !inputFile.eof() ) {
-        for (int row = 0; row < ECG::ROWTRAINING; row++) {
-            for (int col = 0; col < ECG::DIMENSION; col++) {
-                inputFile >> Data[row][col];
-            }
-        }
-    }
-    inputFile.close();
-}
 
 std::set<int> setRNN(int l, std::set<int>& s) { // find a set's RNN on prefix l
     std::set<int> index;
