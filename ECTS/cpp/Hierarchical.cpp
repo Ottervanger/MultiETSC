@@ -17,10 +17,11 @@
 #include "minValue.h"
 #include "util.h"
 
-// ALgorithm parameters: minimal support
+// ALgorithm parameters
 const double MIN_SUPPORT = 0;
 
-int strictversion = 0; // 1 strict veresion , 0 loose version
+enum Version { STRICT, LOOSE };
+Version version = LOOSE;
 
 // global variable
 double training[ECG::ROWTRAINING][ECG::DIMENSION]; // training data set
@@ -123,7 +124,7 @@ int main () {
         std::set<int>  s;
         s.insert(i);
 
-        if (strictversion == 0) {
+        if (version == LOOSE) {
             predictionPrefix[i] = getMPL(s);
         } else {
             predictionPrefix[i] = getMPLStrict(s);
@@ -152,7 +153,7 @@ int main () {
 
                 if (labelTraining[i] == labelTraining[NNofi]) {
                     int tempL;
-                    if (strictversion == 0) {
+                    if (version == LOOSE) {
                         tempL = updateMPL(temp);
                     } else {
                         tempL = updateMPLStrict(temp);
@@ -234,14 +235,14 @@ int main () {
                         int tempLength;
 
                         if (setA.size() > 1 && setB.size() > 1) {
-                            if (strictversion == 0) {
+                            if (version == LOOSE) {
                                 tempLength = getMPL(tempSet, nnSetListCurrentLength[pair[0]], nnSetListCurrentLength[pair[1]]);
                             } else {
                                 tempLength = getMPLStrict(tempSet, nnSetListCurrentLength[pair[0]], nnSetListCurrentLength[pair[1]]);
                             }
                             // tempLength=getMPLTest(tempSet,nnSetListCurrentLength[pair[0]],nnSetListCurrentLength[pair[1]]);
                         } else {
-                            if (strictversion == 0) {
+                            if (version == LOOSE) {
                                 tempLength = getMPL(tempSet);
                             } else {
                                 tempLength = getMPLStrict(tempSet);
@@ -733,11 +734,7 @@ inline double mean(int data[], int len) {
 
 void report() {
     std::ostringstream ss;
-    if (strictversion == 1) {
-        ss << "\nStrict version\n";
-    } else {
-        ss << "\nLoose Version\n";
-    }
+    ss << "\n" << ((version == LOOSE) ? "Loose" : "Strict") << " version\n";
 
     double plTest  = mean(predictedLength,  ECG::ROWTESTING);
     double plTrain = mean(predictionPrefix, ECG::ROWTRAINING);
