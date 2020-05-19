@@ -7,13 +7,13 @@
 namespace util {
 
 // load data in UCR format to the 2d vector 'data' with corresponding 'labels'
-void readUCRData(const char * f,
+bool readUCRData(const char * f,
                  std::vector<std::vector<double> > &data,
                  std::vector<int> &labels) {
     std::ifstream ifs(f);
     if (ifs.fail()) {
         std::cerr << "File \'" << f << "\' could not be opened for reading" << std::endl;
-        exit(1);
+        return false;
     }
 
     std::string line;
@@ -31,18 +31,19 @@ void readUCRData(const char * f,
         data.push_back(row);
         row.clear();
     }
+    return true;
 }
 
 
-template void readDMatrix(const char * f, std::vector<std::vector<int> > &data);
-template void readDMatrix(const char * f, std::vector<std::vector<double> > &data);
+template bool readDMatrix(const char * f, std::vector<std::vector<int> > &data);
+template bool readDMatrix(const char * f, std::vector<std::vector<double> > &data);
 
 template<typename T>
-void readDMatrix(const char * f, std::vector<std::vector<T> > &data) {
+bool readDMatrix(const char * f, std::vector<std::vector<T> > &data) {
     std::ifstream ifs(f);
     if (ifs.fail()) {
         std::cerr << "File \'" << f << "\' could not be opened for reading" << std::endl;
-        exit(1);
+        return false
     }
     std::string line;
     std::vector<T> row;
@@ -53,23 +54,25 @@ void readDMatrix(const char * f, std::vector<std::vector<T> > &data) {
         data.push_back(row);
         row.clear();
     }
+    return true;
 }
 
 template void saveMatrix(const char * f, const std::vector<std::vector<int> > &data);
 template void saveMatrix(const char * f, const std::vector<std::vector<double> > &data);
 
 template<typename T>
-void saveMatrix(const char * f, const std::vector<std::vector<T> > &data) {
+bool saveMatrix(const char * f, const std::vector<std::vector<T> > &data) {
     std::ofstream ofs(f);
     if (ofs.fail()) {
         std::cerr << "File \'" << f << "\' could not be opened for writing" << std::endl;
-        exit(1);
+        return false;
     }
     for (auto r : data) {
         for (T v : r)
             ofs << v << "\t";
         ofs << std::endl;
     }
+    return true;
 }
 
 } // namespace util

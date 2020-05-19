@@ -6,18 +6,18 @@
 namespace util {
 
 // load data in UCR format to the 2d vector 'data' with corresponding 'labels'
-void readUCRData(const char * file,
+bool readUCRData(const char * file,
                  std::vector<std::vector<double> > &data,
                  std::vector<int> &labels);
 
 // load whitespace separated data from file to 2d vector
 template<typename T>
-void readDMatrix(const char * file,
+bool readDMatrix(const char * file,
                  std::vector<std::vector<T> > &data);
 
 // save tab separated data from file to 2d vector
 template<typename T>
-void saveMatrix(const char * file,
+bool saveMatrix(const char * file,
                 const std::vector<std::vector<T> > &data);
 
 } // namespace util
