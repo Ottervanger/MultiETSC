@@ -1,17 +1,11 @@
-all: ects
+all: bin/ects
 
-ects: index dir
-	g++ -O1 Hierarchical.cpp minValue.cpp util.cpp -o bin/ects
+bin/ects: bin ects.cpp util.cpp
+	g++ -O1 ects.cpp util.cpp -o bin/ects
 
-index: dir
-	g++ -O1 IndexBuilding.cpp util.cpp -o bin/index
-
-dir:
+bin:
 	mkdir -p bin
 
-test: ects
-	mkdir -p /tmp/ECG
-	bin/index
-	bin/ects loose
-	bin/ects strict
-	rm -r /tmp/ECG
+test: bin/ects
+	bin/ects --version loose  --path /data/UCR/ --dataset ECG200
+	bin/ects --version strict --path /data/UCR/ --dataset ECG200
