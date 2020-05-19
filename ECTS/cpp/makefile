@@ -12,5 +12,6 @@ dir:
 test: ects
 	mkdir -p /tmp/ECG
 	bin/index
-	bin/ects
+	bin/ects loose
+	bin/ects strict
 	rm -r /tmp/ECG

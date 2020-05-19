@@ -12,6 +12,7 @@
 #include <limits>
 #include <numeric>
 #include <cassert>
+#include <iomanip>
 
 #include "DataSetInformation.h"
 #include "minValue.h"
@@ -76,7 +77,19 @@ void computeClassSupport(const std::vector<int> &labels,
         classSupport.push_back(c.second * minimalSupport);
 }
 
-int main () {
+void argparse(int argc, char* argv[]) {
+    for (int i = 1; i < argc; i++) {
+        if (argv[i][0] == 's') {
+            version = STRICT;
+        } else if (argv[i][0] == 'l') {
+            version = LOOSE;
+        }
+    }
+    std::cout << "Using " << ((version == LOOSE) ? "loose" : "strict") << " version" << std::endl;
+}
+
+int main (int argc, char* argv[]) {
+    argparse(argc, argv);
     // load training data
     std::vector<std::vector<double> > dataTrain;
     std::vector<int> labelTrain;
@@ -364,173 +377,113 @@ int getMPL(std::set<int>& s) {
     std::set<int> ::iterator i;
     if (s.size() == 1) { // simple RNN Method
         std::set<int> LastRNN = setRNN(ECG::DIMENSION, s); // get full length RNN
-
         int FirstElement = *(s.begin());
         double label = labelTraining[FirstElement];
         int labelIndex = 0;
         if (label == -1) {labelIndex = 1;}
         else {labelIndex = label - 1;}
-
         // get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S.
         std::set<int> LastUsefulRNN;
         for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
             int element = *i;
-
             if ( fullLenCorrect[element] == 1) {
-
                 LastUsefulRNN.insert(element);
-
             }
-
         }
         // compute the support of the sequence
         int Support = s.size() + LastUsefulRNN.size();
-
         if (Support >= classSupport[labelIndex]) {
             if (LastUsefulRNN.size() > 0) {
                 std::set<int> PreviousRNN;
                 for (int le = ECG::DIMENSION - 1; le >= 1; le--) {
-
                     PreviousRNN = setRNN(le, s);
-
                     std::set<int> PreviousUsefulRNN;
-
                     for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
                         int element = *i;
-
                         if (fullLenCorrect[element] == 1) {
-
                             PreviousUsefulRNN.insert(element);
-
                         }
-
                     }
-
                     if (  LastUsefulRNN == PreviousUsefulRNN ) {
-
-                        // CurrentUsefulRNN=PreviousUsefulRNN;
-
                         PreviousRNN.clear();
                         PreviousUsefulRNN.clear();
-
                     } else {
-                        /*printSet(s);
-                        printSet(PreviousUsefulRNN);
-                        std::cout << "Support=" << support << "\n";*/
-
                         MPL = le + 1;
                         break;
-
                     }
-
                 }// end of for
-
             } else {MPL = ECG::DIMENSION;}
         } else {
             MPL = ECG::DIMENSION;
         }
-
     } else { // super-sequence Method
         std::set<int> LastRNN = setRNN(ECG::DIMENSION, s); // get full length RNN
-
         int FirstElement = *(s.begin());
         double label = labelTraining[FirstElement];
         int labelIndex = 0;
         if (label == -1) {labelIndex = 1;}
         else {labelIndex = label - 1;}
-
         // get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S.
         std::set<int> LastUsefulRNN;
         for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
             int element = *i;
-
             if (fullLenCorrect[element] == 1) {
-
                 LastUsefulRNN.insert(element);
-
             }
-
         }
         // compute the support of the sequence
         int Support = s.size() + LastUsefulRNN.size();
-
         if (Support >= classSupport[labelIndex]) {
-
             std::set<int> PreviousRNN;
             for (int le = ECG::DIMENSION - 1; le >= 1; le--) {
                 if (nnConsistent(le, s) == 0) {
                     MPL = le + 1;
                     break;
                 } else {
-
                     PreviousRNN = setRNN(le, s);
-
                     std::set<int> PreviousUsefulRNN;
-
                     for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
                         int element = *i;
-
                         if ( fullLenCorrect[element] == 1) {
-
                             PreviousUsefulRNN.insert(element);
-
                         }
-
                     }
-
                     if ( LastUsefulRNN == PreviousUsefulRNN) {
-
                         PreviousRNN.clear();
                         PreviousUsefulRNN.clear();
-
                     } else {
                         /*printSet(s);
                         printSet(PreviousUsefulRNN);
                         std::cout << "Support=" << support << "\n";*/
                         MPL = le + 1;
                         break;
-
                     }
-
                 }// end of else
-
             }// end of for
-
         } else {
             MPL = ECG::DIMENSION;
         }
-
     }
-
     return MPL;
-
 }
 
 int getMPLStrict(std::set<int>& s) {
-
     int MPL = ECG::DIMENSION;
-
     std::set<int> ::iterator i;
     if (s.size() == 1) { // simple RNN Method
         std::set<int> LastRNN = setRNN(ECG::DIMENSION, s); // get full length RNN
-
         int FirstElement = *(s.begin());
         double label = labelTraining[FirstElement];
         int labelIndex = 0;
         if (label == -1) {labelIndex = 1;}
         else {labelIndex = label - 1;}
-
         // get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S.
         std::set<int> LastUsefulRNN;
         for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
             int element = *i;
-
             if ( fullLenCorrect[element] == 1) {
-
                 LastUsefulRNN.insert(element);
-
             }
-
         }
         // compute the support of the sequence
         int Support = s.size() + LastUsefulRNN.size();
@@ -721,21 +674,25 @@ void report(std::vector<int> labelTest) {
     double acc = double(correct) / ECG::ROWTESTING;
 
     // test consistency
-    assert(plTest  == 57.71);
-    assert(plTrain == 57.37);
-    assert(acc == 0.89);
+    if (version == LOOSE) {
+        assert(plTest  == 57.71);
+        assert(plTrain == 57.37);
+        assert(acc == 0.89);
+    }
 
     double FPRate = (double)FP / FC;
     double TPRate = (double)TP / TC;
 
     ss << "Heuristic Algorithm Report\n"
-       << "av. pred. len. test:  " << plTest  << "\n"
-       << "av. pred. len. train: " << plTrain << "\n"
-       << "accuracy: " << acc << "\n"
-       << "av. classification time " << classificationTime / ECG::ROWTESTING << "s\n"
-       << "          training time " << trainingTime << "s\n"
-       << "FP rate: " << FPRate << "\n"
-       << "TP rate: " << TPRate << "\n";
+       << std::setprecision(3) << std::fixed
+       << "av. pred. len. test:  " << std::setw(7) << plTest  << "\n"
+       << "av. pred. len. train: " << std::setw(7) << plTrain << "\n"
+       << "accuracy:             " << std::setw(7) << acc << "\n"
+       << std::setprecision(6) << std::fixed
+       << "av. classif. time     " << std::setw(10) << classificationTime / ECG::ROWTESTING << "s\n"
+       << "    training time     " << std::setw(10) << trainingTime << "s\n"
+       << "FP rate:              " << std::setw(10) << FPRate << "\n"
+       << "TP rate:              " << std::setw(10) << TPRate << "\n";
 
     // write output to console
     std::cout << ss.str();
@@ -812,8 +769,6 @@ int getMPL(std::set<int>& s, int la, int lb) {
 
     int MPL = ECG::DIMENSION;
 
-    std::set<int> ::iterator i;
-
     std::set<int> LastRNN = setRNN(ECG::DIMENSION, s); // get full length RNN
 
     int FirstElement = *(s.begin());
@@ -824,7 +779,7 @@ int getMPL(std::set<int>& s, int la, int lb) {
 
     // get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S.
     std::set<int> LastUsefulRNN;
-    for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
+    for (auto i = LastRNN.begin(); i != LastRNN.end(); i++) {
         int element = *i;
 
         if (fullLenCorrect[element] == 1) {
@@ -847,7 +802,7 @@ int getMPL(std::set<int>& s, int la, int lb) {
 
                 PreviousRNN = setRNN(le, s);
 
-                for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
+                for (auto i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
                     int element = *i;
 
                     if ( fullLenCorrect[element] == 1) {
