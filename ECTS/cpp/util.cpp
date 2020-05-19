@@ -43,7 +43,7 @@ bool readDMatrix(const char * f, std::vector<std::vector<T> > &data) {
     std::ifstream ifs(f);
     if (ifs.fail()) {
         std::cerr << "File \'" << f << "\' could not be opened for reading" << std::endl;
-        return false
+        return false;
     }
     std::string line;
     std::vector<T> row;
@@ -57,8 +57,8 @@ bool readDMatrix(const char * f, std::vector<std::vector<T> > &data) {
     return true;
 }
 
-template void saveMatrix(const char * f, const std::vector<std::vector<int> > &data);
-template void saveMatrix(const char * f, const std::vector<std::vector<double> > &data);
+template bool saveMatrix(const char * f, const std::vector<std::vector<int> > &data);
+template bool saveMatrix(const char * f, const std::vector<std::vector<double> > &data);
 
 template<typename T>
 bool saveMatrix(const char * f, const std::vector<std::vector<T> > &data) {
