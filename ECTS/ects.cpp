@@ -409,17 +409,6 @@ void report(std::vector<int> labelTest, std::vector<int> labelPred, std::vector<
     double plTrain = mean(predictionPrefix);
     double acc = double(correct) / n;
 
-    // test consistency
-    if (GLOBAL::version == LOOSE) {
-        assert(plTest  == 57.71);
-        assert(plTrain == 57.37);
-        assert(acc == 0.89);
-    } else {
-        assert(plTest  == 74.10);
-        assert(plTrain == 75.92);
-        assert(acc == 0.89);
-    }
-
     double FPRate = (double)FP / FC;
     double TPRate = (double)TP / TC;
 
