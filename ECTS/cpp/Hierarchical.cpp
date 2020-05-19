@@ -24,21 +24,17 @@ enum Version { STRICT, LOOSE };
 Version version = LOOSE;
 
 // global variable
-double training[ECG::ROWTRAINING][ECG::DIMENSION]; // training data set
 double labelTraining[ECG::ROWTRAINING] = {0}; // training data class labels
-double testing [ECG::ROWTESTING][ECG::DIMENSION]; //  testing data set
-double labelTesting[ECG::ROWTESTING] = {0}; // testing data class labels
 double predictedLabel[ECG::ROWTESTING] = {0}; // predicted label by the classifier
 int predictedLength[ECG::ROWTESTING] = {0}; // predicted length by the classifier
 std::vector<std::vector<int> > trainingIndex;//  store the 1NN for each space, no ranking tie
 std::vector<std::vector<double> > disArray; //  the pairwise distance array of full length
 std::vector<double> classSupport;
-int fullLengthClassificationStatus[ECG::ROWTRAINING];// 0 can not be classified correctly, 1 can be classified correctly
+int fullLenCorrect[ECG::ROWTRAINING];// 0: incorrectly, 1: correct
 int predictionPrefix[ECG::ROWTRAINING];
 std::vector<std::set<int>> nnSetList;// store the MNCS;
 std::vector<int> nnSetListLength;
 std::vector<int> nnSetListClassMap;// store the class label of the MNCS
-int correct = 0; // the unlabeled sequence which is correctly classified.
 double classificationTime; // classification time of one instance
 double trainingTime; // classification time of one instance
 
@@ -49,31 +45,28 @@ int nnConsistent(int l, std::set<int>& s);
 //void testUnion();
 int getMPL(std::set<int>& s); // loose version
 int getMPL(std::set<int>& s, int la, int lb); // loose version
-int getMPL2(std::set<int>& setA, std::set<int>& setB, int la, int lb);
 //void getMNCS(int onenode,double label, std::set<int>& PreMNCS);
 int updateMPL(std::set<int> s);
 //bool sharePrefix(std::set<int>& s1, std::set<int>& s2, std::set<int>& s3, int level        );
 void printSet(std::set<int> & s);
 void printSetList(std::vector<std::set<int>> & v) ;
 int findMin( int data[], int len);
-void classification();
+void classification(std::vector<std::vector<double> > dataTest,
+                    std::vector<std::vector<double> > dataTrain,
+                    std::vector<int> labelTrain);
 double mean(int data[], int len);
-void report();
+void report(std::vector<int> labelTest);
 double SetDis( std::set<int> A, std::set<int> B );
 std::vector<int> RankingArray(std::vector<std::set<int>> & List);
-int GetMN(std::vector<std::set<int>> & List, int ClusterIndex); // get the NN of cluster, if there is no MN, return -1, others , return the value;
+// get the NN of cluster, if there is no MN, return -1, others , return the value;
+int GetMN(std::vector<std::set<int>> & List, int ClusterIndex);
 
 int getMPLStrict(std::set<int>& s, int la, int lb);
 int getMPLStrict(std::set<int>& s);
 int updateMPLStrict(std::set<int> s);
 
-int getMPLTest(std::set<int>& s, int la, int lb);
-int getMPLTest(std::set<int>& s);
-int updateMPLTest(std::set<int> s);
-
-
 // changes classSupport to contain label frequency times minimalSupport for each label
-void computeClassSupport(const std::vector<int> labels,
+void computeClassSupport(const std::vector<int> &labels,
                          std::vector<double> &classSupport,
                          const double minimalSupport) {
     std::map<int, int> labelCount;
@@ -85,16 +78,13 @@ void computeClassSupport(const std::vector<int> labels,
 
 int main () {
     // load training data
-    std::vector<std::vector<double> > data;
-    std::vector<int> labels;
-    util::readUCRData(ECG::trainingFileName, data, labels);
-    computeClassSupport(labels, classSupport, MIN_SUPPORT);
+    std::vector<std::vector<double> > dataTrain;
+    std::vector<int> labelTrain;
+    util::readUCRData(ECG::trainingFileName, dataTrain, labelTrain);
+    computeClassSupport(labelTrain, classSupport, MIN_SUPPORT);
 
-    for (int i = 0; i < data.size(); i++) {
-        labelTraining[i] = labels[i];
-        for (int j = 0; j < data[i].size(); j++) {
-            training[i][j] = data[i][j];
-        }
+    for (int i = 0; i < dataTrain.size(); i++) {
+        labelTraining[i] = labelTrain[i];
     }
 
     util::readDMatrix(ECG::DisArrayFileName, disArray);
@@ -106,7 +96,7 @@ int main () {
     for (int i = 0; i < ECG::ROWTRAINING; i++) {
         int NNofi = trainingIndex[i][ECG::DIMENSION - 1];
         if (labelTraining[i] == labelTraining[NNofi]) {
-            fullLengthClassificationStatus[i] = 1;
+            fullLenCorrect[i] = 1;
             count++;
         }
     }
@@ -159,7 +149,6 @@ int main () {
                         tempL = updateMPLStrict(temp);
                     }
 
-                    //  tempL=updateMPLTest(temp);
                     biRootsLength.push_back(tempL);
                     setLabel.push_back(labelTraining[NNofi]);
                     biRoots.push_back(temp);
@@ -213,7 +202,7 @@ int main () {
             int tempi = currentNew[i];
             if (status[tempi] == 0) {
                 std::vector<int> pair;
-                int MNofi = GetMN(nnSetListCurrent, tempi); // get the NN of cluster, if there is no MN, return -1, others , return the value
+                int MNofi = GetMN(nnSetListCurrent, tempi);
                 if (MNofi != -1) {
 
                     pair.push_back(tempi);
@@ -240,7 +229,6 @@ int main () {
                             } else {
                                 tempLength = getMPLStrict(tempSet, nnSetListCurrentLength[pair[0]], nnSetListCurrentLength[pair[1]]);
                             }
-                            // tempLength=getMPLTest(tempSet,nnSetListCurrentLength[pair[0]],nnSetListCurrentLength[pair[1]]);
                         } else {
                             if (version == LOOSE) {
                                 tempLength = getMPL(tempSet);
@@ -329,10 +317,14 @@ int main () {
     clock_t t;
     t = clock();
 
-    classification();
+    std::vector<std::vector<double> > dataTest;
+    std::vector<int> labelTest;
+    util::readUCRData(ECG::testingFileName, dataTest, labelTest);
+
+    classification(dataTest, dataTrain, labelTrain);
 
     classificationTime = ((double)(clock() - t))/CLOCKS_PER_SEC;
-    report();
+    report(labelTest);
 }// end main
 
 std::set<int> setRNN(int l, std::set<int>& s) { // find a set's RNN on prefix l
@@ -384,7 +376,7 @@ int getMPL(std::set<int>& s) {
         for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
             int element = *i;
 
-            if ( fullLengthClassificationStatus[element] == 1) {
+            if ( fullLenCorrect[element] == 1) {
 
                 LastUsefulRNN.insert(element);
 
@@ -406,7 +398,7 @@ int getMPL(std::set<int>& s) {
                     for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
                         int element = *i;
 
-                        if (fullLengthClassificationStatus[element] == 1) {
+                        if (fullLenCorrect[element] == 1) {
 
                             PreviousUsefulRNN.insert(element);
 
@@ -452,7 +444,7 @@ int getMPL(std::set<int>& s) {
         for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
             int element = *i;
 
-            if (fullLengthClassificationStatus[element] == 1) {
+            if (fullLenCorrect[element] == 1) {
 
                 LastUsefulRNN.insert(element);
 
@@ -478,7 +470,7 @@ int getMPL(std::set<int>& s) {
                     for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
                         int element = *i;
 
-                        if ( fullLengthClassificationStatus[element] == 1) {
+                        if ( fullLenCorrect[element] == 1) {
 
                             PreviousUsefulRNN.insert(element);
 
@@ -533,7 +525,7 @@ int getMPLStrict(std::set<int>& s) {
         for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
             int element = *i;
 
-            if ( fullLengthClassificationStatus[element] == 1) {
+            if ( fullLenCorrect[element] == 1) {
 
                 LastUsefulRNN.insert(element);
 
@@ -550,7 +542,7 @@ int getMPLStrict(std::set<int>& s) {
                     std::set<int> PreviousUsefulRNN;
                     for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
                         int element = *i;
-                        if (fullLengthClassificationStatus[element] == 1) {
+                        if (fullLenCorrect[element] == 1) {
                             PreviousUsefulRNN.insert(element);
                         }
                     }
@@ -641,7 +633,7 @@ int findMin( int data[], int len) {
 
 }
 
-double Euclidean(double * a, double * b, int length) {
+double Euclidean(std::vector<double> a, std::vector<double> b, int length) {
     double ret = 0;
     for (int i = 0; i < length; i++) {
         double dist = a[i] - b[i];
@@ -652,76 +644,49 @@ double Euclidean(double * a, double * b, int length) {
     return ret;
 }
 
-int findNN(int index, int len) {
+int findNN(std::vector<double> ts, int len,
+           std::vector<std::vector<double> > dataTrain) {
+
     int indexOfNN = -1;
-
     double Mindis = 100000;
-
     for (int i = 0; i < ECG::ROWTRAINING; i++) {
-        double tempdis = Euclidean( testing[index], training[i], len );
-
+        double tempdis = Euclidean(ts, dataTrain[i], len);
         if (tempdis < Mindis) {
             Mindis = tempdis;
             indexOfNN = i;
-
         }
-
     }
-
     return indexOfNN;
 }
 
 
 // used globals:
 // 
-// ECG::testingFileName
-// testing
-// labelTesting
-// ECG::ROWTESTING
-// ECG::ROWTRAINING
 // predictionPrefix
-// ECG::DIMENSION
 // predictedLabel
-// labelTraining
 // predictedLength
-// labelTesting
-// correct
 
-void classification() {
-    std::vector<std::vector<double> > data;
-    std::vector<int> labels;
-    util::readUCRData(ECG::testingFileName, data, labels);
+void classification(std::vector<std::vector<double> > dataTest,
+                    std::vector<std::vector<double> > dataTrain,
+                    std::vector<int> labelTrain) {
 
-    for (int i = 0; i < data.size(); i++) {
-        labelTesting[i] = labels[i];
-        for (int j = 0; j < data[i].size(); j++) {
-            testing[i][j] = data[i][j];
-        }
-    }
-
-
-    int startfrom = findMin( predictionPrefix, ECG::ROWTRAINING);
+    int startfrom = findMin( predictionPrefix, dataTrain.size());
     std::cout << "\n Start from: " << startfrom << std::endl;
 
     // for each instance
-    for (int i = 0; i < ECG::ROWTESTING; i++) {
+    for (int i = 0; i < dataTest.size(); i++) {
         // for each observation
         // start from the smallest mimimum prefix in the train data
-        for (int j = startfrom; j <= ECG::DIMENSION; j++) {
+        for (int j = startfrom; j <= dataTest[i].size(); j++) {
             // find the nearest neigbour of i in j-prefix space
-            int tempNN = findNN(i, j);
+            int tempNN = findNN(dataTest[i], j, dataTrain);
 
             // trigger mechanism
             if (predictionPrefix[tempNN] <= j) {
                 // label instance i
-                predictedLabel[i] = labelTraining[tempNN];
+                predictedLabel[i] = labelTrain[tempNN];
                 // record earliness
                 predictedLength[i] = j;
-
-                // check if correct
-                if (predictedLabel[i] == labelTesting[i]) {
-                    correct++;
-                }
                 break;
             }
         }
@@ -732,9 +697,24 @@ inline double mean(int data[], int len) {
     return std::accumulate(data, data+len, 0.0) / len;
 }
 
-void report() {
+void report(std::vector<int> labelTest) {
     std::ostringstream ss;
     ss << "\n" << ((version == LOOSE) ? "Loose" : "Strict") << " version\n";
+
+    int correct = 0;
+    // compute the false positive  and true positve
+    int FP = 0, TP = 0, TC = 0, FC = 0;
+    for (int i = 0; i < ECG::ROWTESTING; i++) {
+        if (predictedLabel[i] == 1 && labelTest[i] == -1) FP++;
+        if (predictedLabel[i] == 1 && labelTest[i] ==  1) TP++;
+        if (predictedLabel[i] == labelTest[i]) correct++;
+
+        if (labelTest[i] == 1) {
+            TC++;
+        } else {
+            FC++;
+        }
+    }
 
     double plTest  = mean(predictedLength,  ECG::ROWTESTING);
     double plTrain = mean(predictionPrefix, ECG::ROWTRAINING);
@@ -744,19 +724,6 @@ void report() {
     assert(plTest  == 57.71);
     assert(plTrain == 57.37);
     assert(acc == 0.89);
-
-    // compute the false positive  and true positve
-    int FP = 0, TP = 0, TC = 0, FC = 0;
-    for (int i = 0; i < ECG::ROWTESTING; i++) {
-        if (predictedLabel[i] == 1 && labelTesting[i] == -1) FP++;
-        if (predictedLabel[i] == 1 && labelTesting[i] ==  1) TP++;
-
-        if (labelTesting[i] == 1) {
-            TC++;
-        } else {
-            FC++;
-        }
-    }
 
     double FPRate = (double)FP / FC;
     double TPRate = (double)TP / TC;
@@ -800,7 +767,8 @@ double SetDis( std::set<int> A, std::set<int> B ) {
     return minimal;
 }
 
-int GetMN(std::vector<std::set<int>> & List, int ClusterIndex) { // get the NN of cluster, if there is no MN, return -1, others , return the value
+// get the NN of cluster, if there is no MN, return -1, others , return the value
+int GetMN(std::vector<std::set<int>> & List, int ClusterIndex) {
     // find the NN of ClusterIndex
     double Mindis = 100000;
     int NN = -1;
@@ -859,7 +827,7 @@ int getMPL(std::set<int>& s, int la, int lb) {
     for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
         int element = *i;
 
-        if (fullLengthClassificationStatus[element] == 1) {
+        if (fullLenCorrect[element] == 1) {
 
             LastUsefulRNN.insert(element);
 
@@ -882,7 +850,7 @@ int getMPL(std::set<int>& s, int la, int lb) {
                 for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
                     int element = *i;
 
-                    if ( fullLengthClassificationStatus[element] == 1) {
+                    if ( fullLenCorrect[element] == 1) {
 
                         PreviousUsefulRNN.insert(element);
 
@@ -959,142 +927,6 @@ int getMPLStrict(std::set<int>& s, int la, int lb) {
         }// end of for
     } else {
         MPL = ECG::DIMENSION;
-    }
-    return MPL;
-}
-
-int getMPLTest(std::set<int>& s, int la, int lb) {
-    int startFrom = 0;
-
-    if (la <= lb)
-        startFrom = lb;
-    else
-        startFrom = la;
-
-    int MPL = ECG::DIMENSION;
-
-    if (s.size() == 1) { // simple RNN Method
-        std::set<int> LastRNN = setRNN(ECG::DIMENSION, s); // get full length RNN
-
-        int FirstElement = *(s.begin());
-        double label = labelTraining[FirstElement];
-        int labelIndex = 0;
-        if (label == -1) {labelIndex = 1;}
-        else {labelIndex = label - 1;}
-
-        // compute the support of the sequence
-        int Support = s.size() + LastRNN.size();
-
-        if (Support >= classSupport[labelIndex]) {
-            if (LastRNN.size() > 0) {
-                std::set<int> PreviousRNN;
-                for (int le = ECG::DIMENSION - 1; le >= 1; le--) {
-
-                    PreviousRNN = setRNN(le, s);
-
-                    if (  LastRNN == PreviousRNN ) {
-
-                        PreviousRNN.clear();
-
-                    } else {
-
-                        MPL = le + 1;
-                        break;
-
-                    }
-
-                }// end of for
-
-            } else {
-                MPL = ECG::DIMENSION;
-            }
-        } else {
-            MPL = ECG::DIMENSION;
-        }
-
-    } else { // super-sequence Method
-        std::set<int> LastRNN = setRNN(ECG::DIMENSION, s); // get full length RNN
-
-        int FirstElement = *(s.begin());
-        double label = labelTraining[FirstElement];
-        int labelIndex = 0;
-        if (label == -1) {labelIndex = 1;}
-        else {labelIndex = label - 1;}
-
-        // compute the support of the sequence
-        int Support = s.size() + LastRNN.size();
-
-        if (Support >= classSupport[labelIndex]) {
-            for (int le = startFrom - 1; le >= 1; le--) {
-                if (nnConsistent(le, s) == 0) {
-                    MPL = le + 1;
-                    break;
-                }
-            }// end of for
-
-        } else {
-            MPL = ECG::DIMENSION;
-        }
-    }
-    return MPL;
-}
-
-int getMPLTest(std::set<int>& s) {
-
-    int MPL = ECG::DIMENSION;
-    if (s.size() == 1) { // simple RNN Method
-        std::set<int> LastRNN = setRNN(ECG::DIMENSION, s); // get full length RNN
-
-        int FirstElement = *(s.begin());
-        double label = labelTraining[FirstElement];
-        int labelIndex = 0;
-        if (label == -1) {labelIndex = 1;}
-        else {labelIndex = label - 1;}
-
-        // compute the support of the sequence
-        int Support = s.size() + LastRNN.size();
-
-        if (Support >= classSupport[labelIndex]) {
-            if (LastRNN.size() > 0) {
-                std::set<int> PreviousRNN;
-                for (int le = ECG::DIMENSION - 1; le >= 1; le--) {
-
-                    PreviousRNN = setRNN(le, s);
-                    if (  LastRNN == PreviousRNN ) {
-                        PreviousRNN.clear();
-                    } else {
-                        MPL = le + 1;
-                        break;
-                    }
-                }// end of for
-            } else {
-                MPL = ECG::DIMENSION;
-            }
-        } else {
-            MPL = ECG::DIMENSION;
-        }
-    } else { // super-sequence Method
-        std::set<int> LastRNN = setRNN(ECG::DIMENSION, s); // get full length RNN
-
-        int FirstElement = *(s.begin());
-        double label = labelTraining[FirstElement];
-        int labelIndex = 0;
-        if (label == -1) {labelIndex = 1;}
-        else {labelIndex = label - 1;}
-
-        // compute the support of the sequence
-        int Support = s.size() + LastRNN.size();
-
-        if (Support >= classSupport[labelIndex]) {
-            for (int le = ECG::DIMENSION - 1; le >= 1; le--) {
-                if (nnConsistent(le, s) == 0) {
-                    MPL = le + 1;
-                    break;
-                }
-            }// end of for
-        } else {
-            MPL = ECG::DIMENSION;
-        }
     }
     return MPL;
 }
