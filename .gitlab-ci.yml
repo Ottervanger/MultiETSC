@@ -5,7 +5,7 @@ stages:
 test ECTS:
   stage: test
   script:
-    - pushd ECTS/cpp
+    - pushd ECTS
     - make test
     - pwd
 
