@@ -7,7 +7,7 @@
 namespace util {
 
 // load data in UCR format to the 2d vector 'data' with corresponding 'labels'
-bool readUCRData(const char * f,
+bool readUCRData(const std::string &f,
                  std::vector<std::vector<double> > &data,
                  std::vector<int> &labels) {
     std::ifstream ifs(f);
@@ -35,11 +35,11 @@ bool readUCRData(const char * f,
 }
 
 
-template bool readDMatrix(const char * f, std::vector<std::vector<int> > &data);
-template bool readDMatrix(const char * f, std::vector<std::vector<double> > &data);
+template bool readDMatrix(const std::string &f, std::vector<std::vector<int> > &data);
+template bool readDMatrix(const std::string &f, std::vector<std::vector<double> > &data);
 
 template<typename T>
-bool readDMatrix(const char * f, std::vector<std::vector<T> > &data) {
+bool readDMatrix(const std::string &f, std::vector<std::vector<T> > &data) {
     std::ifstream ifs(f);
     if (ifs.fail()) {
         std::cerr << "File \'" << f << "\' could not be opened for reading" << std::endl;
@@ -57,11 +57,11 @@ bool readDMatrix(const char * f, std::vector<std::vector<T> > &data) {
     return true;
 }
 
-template bool saveMatrix(const char * f, const std::vector<std::vector<int> > &data);
-template bool saveMatrix(const char * f, const std::vector<std::vector<double> > &data);
+template bool saveMatrix(const std::string &f, const std::vector<std::vector<int> > &data);
+template bool saveMatrix(const std::string &f, const std::vector<std::vector<double> > &data);
 
 template<typename T>
-bool saveMatrix(const char * f, const std::vector<std::vector<T> > &data) {
+bool saveMatrix(const std::string &f, const std::vector<std::vector<T> > &data) {
     std::ofstream ofs(f);
     if (ofs.fail()) {
         std::cerr << "File \'" << f << "\' could not be opened for writing" << std::endl;
