@@ -1,7 +1,7 @@
 all: bin/ects
 
 bin/ects: bin ects.cpp util.cpp
-	g++ -O1 ects.cpp util.cpp -o bin/ects
+	g++ -O3 -g ects.cpp util.cpp -o bin/ects
 
 bin:
 	mkdir -p bin

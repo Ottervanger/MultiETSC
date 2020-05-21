@@ -39,11 +39,11 @@ inline std::string testFile() {
 }
 
 inline std::string distMatFile() {
-    return "/tmp/" + GLOBAL::DATA_NAME + "_distMat";
+    return "/tmp/ECTS_" + GLOBAL::DATA_NAME + "_distMat";
 }
 
 inline std::string distIdxFile() {
-    return "/tmp/" + GLOBAL::DATA_NAME + "_distIdx";
+    return "/tmp/ECTS_" + GLOBAL::DATA_NAME + "_distIdx";
 }
 
 // global variable
@@ -326,30 +326,24 @@ int updateMPLStrict(std::set<int> s) {
     return length;
 }
 
-double Euclidean(std::vector<double> a, std::vector<double> b, int length) {
-    double ret = 0;
-    for (int i = 0; i < length; i++) {
-        double dist = a[i] - b[i];
-        ret += dist * dist;
-    }
-    // since we only use the distance to order 
-    // we can leave out taking the root
-    return ret;
-}
+inline int findNN(const std::vector<double> &ts, int len,
+           const std::vector<std::vector<double> > &dataTrain) {
 
-int findNN(std::vector<double> ts, int len,
-           std::vector<std::vector<double> > dataTrain) {
-
-    int indexOfNN = -1;
-    double Mindis = 100000;
+    int iMin = -1;
+    double distMin = 100000;
     for (int i = 0; i < dataTrain.size(); i++) {
-        double tempdis = Euclidean(ts, dataTrain[i], len);
-        if (tempdis < Mindis) {
-            Mindis = tempdis;
-            indexOfNN = i;
+        double dist = 0;
+        for (int j = 0; j < len; j++) {
+            dist += (ts[j] - dataTrain[i][j]) * (ts[j] - dataTrain[i][j]);
+            if (dist > distMin)
+                break;
+        }
+        if (dist < distMin) {
+            distMin = dist;
+            iMin = i;
         }
     }
-    return indexOfNN;
+    return iMin;
 }
 
 
@@ -357,11 +351,11 @@ int findNN(std::vector<double> ts, int len,
 // 
 // predictionPrefix
 
-void classification(std::vector<std::vector<double> > dataTest,
-                    std::vector<std::vector<double> > dataTrain,
+void classification(const std::vector<std::vector<double> > &dataTest,
+                    const std::vector<std::vector<double> > &dataTrain,
                     std::vector<int> &labelPred,
                     std::vector<int> &predLen,
-                    std::vector<int> labelTrain) {
+                    const std::vector<int> &labelTrain) {
 
     int startfrom = *std::min_element(predictionPrefix.begin(), predictionPrefix.end());
 
@@ -422,7 +416,7 @@ void report(std::vector<int> labelTest, std::vector<int> labelPred, std::vector<
        << "av. classif. time     " << std::setw(10) << classificationTime / n << "s\n"
        << "    training time     " << std::setw(10) << trainingTime << "s\n"
        << "FP rate:              " << std::setw(10) << FPRate << "\n"
-       << "TP rate:              " << std::setw(10) << TPRate << "\n";
+       << "TP rate:              " << std::setw(10) << TPRate << "\n\n";
 
     // write output to console
     std::cout << ss.str();
@@ -637,6 +631,7 @@ inline bool exists (const std::string &file) {
 
 int main (int argc, char* argv[]) {
     argparse(argc, argv);
+    clock_t t;
     // load training data
     std::vector<std::vector<double> > dataTrain;
     bool ok;
@@ -649,16 +644,17 @@ int main (int argc, char* argv[]) {
         ok &= util::readDMatrix(distIdxFile(), distIdx);
         if (!ok) exit(1);
     } else {
+        t = clock();
         computeDist(dataTrain, distIdx, distMat);
-        util::saveMatrix(distIdxFile(), distIdx);
-        util::saveMatrix(distMatFile(), distMat);
+        std::cout << "index time: " << (double)(clock() - t) / CLOCKS_PER_SEC << "s" << std::endl;
+        // util::saveMatrix(distIdxFile(), distIdx);
+        // util::saveMatrix(distMatFile(), distMat);
     }
     
-    // compute the full length classification status, 0 incorrect, 1 correct
-    clock_t t3, t4;
-
+    
     GLOBAL::DIM = dataTrain[0].size();
 
+    // compute the full length classification status, 0 incorrect, 1 correct
     int n = dataTrain.size();
     fullLenCorrect.resize(n, 0);
     for (int i = 0; i < n; i++) {
@@ -675,7 +671,7 @@ int main (int argc, char* argv[]) {
     }
 
     // simple RNN method
-    t3 = clock();
+    t = clock();
     // simple RNN method
     for (int i = 0; i < n; i++) {
         std::set<int>  s;
@@ -878,12 +874,9 @@ int main (int argc, char* argv[]) {
     }// end while
 
     // end of heuristic algorithm
-    t4 = clock();
-    trainingTime = (double)(t4 - t3) / CLOCKS_PER_SEC  ;
+    trainingTime = (double)(clock() - t) / CLOCKS_PER_SEC;
 
-    clock_t t;
     t = clock();
-
     std::vector<std::vector<double> > dataTest;
     std::vector<int> labelTest;
     util::readUCRData(testFile(), dataTest, labelTest);
