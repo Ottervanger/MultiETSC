@@ -99,12 +99,9 @@ void argparse(int argc, char* argv[]) {
     }
 }
 
-std::set<int> setRNN(int l, std::set<int>& s) { // find a set's RNN on prefix l
+std::set<int> setRNN(int l, const std::set<int>& s) { // find a set's RNN on prefix l
     std::set<int> index;
-
-    std::set<int>::iterator i;
-    for (i = s.begin(); i != s.end(); i++) {
-        int element = *i;
+    for (int element : s) {
         for (int j = 0; j < distIdx.size(); j++) {
             if (distIdx[j][l - 1] == element && s.count(j) == 0) {
                 index.insert(j);
@@ -114,23 +111,15 @@ std::set<int> setRNN(int l, std::set<int>& s) { // find a set's RNN on prefix l
     return index;
 }
 
-int nnConsistent(int l, std::set<int>& s) { // return 1, if it is NN consistent, return 0, if not
-    std::set<int>::iterator i;
-    int consistent = 1;
-    for (i = s.begin(); i != s.end(); i++) {
-        int element = *i;
-
-        int NNofelement = distIdx[element][l - 1]; // get the NN
-
-        if (s.count(NNofelement) == 0) {
-            consistent = 0;
-            break;
-        }
+int nnConsistent(int l, const std::set<int>& s) { // return 1, if it is NN consistent, return 0, if not
+    for (int element : s) {
+        if (s.count(distIdx[element][l - 1]) == 0)
+            return 0;
     }
-    return consistent;
+    return 1;
 }
 
-int getMPL(std::set<int>& s) {
+int getMPL(const std::set<int>& s) {
     int MPL = GLOBAL::DIM;
 
     std::set<int> ::iterator i;
@@ -143,7 +132,7 @@ int getMPL(std::set<int>& s) {
         else {labelIndex = label - 1;}
         // get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S.
         std::set<int> LastUsefulRNN;
-        for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
+        for (i = LastRNN.begin(); i != LastRNN.end(); ++i) {
             int element = *i;
             if ( fullLenCorrect[element] == 1) {
                 LastUsefulRNN.insert(element);
@@ -157,7 +146,7 @@ int getMPL(std::set<int>& s) {
                 for (int le = GLOBAL::DIM - 1; le >= 1; le--) {
                     PreviousRNN = setRNN(le, s);
                     std::set<int> PreviousUsefulRNN;
-                    for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
+                    for (i = PreviousRNN.begin(); i != PreviousRNN.end(); ++i) {
                         int element = *i;
                         if (fullLenCorrect[element] == 1) {
                             PreviousUsefulRNN.insert(element);
@@ -184,7 +173,7 @@ int getMPL(std::set<int>& s) {
         else {labelIndex = label - 1;}
         // get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S.
         std::set<int> LastUsefulRNN;
-        for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
+        for (i = LastRNN.begin(); i != LastRNN.end(); ++i) {
             int element = *i;
             if (fullLenCorrect[element] == 1) {
                 LastUsefulRNN.insert(element);
@@ -201,7 +190,7 @@ int getMPL(std::set<int>& s) {
                 } else {
                     PreviousRNN = setRNN(le, s);
                     std::set<int> PreviousUsefulRNN;
-                    for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
+                    for (i = PreviousRNN.begin(); i != PreviousRNN.end(); ++i) {
                         int element = *i;
                         if ( fullLenCorrect[element] == 1) {
                             PreviousUsefulRNN.insert(element);
@@ -223,7 +212,7 @@ int getMPL(std::set<int>& s) {
     return MPL;
 }
 
-int getMPLStrict(std::set<int>& s) {
+int getMPLStrict(const std::set<int>& s) {
     int MPL = GLOBAL::DIM;
     std::set<int> ::iterator i;
     if (s.size() == 1) { // simple RNN Method
@@ -235,7 +224,7 @@ int getMPLStrict(std::set<int>& s) {
         else {labelIndex = label - 1;}
         // get the intersect(RNN(S,L), T')=RNN(S,L) in the same class as S.
         std::set<int> LastUsefulRNN;
-        for (i = LastRNN.begin(); i != LastRNN.end(); i++) {
+        for (i = LastRNN.begin(); i != LastRNN.end(); ++i) {
             int element = *i;
             if ( fullLenCorrect[element] == 1) {
                 LastUsefulRNN.insert(element);
@@ -249,7 +238,7 @@ int getMPLStrict(std::set<int>& s) {
                 for (int le = GLOBAL::DIM - 1; le >= 1; le--) {
                     PreviousRNN = setRNN(le, s);
                     std::set<int> PreviousUsefulRNN;
-                    for (i = PreviousRNN.begin(); i != PreviousRNN.end(); i++) {
+                    for (i = PreviousRNN.begin(); i != PreviousRNN.end(); ++i) {
                         int element = *i;
                         if (fullLenCorrect[element] == 1) {
                             PreviousUsefulRNN.insert(element);
@@ -300,12 +289,12 @@ int getMPLStrict(std::set<int>& s) {
     return MPL;
 }
 
-int updateMPL(std::set<int> s) {
+int updateMPL(const std::set<int> &s) {
 
     int length = getMPL(s);
 
     std::set<int> ::iterator jj;
-    for (jj = s.begin(); jj != s.end(); jj++) {
+    for (jj = s.begin(); jj != s.end(); ++jj) {
         if (predictionPrefix[*jj] > length) {
             predictionPrefix[*jj] = length;
         }
@@ -313,39 +302,18 @@ int updateMPL(std::set<int> s) {
     return length;
 }
 
-int updateMPLStrict(std::set<int> s) {
+int updateMPLStrict(const std::set<int> &s) {
 
     int length = getMPLStrict(s);
 
     std::set<int> ::iterator jj;
-    for (jj = s.begin(); jj != s.end(); jj++) {
+    for (jj = s.begin(); jj != s.end(); ++jj) {
         if (predictionPrefix[*jj] > length) {
             predictionPrefix[*jj] = length;
         }
     }
     return length;
 }
-
-inline int findNN(const std::vector<double> &ts, int len,
-           const std::vector<std::vector<double> > &dataTrain) {
-
-    int iMin = -1;
-    double distMin = 100000;
-    for (int i = 0; i < dataTrain.size(); i++) {
-        double dist = 0;
-        for (int j = 0; j < len; j++) {
-            dist += (ts[j] - dataTrain[i][j]) * (ts[j] - dataTrain[i][j]);
-            if (dist > distMin)
-                break;
-        }
-        if (dist < distMin) {
-            distMin = dist;
-            iMin = i;
-        }
-    }
-    return iMin;
-}
-
 
 // used globals:
 // 
@@ -361,16 +329,25 @@ void classification(const std::vector<std::vector<double> > &dataTest,
 
     // for each instance
     for (int i = 0; i < dataTest.size(); i++) {
-        // for each observation
-        // start from the smallest mimimum prefix in the train data
+        // compute prefix distances to all training samples
+        std::vector<double> dists(dataTrain.size(), 0);
+        // based on increasing prefix len j
+        // first compute distances without checking for the trigger
+        for (int j = 0; j < startfrom-1; j++)
+            for (int k = 0; k < dataTrain.size(); k++)
+                dists[k] += (dataTest[i][j] - dataTrain[k][j]) * (dataTest[i][j] - dataTrain[k][j]);
+        // now start checking the trigger
         for (int j = startfrom; j <= dataTest[i].size(); j++) {
+            for (int k = 0; k < dataTrain.size(); k++)
+                dists[k] += (dataTest[i][j-1] - dataTrain[k][j-1]) * (dataTest[i][j-1] - dataTrain[k][j-1]);
+
             // find the nearest neigbour of i in j-prefix space
-            int tempNN = findNN(dataTest[i], j, dataTrain);
+            int nn = std::distance(dists.begin(), std::min_element(dists.begin(), dists.end()));
 
             // trigger mechanism
-            if (predictionPrefix[tempNN] <= j) {
+            if (predictionPrefix[nn] <= j) {
                 // label instance i
-                labelPred[i] = labelTrain[tempNN];
+                labelPred[i] = labelTrain[nn];
                 // record earliness
                 predLen[i] = j;
                 break;
@@ -383,7 +360,7 @@ inline double mean(std::vector<int> data) {
     return std::accumulate(data.begin(), data.end(), 0.0) / data.size();
 }
 
-void report(std::vector<int> labelTest, std::vector<int> labelPred, std::vector<int> predLen) {
+void report(const std::vector<int> &labelTest, const std::vector<int> &labelPred, const std::vector<int> &predLen) {
     int correct = 0;
     // compute the false positive  and true positve
     int FP = 0, TP = 0, TC = 0, FC = 0, n = labelPred.size();
@@ -432,15 +409,15 @@ void report(std::vector<int> labelTest, std::vector<int> labelPred, std::vector<
 
 // Computes the set distance: min distance between two items each
 // of a different set, based on the full len
-double SetDis( std::set<int> A, std::set<int> B ) {
+double SetDis(const std::set<int> &A, const std::set<int> &B ) {
 
     double minimal = 10000000;
 
     std::set<int> :: iterator iA;
     std::set<int> :: iterator iB;
 
-    for ( iA = A.begin(); iA != A.end(); iA++) {
-        for (iB = B.begin(); iB != B.end(); iB++) {
+    for ( iA = A.begin(); iA != A.end(); ++iA) {
+        for (iB = B.begin(); iB != B.end(); ++iB) {
             double temp = distMat[*iA][*iB];
             if (minimal > temp) {
                 minimal = temp;
@@ -803,7 +780,7 @@ int main (int argc, char* argv[]) {
                         // update the length
 
                         std::set<int> ::iterator jj;
-                        for (jj = tempSet.begin(); jj != tempSet.end(); jj++) {
+                        for (jj = tempSet.begin(); jj != tempSet.end(); ++jj) {
                             if (predictionPrefix[*jj] > tempLength) {
                                 predictionPrefix[*jj] = tempLength;
                             }
