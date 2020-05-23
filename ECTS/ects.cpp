@@ -17,9 +17,6 @@
 
 #include "util.h"
 
-// ALgorithm parameters
-const double MIN_SUPPORT = 0;
-
 enum Version { STRICT, LOOSE };
 
 namespace GLOBAL {
@@ -27,6 +24,9 @@ namespace GLOBAL {
     std::string DATA_PATH;
     std::string DATA_NAME;
     std::string OUT_FILE = "";
+    bool OUT_SHORT = false;
+    // ALgorithm parameters
+    double MIN_SUPPORT = 0;
     Version version = LOOSE;
 }
 
@@ -71,28 +71,27 @@ void computeClassSupport(const std::vector<int> &labels,
 }
 
 void argparse(int argc, char* argv[]) {
-    for (int i = 1; i < argc-1; i++) {
+    for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-') {
             switch (argv[i][(argv[i][1] == '-' ? 2 : 1)]) {
               case 'v': // version
-                if (argv[i+1][0] == 's') {
+                if (argv[++i][0] == 's')
                     GLOBAL::version = STRICT;
-                } else if (argv[i+1][0] == 'l') {
-                    GLOBAL::version = LOOSE;
-                }
-                i++;
                 break;
               case 'p': // path to UCR datasets
-                GLOBAL::DATA_PATH = argv[i+1];
-                i++;
+                GLOBAL::DATA_PATH = argv[++i];
                 break;
               case 'd': // name of the datset
-                GLOBAL::DATA_NAME = argv[i+1];
-                i++;
+                GLOBAL::DATA_NAME = argv[++i];
                 break;
               case 'o': // output file
-                GLOBAL::OUT_FILE = argv[i+1];
-                i++;
+                GLOBAL::OUT_FILE = argv[++i];
+                break;
+              case 's': // short output (for paramILS)
+                GLOBAL::OUT_SHORT = true;
+                break;
+              case 'm': // min support
+                GLOBAL::MIN_SUPPORT = std::stod(argv[++i]);
                 break;
             }
         }
@@ -406,6 +405,15 @@ void report(const std::vector<int> &labelTest, const std::vector<int> &labelPred
     }
 }
 
+void shortReport(const std::vector<int> &labelTest, const std::vector<int> &labelPred) {
+    int correct = 0, n = labelPred.size();;
+    for (int i = 0; i < n; i++) {
+        if (labelPred[i] == labelTest[i]) correct++;
+    }
+    std::cout << "Result: SUCCESS, " << classificationTime + trainingTime 
+              << ", [" << mean(predictionPrefix) << ", " << double(correct) / n << "]" << std::endl;
+}
+
 
 // Computes the set distance: min distance between two items each
 // of a different set, based on the full len
@@ -614,18 +622,16 @@ int main (int argc, char* argv[]) {
     bool ok;
     ok = util::readUCRData(trainFile(), dataTrain, labelTrain);
     if (!ok) exit(1);
-    computeClassSupport(labelTrain, classSupport, MIN_SUPPORT);
+    computeClassSupport(labelTrain, classSupport, GLOBAL::MIN_SUPPORT);
 
     if (exists(distMatFile()) && exists(distIdxFile())) {
         ok = util::readDMatrix(distMatFile(), distMat);
         ok &= util::readDMatrix(distIdxFile(), distIdx);
         if (!ok) exit(1);
     } else {
-        t = clock();
         computeDist(dataTrain, distIdx, distMat);
-        std::cout << "index time: " << (double)(clock() - t) / CLOCKS_PER_SEC << "s" << std::endl;
-        // util::saveMatrix(distIdxFile(), distIdx);
-        // util::saveMatrix(distMatFile(), distMat);
+        util::saveMatrix(distIdxFile(), distIdx);
+        util::saveMatrix(distMatFile(), distMat);
     }
     
     
@@ -863,5 +869,8 @@ int main (int argc, char* argv[]) {
     classification(dataTest, dataTrain, labelPred, predLen, labelTrain);
 
     classificationTime = ((double)(clock() - t))/CLOCKS_PER_SEC;
-    report(labelTest, labelPred, predLen);
+    if (GLOBAL::OUT_SHORT)
+        shortReport(labelTest, labelPred);
+    else
+        report(labelTest, labelPred, predLen);
 }// end main
