@@ -1,1 +1,0 @@
-double minValue (double  a[], int length);
