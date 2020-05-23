@@ -7,5 +7,7 @@ bin:
 	mkdir -p bin
 
 test: bin/ects
-	bin/ects --version loose  --path /data/UCR/ --dataset TwoPatterns
-	bin/ects --version strict --path /data/UCR/ --dataset TwoPatterns
+	bin/ects --version loose  --path /data/UCR/ --dataset ECG200
+	bin/ects --version strict --path /data/UCR/ --dataset ECG200
+	bin/ects --version loose  --path /data/UCR/ --dataset ECG200 --s
+	bin/ects --version strict --path /data/UCR/ --dataset ECG200 --s
