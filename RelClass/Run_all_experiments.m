@@ -1,5 +1,3 @@
-clear all;
-
 %%%% User Inputs %%%%%%%%
 dataset = 'MedicalImages';
 disp(['Loading ' dataset ' data']);
@@ -57,4 +55,4 @@ for counter = 1:length(tau_percent)
 end;
 
 save(['Results/' dataset '_Reliable_Early_Results_' constraint_type '_' pred_type], 'results');
-    
+

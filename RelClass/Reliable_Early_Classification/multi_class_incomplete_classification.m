@@ -58,7 +58,7 @@ LDG_necessary = 0;
 %% Generate Training and Test Datasets
 % create random number seed
 RANDS = RandStream.create('mrg32k3a','NumStreams',1,'Seed',1);
-OLD = RandStream.setDefaultStream( RANDS );
+OLD = RandStream.setGlobalStream( RANDS );
 
 % load test and training data
 [tr_d0,tr_l,ts_d0,ts_l] = loadDataset(dataset,RANDS);
