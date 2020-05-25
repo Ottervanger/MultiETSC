@@ -1,0 +1,55 @@
+#!/bin/bash
+# This script starts an instance of MATLAB with a loop listing to a fifo pipe
+# for matlab commands. This script is meant to prevent the overhead of repeatedly
+# starting and stopping instances of MATLAB.
+
+# Usage:
+# ./matlab-runner [expression]
+# to quit the runner:
+# ./matlab-runner exit
+
+IN_PIPE=".matlab-run"
+MATLAB_PATH="/vol/share/software/matlab/liacs/R2015b/bin/"
+OUT_FILE="matlab-out"
+
+# if instance is not running
+if [[ ! -e $IN_PIPE ]]; then
+    echo "Starting runner"
+    # input pipe
+    mkfifo "$IN_PIPE"
+    # location of matlab binary
+
+    # backup and clear output file
+    if [ -e $OUT_FILE ]; then
+        cat $OUT_FILE >> $OUT_FILE.old
+        > $OUT_FILE
+    fi
+
+    #MATLAB instructions to watch for commands sent to matlab-run
+    RUNNER="f=fopen('$OUT_FILE','a');fprintf(f,'\n');while 1;[v,o]=system('cat $IN_PIPE');if v;break;end;try;r=evalc(o);catch ME;r=ME.message;end;fprintf(f,'%s:\n>> %s\n   %s\n',datestr(now,'YYYY-mm-DD HH:MM:SS.FFF'),strtrim(o),r);end;fprintf(f,'exiting\n');exit;"
+
+    # starting MATLAB
+    $MATLAB_PATH"matlab" -nodisplay -nojvm -nosplash -r "$RUNNER" > /dev/null &
+    while [[ ! -s $OUT_FILE ]]; do :; done;
+    echo "Runner ready and waiting."
+fi
+
+# check if MATLAB is still running
+if ! pidof MATLAB > /dev/null; then
+    echo "MATLAB exited"
+    rm "$IN_PIPE"
+    exit
+fi
+
+# check for input commands
+if [[ $# -eq 1 ]]; then
+    echo $1 >> "$IN_PIPE"
+    if [[ $1 == exit ]]; then
+        echo "exiting";
+        rm "$IN_PIPE"
+    fi
+else
+    echo "Provide a (single) command to send to MATLAB"
+fi
+    
+
