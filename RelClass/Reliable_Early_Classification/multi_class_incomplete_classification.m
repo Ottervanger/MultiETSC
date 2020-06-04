@@ -1,11 +1,11 @@
-function [early_l, early_l_sct, early_t, final_l, all_l, ts_l, training_time, testing_time, BESTWORSTCONF, final_dims, LDG_necessary] = multi_class_incomplete_classification( dataset, BESTWORSTCONF, constraint_type, pred_type, dim_red, min_d )
+function [early_l, early_l_sct, early_t, final_l, all_l, ts_l, training_time, testing_time, BESTWORSTCONF, final_dims, LDG_necessary] = multi_class_incomplete_classification( data, BESTWORSTCONF, constraint_type, pred_type, dim_red, min_d )
 
 %This function performs an early classification experiment.  The inputs are
 %as follows:
 
 %___________INPUT_____________
-    %dataset - the dataset on which you would like to perform the experiment,
-        %example 'control'
+    %data - stuct containing test and train fields each containing labels and
+        % data fields: the dataset on which you would like to perform the experiment.
     %BESTWORSTCONF - This is the lower bound on the percentage of early labels 
         %that match the final labels - the $\tau$ parameter in the paper
     %constraint_type - 'Cheby','Naive','BoxCo' for the Chebyshev constraint
@@ -39,7 +39,8 @@ function [early_l, early_l_sct, early_t, final_l, all_l, ts_l, training_time, te
         %dimensionality reduction will improve the classifier error rate, 0
         %otherwise (this is not informative if LDG dimensionality reduction is not used)
     
-%Last edited by Nathan Parrish 7/30/2012
+%Edited by Nathan Parrish 7/30/2012
+%Edited by Gilles Ottervanger 2020-06-04
 
 if ~exist('BESTWORSTCONF')
     BESTWORSTCONF = 0.95;
@@ -61,7 +62,10 @@ RANDS = RandStream.create('mrg32k3a','NumStreams',1,'Seed',1);
 OLD = RandStream.setGlobalStream( RANDS );
 
 % load test and training data
-[tr_d0,tr_l,ts_d0,ts_l] = loadDataset(dataset,RANDS);
+tr_d0 = data.train.data;
+tr_l  = data.train.labels;
+ts_d0 = data.test.data;
+ts_l  = data.test.labels;
 [Ntest,~] = size(ts_d0);
 [Ntrain,~] = size(tr_d0);
 classes = unique(tr_l);
