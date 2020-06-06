@@ -1,12 +1,12 @@
-function [early_l, early_l_sct, early_t, final_l, all_l, ts_l, training_time, testing_time, BESTWORSTCONF, final_dims, LDG_necessary] = multi_class_incomplete_classification( dataset, BESTWORSTCONF, constraint_type, pred_type, dim_red, min_d )
+function [early_l, early_l_sct, early_t, final_l, all_l, ts_l, training_time, testing_time, tau, final_dims, LDG_necessary] = multi_class_incomplete_classification( data, tau, constraint_type, pred_type, dim_red, min_d )
 
 %This function performs an early classification experiment.  The inputs are
 %as follows:
 
 %___________INPUT_____________
-    %dataset - the dataset on which you would like to perform the experiment,
-        %example 'control'
-    %BESTWORSTCONF - This is the lower bound on the percentage of early labels 
+    %data - stuct containing test and train fields each containing labels and
+        % data fields: the dataset on which you would like to perform the experiment.
+    %tau - This is the lower bound on the percentage of early labels 
         %that match the final labels - the $\tau$ parameter in the paper
     %constraint_type - 'Cheby','Naive','BoxCo' for the Chebyshev constraint
         %set, Naive Bayes constraint set, or Naive Bayes box constraint set
@@ -32,17 +32,20 @@ function [early_l, early_l_sct, early_t, final_l, all_l, ts_l, training_time, te
     %training_time - time taken to train the classifier
     %testing_time - time taken to perform incomplete classification on the
         %entire test set
-    %BESTWORSTCONF - the BESTWORSTCONF used by the early classifier
+    %tau - the tau used by the early classifier
     %final_dims - number of final dimensions (useful when LDG dimensionality
         %reduction is used)
     %LDG_necessary - marked as 1 if the training process thinks that
         %dimensionality reduction will improve the classifier error rate, 0
         %otherwise (this is not informative if LDG dimensionality reduction is not used)
     
-%Last edited by Nathan Parrish 7/30/2012
+%Edited by Nathan Parrish 7/30/2012
+%Edited by Gilles Ottervanger 2020-06-04
 
-if ~exist('BESTWORSTCONF')
-    BESTWORSTCONF = 0.95;
+addpath(genpath('Utilities'));
+
+if ~exist('tau')
+    tau = 0.95;
 end;
 
 if ~exist('min_d')
@@ -55,13 +58,11 @@ if ~exist('localQDA_Mex')
 end;
 LDG_necessary = 0;
 
-%% Generate Training and Test Datasets
-% create random number seed
-RANDS = RandStream.create('mrg32k3a','NumStreams',1,'Seed',1);
-OLD = RandStream.setDefaultStream( RANDS );
-
 % load test and training data
-[tr_d0,tr_l,ts_d0,ts_l] = loadDataset(dataset,RANDS);
+tr_d0 = data.train.data;
+tr_l  = data.train.labels;
+ts_d0 = data.test.data;
+ts_l  = data.test.labels;
 [Ntest,~] = size(ts_d0);
 [Ntrain,~] = size(tr_d0);
 classes = unique(tr_l);
@@ -294,22 +295,22 @@ while and( d < dim, sum(locknow ~=1 > 0)) % present datapoints 1 timestep at a t
             if ~isempty(check_idcs_test_sigs)
                 if dim_red == 1
                     if strcmpi(pred_type,'corr')
-                        [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar, tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, BESTWORSTCONF, size(B_LDG,2), constraint_type, pred_type );
+                        [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar, tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, tau, size(B_LDG,2), constraint_type, pred_type );
                     else
                         if ~strcmpi(constraint_type,'Cheby')
-                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(check_idcs_test_sigs,:), tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, BESTWORSTCONF, size(B_LDG,2), constraint_type, pred_type );
+                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(check_idcs_test_sigs,:), tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, tau, size(B_LDG,2), constraint_type, pred_type );
                         else
-                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(:,:,check_idcs_test_sigs), tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, BESTWORSTCONF, size(B_LDG,2), constraint_type, pred_type );
+                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(:,:,check_idcs_test_sigs), tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, tau, size(B_LDG,2), constraint_type, pred_type );
                         end;
                     end;
                 else
                     if strcmpi(pred_type,'corr')
-                        [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(d+1:end,d+1:end), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, BESTWORSTCONF, dim-d, constraint_type, pred_type );
+                        [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(d+1:end,d+1:end), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, tau, dim-d, constraint_type, pred_type );
                     else
                         if ~strcmpi(constraint_type,'Cheby');
-                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(check_idcs_test_sigs,:), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, BESTWORSTCONF, dim-d, constraint_type, pred_type );
+                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(check_idcs_test_sigs,:), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, tau, dim-d, constraint_type, pred_type );
                         else
-                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(:,:,check_idcs_test_sigs), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, BESTWORSTCONF, dim-d, constraint_type, pred_type );
+                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(:,:,check_idcs_test_sigs), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, tau, dim-d, constraint_type, pred_type );
                         end;
                     end;
                 end;
@@ -359,22 +360,22 @@ while and( d < dim, sum(locknow ~=1 > 0)) % present datapoints 1 timestep at a t
             if ~isempty(check_idcs_test_sigs)
                 if dim_red == 1
                     if strcmpi(pred_type,'corr')
-                        [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar, tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, BESTWORSTCONF, size(B_LDG,2), constraint_type, pred_type );
+                        [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar, tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, tau, size(B_LDG,2), constraint_type, pred_type );
                     else
                         if ~strcmpi(constraint_type,'Cheby')
-                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(check_idcs_test_sigs,:), tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, BESTWORSTCONF, size(B_LDG,2), constraint_type, pred_type );
+                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(check_idcs_test_sigs,:), tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, tau, size(B_LDG,2), constraint_type, pred_type );
                         else
-                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(:,:,check_idcs_test_sigs), tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, BESTWORSTCONF, size(B_LDG,2), constraint_type, pred_type );
+                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(:,:,check_idcs_test_sigs), tr_d0(current_tr_idcs,:)*B_LDG, tr_l(current_tr_idcs), knn, tau, size(B_LDG,2), constraint_type, pred_type );
                         end;
                     end;
                 else
                     if strcmpi(pred_type,'corr')
-                        [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(d+1:end,d+1:end), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, BESTWORSTCONF, dim-d, constraint_type, pred_type );
+                        [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(d+1:end,d+1:end), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, tau, dim-d, constraint_type, pred_type );
                     else
                         if ~strcmpi(constraint_type,'Cheby');
-                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(check_idcs_test_sigs,:), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, BESTWORSTCONF, dim-d, constraint_type, pred_type );
+                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(check_idcs_test_sigs,:), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, tau, dim-d, constraint_type, pred_type );
                         else
-                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(:,:,check_idcs_test_sigs), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, BESTWORSTCONF, dim-d, constraint_type, pred_type );
+                            [f_min, f_max] = maxandmin_of_fx(prior([class_a, class_b]), thistest(check_idcs_test_sigs,:), thistestVar(:,:,check_idcs_test_sigs), tr_d0(current_tr_idcs,:), tr_l(current_tr_idcs), knn, tau, dim-d, constraint_type, pred_type );
                         end;
                     end;
                 end;
