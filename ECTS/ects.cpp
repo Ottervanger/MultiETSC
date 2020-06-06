@@ -21,8 +21,8 @@ enum Version { STRICT, LOOSE };
 
 namespace GLOBAL {
     int DIM = 0;
-    std::string DATA_PATH;
-    std::string DATA_NAME;
+    std::string TRAIN_FILE_NAME;
+    std::string TEST_FILE_NAME;
     std::string OUT_FILE = "";
     bool OUT_SHORT = false;
     // ALgorithm parameters
@@ -31,19 +31,19 @@ namespace GLOBAL {
 }
 
 inline std::string trainFile() {
-    return GLOBAL::DATA_PATH + GLOBAL::DATA_NAME + "/" + GLOBAL::DATA_NAME+"_TRAIN.tsv";
+    return GLOBAL::TRAIN_FILE_NAME;
 }
 
 inline std::string testFile() {
-    return GLOBAL::DATA_PATH+GLOBAL::DATA_NAME + "/" + GLOBAL::DATA_NAME + "_TEST.tsv";
+    return GLOBAL::TEST_FILE_NAME;
 }
 
 inline std::string distMatFile() {
-    return "/tmp/ECTS_" + GLOBAL::DATA_NAME + "_distMat";
+    return GLOBAL::TRAIN_FILE_NAME+".dist";
 }
 
 inline std::string distIdxFile() {
-    return "/tmp/ECTS_" + GLOBAL::DATA_NAME + "_distIdx";
+    return GLOBAL::TRAIN_FILE_NAME+".idx";
 }
 
 // global variable
@@ -78,11 +78,9 @@ void argparse(int argc, char* argv[]) {
                 if (argv[++i][0] == 's')
                     GLOBAL::version = STRICT;
                 break;
-              case 'p': // path to UCR datasets
-                GLOBAL::DATA_PATH = argv[++i];
-                break;
               case 'd': // name of the datset
-                GLOBAL::DATA_NAME = argv[++i];
+                GLOBAL::TRAIN_FILE_NAME = argv[++i];
+                GLOBAL::TEST_FILE_NAME = argv[++i];
                 break;
               case 'o': // output file
                 GLOBAL::OUT_FILE = argv[++i];
@@ -410,8 +408,9 @@ void shortReport(const std::vector<int> &labelTest, const std::vector<int> &labe
     for (int i = 0; i < n; i++) {
         if (labelPred[i] == labelTest[i]) correct++;
     }
-    std::cout << "Result: SUCCESS, " << classificationTime + trainingTime 
-              << ", [" << mean(predictionPrefix) << ", " << double(correct) / n << "]" << std::endl;
+    std::cout << "Result: SUCCESS, " << classificationTime + trainingTime << ", [" 
+              << std::setprecision(6) << std::fixed << mean(predictionPrefix)/GLOBAL::DIM
+              << ", "  << 1.0 - (double(correct) / n) << "], 0" << std::endl;
 }
 
 
