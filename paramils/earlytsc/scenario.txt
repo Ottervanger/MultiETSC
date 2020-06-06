@@ -1,0 +1,25 @@
+# algorithm path
+execdir = ./earlytsc
+# any output is put in the "output" folder
+outdir = output
+
+# algorithm command line
+algo = ./run -data 
+# parameters are detailed here
+paramfile = params.txt
+
+# instance files
+instance_file = /tmp/paramilsdata/UCR/ECG200/train_list.txt
+test_instance_file = test_list.txt
+# if the algorithm is not deterministic, seeding is used
+# 1=true ; 0=false
+deterministic = 1
+
+# quality | time
+run_obj = quality
+# use arithmetic mean
+overall_obj = mean
+# target algorithms maximum runtime
+cutoff_time = 1
+# configurator stops after 10 seconds
+tunerTimeout = 60
