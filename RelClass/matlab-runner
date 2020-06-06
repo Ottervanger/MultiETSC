@@ -9,35 +9,30 @@
 # ./matlab-runner exit
 
 IN_PIPE=".matlab-run"
+OUT_PIPE=".outpipe"
 MATLAB_PATH="/vol/share/software/matlab/liacs/R2015b/bin/"
-OUT_FILE="matlab-out"
 
 # if instance is not running
 if [[ ! -e $IN_PIPE ]]; then
-    echo "Starting runner"
     # input pipe
     mkfifo "$IN_PIPE"
+    mkfifo "$OUT_PIPE"
     # location of matlab binary
 
-    # backup and clear output file
-    if [ -e $OUT_FILE ]; then
-        cat $OUT_FILE >> $OUT_FILE.old
-        > $OUT_FILE
-    fi
-
     #MATLAB instructions to watch for commands sent to matlab-run
-    RUNNER="f=fopen('$OUT_FILE','a');fprintf(f,'\n');while 1;[v,o]=system('cat $IN_PIPE');if v;break;end;try;r=evalc(o);catch ME;r=ME.message;end;fprintf(f,'%s:\n>> %s\n   %s\n',datestr(now,'YYYY-mm-DD HH:MM:SS.FFF'),strtrim(o),r);end;fprintf(f,'exiting\n');exit;"
+    RUNNER="while 1;clear;rng('default');[v,o]=system('cat $IN_PIPE');if v;break;end;try;r=evalc(o);catch ME;r=ME.message;end;f=fopen('$OUT_PIPE','a');fprintf(f,'%s\n', strtrim(r));fclose(f);end;exit;"
 
     # starting MATLAB
     $MATLAB_PATH"matlab" -nodisplay -nojvm -nosplash -r "$RUNNER" > /dev/null &
-    while [[ ! -s $OUT_FILE ]]; do :; done;
-    echo "Runner ready and waiting."
+    echo "disp('Runner ready and waiting');" >> $IN_PIPE
+    cat $OUT_PIPE > /dev/null
 fi
 
 # check if MATLAB is still running
 if ! pidof MATLAB > /dev/null; then
     echo "MATLAB exited"
     rm "$IN_PIPE"
+    rm "$OUT_PIPE"
     exit
 fi
 
@@ -47,6 +42,9 @@ if [[ $# -eq 1 ]]; then
     if [[ $1 == exit ]]; then
         echo "exiting";
         rm "$IN_PIPE"
+        rm "$OUT_PIPE"
+    else
+        cat $OUT_PIPE
     fi
 else
     echo "Provide a (single) command to send to MATLAB"
