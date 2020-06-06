@@ -1,0 +1,70 @@
+#!/bin/bash
+# Author: Gilles Ottervanger 2020-06-06
+# This is the run script for the RelClass algorithm implemented in MATLAB
+# This script relies on two other intermedate scripts before calling the
+# original authors MATLAB funcions.
+
+# The first is the 'matlab-runner' script which is responsible for managing
+# a background MATLAB instance preventing MATLAB startup overhead for repeated
+# calls. The second is the run.m MATLAB function which loads data, calls the
+# main function and computes the desired metrics.
+
+# This script returns output that is compatible with the paramILS configurator
+
+usage() { 
+    cat <<'EOF'
+Usage: $0 --data <train> <test> \
+          --tau <0-1> \
+          --constr [ 'boxco' | 'Naive' | 'Cheby' ] \
+          --pred [ 'Corr' | 'Cond' ] \
+          --ldg [ 0 | 1]
+EOF
+    exit 1;
+}
+
+# defaults
+TAU="0.9"
+CONSTR='boxco'
+PRED='Corr'
+LDG="0"
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -d|--data)
+            [ "$2" ] && [ "$3" ] || usage
+            TRAIN="$2"
+            TEST="$3"
+            shift; shift; shift
+            ;;
+        -t|--tau)
+            [ "$2" ] || usage
+            TAU="$2"
+            shift; shift
+            ;;
+        -c|--constr)
+            [ "$2" ] || usage
+            CONSTR="$2"
+            shift; shift
+            ;;
+        -p|--pred)
+            [ "$2" ] || usage
+            PRED="$2"
+            shift; shift
+            ;;
+        -l|--ldg)
+            [ "$2" ] || usage
+            LDG="$2"
+            shift; shift
+            ;;
+        *)
+            # ignore positionals
+            shift
+            ;;
+    esac
+done
+# TRAIN and TEST are required
+[[ $TRAIN ]] && [[ $TEST ]] || usage
+CMD="run('$TRAIN', '$TEST', $TAU, '$CONSTR', '$PRED', $LDG);"
+
+./matlab-runner "$CMD"
+
