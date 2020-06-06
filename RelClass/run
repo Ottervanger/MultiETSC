@@ -66,5 +66,5 @@ done
 [[ $TRAIN ]] && [[ $TEST ]] || usage
 CMD="run('$TRAIN', '$TEST', $TAU, '$CONSTR', '$PRED', $LDG);"
 
-./matlab-runner "$CMD"
+"${0%/*}"/matlab-runner "$CMD"
 
