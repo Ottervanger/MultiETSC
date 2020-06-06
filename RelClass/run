@@ -13,11 +13,11 @@
 
 usage() { 
     cat <<'EOF'
-Usage: $0 --data <train> <test> \
-          --tau <0-1> \
-          --constr [ 'boxco' | 'Naive' | 'Cheby' ] \
-          --pred [ 'Corr' | 'Cond' ] \
-          --ldg [ 0 | 1]
+Usage: $0 -data <train> <test> \
+          -tau <0-1> \
+          -constr [ 'boxco' | 'Naive' | 'Cheby' ] \
+          -pred [ 'Corr' | 'Cond' ] \
+          -ldg [ 0 | 1]
 EOF
     exit 1;
 }
@@ -30,28 +30,28 @@ LDG="0"
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        -d|--data)
+        -d|-data)
             [ "$2" ] && [ "$3" ] || usage
             TRAIN="$2"
             TEST="$3"
             shift; shift; shift
             ;;
-        -t|--tau)
+        -t|-tau)
             [ "$2" ] || usage
             TAU="$2"
             shift; shift
             ;;
-        -c|--constr)
+        -c|-constr)
             [ "$2" ] || usage
             CONSTR="$2"
             shift; shift
             ;;
-        -p|--pred)
+        -p|-pred)
             [ "$2" ] || usage
             PRED="$2"
             shift; shift
             ;;
-        -l|--ldg)
+        -l|-ldg)
             [ "$2" ] || usage
             LDG="$2"
             shift; shift
