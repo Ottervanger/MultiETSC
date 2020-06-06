@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sys
 import os
 import numpy as np
@@ -51,17 +52,18 @@ if __name__ == '__main__':
         outputpath += '/'
     try:
         os.makedirs(outputpath)
-    except FileExistsError:
+    except:
         pass
     np.random.seed(0)
-    np.random.shuffle(data)
+    idx = list(range(len(data)))
+    np.random.shuffle(idx)
     if not folds:
         folds = 1
     if not holdout:
         holdout = 1/folds
     splits = []
     for i in range(folds):
-        validIdx = np.array([j%folds == i for j in range(len(data))], dtype=bool)
+        validIdx = np.array([j%folds == i for j in idx], dtype=bool)
         valid, train = data[validIdx], data[~validIdx]
         validFileName = 'VALID-{:03d}.tsv'.format(i)
         trainFileName = 'TRAIN-{:03d}.tsv'.format(i)
