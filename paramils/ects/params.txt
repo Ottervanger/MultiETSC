@@ -1,3 +1,0 @@
-# ects parameters
-m {0.0,0.01..1.0}[0.0]
-v {strict,loose}[strict]
