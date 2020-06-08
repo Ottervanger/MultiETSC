@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import sys
 import os
+import shutil
 import numpy as np
 
 def usage():
@@ -24,6 +25,9 @@ def argparse():
         if arg[:9] == '--holdout':
             folds = float(arg[10:])
             continue
+        if arg[:6] == '--seed':
+            np.random.seed(int(arg[7:]))
+            continue
         if not datafile:
             datafile = arg
             continue
@@ -40,6 +44,7 @@ def argparse():
     return folds, holdout, datafile, outputpath
         
 if __name__ == '__main__':
+    np.random.seed(0)
     folds, holdout, datafile, outputpath = argparse()
 
     with open(datafile, 'r') as f:
@@ -50,11 +55,9 @@ if __name__ == '__main__':
         outputpath = '/tmp/paramilsdata/UCR/{}/'.format(dataname)
     if (outputpath[-1] != '/'):
         outputpath += '/'
-    try:
-        os.makedirs(outputpath)
-    except:
-        pass
-    np.random.seed(0)
+    
+    shutil.rmtree(outputpath)
+    os.makedirs(outputpath)
     idx = list(range(len(data)))
     np.random.shuffle(idx)
     if not folds:
@@ -79,4 +82,4 @@ if __name__ == '__main__':
         for line in splits:
             f.write(line)
 
-    print('instance_file = {}train_list.txt'.format(outputpath))
+    print('{}train_list.txt'.format(outputpath))

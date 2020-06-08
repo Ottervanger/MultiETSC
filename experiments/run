@@ -1,0 +1,35 @@
+#!/bin/bash
+set -e
+# change dir to script location
+cd "${0%/*}"
+
+# config
+SEED=0
+VALIDATION="--folds=5"
+UCR="/vol/share/groups/liacs/scratch/UCR/"
+DATASET="ECG200"
+ABS_PATH_TRAIN=$UCR$DATASET"/"$DATASET"_TRAIN.tsv"
+ABS_PATH_TEST=$UCR$DATASET"/"$DATASET"_TEST.tsv"
+
+# produce train-validate split from training data
+INSTANCE=$(python ../util/validationsplitter.py "$VALIDATION" --seed=$SEED "$ABS_PATH_TRAIN")
+echo "$ABS_PATH_TRAIN" "$ABS_PATH_TEST" > "conf/test.txt"
+
+# Start the configurator
+../paramils/paramils --MO TRUE \
+                     --scenario-file conf/scenario.txt \
+                     --seed $SEED \
+                     --execdir conf \
+                     --outdir output \
+                     --rungroup results \
+                     --instance_file "$INSTANCE" \
+                     --test_instance_file "conf/test.txt"
+
+# get output file
+OUTFILE="output/results/detailed-traj-run-$SEED.csv"
+# extract the Pareto front
+grep -E "\[[0-9e. ]*,[0-9e. ]*\]" "$OUTFILE" |\
+         cut -d"\"" -f4 |\
+         perl -pe "s/[\[\] ]//g" |\
+         diff -q assert.out -
+
