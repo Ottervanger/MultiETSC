@@ -1,2 +1,3 @@
 # ignore data archive
 paramils/output
+*.swp
