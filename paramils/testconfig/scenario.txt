@@ -1,0 +1,26 @@
+# algorithm path
+execdir = testconfig
+# any output is put in the "output" folder
+#outdir = output
+
+# algorithm command line
+algo = python algo.py
+# parameters are detailed here
+paramfile = params.txt
+
+# instance files
+instance_file = train.txt
+test_instance_file = test.txt
+# if the algorithm is not deterministic, seeding is used
+# 1=true ; 0=false
+deterministic = 1
+
+# quality | time
+run_obj = quality
+# use arithmetic mean
+overall_obj = mean
+# target algorithms maximum runtime
+cutoff_time = 1
+# configurator stops after 10 seconds
+#tunerTimeout = 5
+runcount-limit = 50
