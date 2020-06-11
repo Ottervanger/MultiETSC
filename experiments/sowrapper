@@ -23,7 +23,7 @@ function hmean {
 }
 
 ARGS=${ARGS[*]}
-CMD="../../${ALGO//[\'\"]/} ${ARGS//[\'\"]/}"
+CMD="../${ALGO//[\'\"]/} -data ${ARGS//[\'\"]/}"
 
 hmean "$($CMD)"
 
