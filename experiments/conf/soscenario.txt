@@ -1,0 +1,17 @@
+# algorithm command line
+algo = ./sorunner -data 
+# parameters are detailed here
+paramfile = params.txt
+
+# if the algorithm is not deterministic, seeding is used
+# 1=true ; 0=false
+deterministic = 1
+
+# quality | time
+run_obj = quality
+# use arithmetic mean
+overall_obj = mean
+# target algorithms maximum runtime
+# cutoff_time = 1
+# configurator stops after x seconds
+tunerTimeout = 1200
