@@ -14,6 +14,6 @@ case "$1" in
 esac
 done
 ARGS=${ARGS[*]}
-CMD="../../${ALGO//[\'\"]/} ${ARGS//[\'\"]/}"
+CMD="../${ALGO//[\'\"]/} -data ${ARGS//[\'\"]/}"
 $CMD
 
