@@ -10,10 +10,11 @@ UCR="/vol/share/groups/liacs/scratch/UCR/"
 # default arguments
 SEED=1
 DATASET="ECG200"
-TIMEOUT="30"
+TIMEOUT="3600"
 METHOD="mo"
 MO="TRUE"
 
+# standard and computed files and directories
 OUTDIR="output"
 RUNGROUP="results"
 EXECDIR="." # directory containing the algorithm wrapper
@@ -77,6 +78,7 @@ INSTANCE=$(python ../util/validationsplitter.py "$VALIDATION" --seed=$SEED "$ABS
 # note that we use mo validation regardless of the optimization method
 configs=$(realpath "output/results/configs${SEED}.txt")
 validation_out=$(realpath "output/results/validation-${SEED}.csv")
+>"$validation_out"
 while read conf; do
     echo $(./mowrapper "$ABS_PATH_TRAIN" "$ABS_PATH_TEST" $conf)", $conf" | tee -a "$validation_out"
 done<"${configs}"
