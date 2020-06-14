@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+ARGS=($@)
+for i in ${!ARGS[@]}; do
+    if [ -e "${ARGS[i]}" ]; then
+        ARGS[$i]=$(realpath -e "${ARGS[$i]}")
+    fi  
+done
+set -- "${ARGS[@]}"
+cd "${0%/*}"
 ParamILS_MEMORY_INPUT=$ParamILS_MEMORY
 ParamILSMEM=1024
 test "$ParamILS_MEMORY_INPUT" -ge 1 2>&- && ParamILSMEM=$ParamILS_MEMORY_INPUT

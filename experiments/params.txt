@@ -1,0 +1,16 @@
+# algorithms
+algorithm {ECTS/bin/ects -s, RelClass/run}[ECTS/bin/ects -s]
+
+# ects parameters
+min_support {0.0,0.01..1.0}[0.0]
+version {strict,loose}[strict]
+min_support | algorithm in {ECTS/bin/ects -s}
+version | algorithm in {ECTS/bin/ects -s}
+
+# RelClass parameters
+tau {1e-30,1e-25,1e-15,1e-10,1e-6,1e-4,.001,0.05,.15,.25,.5,.8,.9,95}[1e-4]
+constr {boxco,Naive,Cheby}[boxco]
+ldg {0,1}[0]
+tau | algorithm in {RelClass/run}
+constr | algorithm in {RelClass/run}
+ldg | algorithm in {RelClass/run}

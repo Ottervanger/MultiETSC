@@ -8,9 +8,10 @@
 # to quit the runner:
 # ./matlab-runner exit
 
-IN_PIPE=".matlab-run"
+IN_PIPE=".inpipe"
 OUT_PIPE=".outpipe"
 MATLAB_PATH="/vol/share/software/matlab/liacs/R2015b/bin/"
+cd "${0%/*}"
 
 # if instance is not running
 if [[ ! -e $IN_PIPE ]]; then
@@ -19,8 +20,8 @@ if [[ ! -e $IN_PIPE ]]; then
     mkfifo "$OUT_PIPE"
     # location of matlab binary
 
-    #MATLAB instructions to watch for commands sent to matlab-run
-    RUNNER="while 1;clear;rng('default');[v,o]=system('cat $IN_PIPE');if v;break;end;try;r=evalc(o);catch ME;r=ME.message;end;f=fopen('$OUT_PIPE','a');fprintf(f,'%s\n', strtrim(r));fclose(f);end;exit;"
+    #MATLAB instructions to watch for commands sent to the IN_PIPE
+    RUNNER="warning('off','all');while 1;clear;rng('default');[v,o]=system('cat $IN_PIPE');if v;break;end;try;r=evalc(o);catch ME;r=ME.message;end;f=fopen('$OUT_PIPE','a');fprintf(f,'%s\n', strtrim(r));fclose(f);end;exit;"
 
     # starting MATLAB
     $MATLAB_PATH"matlab" -nodisplay -nojvm -nosplash -r "$RUNNER" > /dev/null &

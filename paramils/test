@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+cd "${0%/*}"
+SEED=0
+./paramils --MO TRUE --scenario-file testconfig/scenario.txt --seed $SEED --outdir output
+
+# get output file
+OUTFILE="output/testconfig/detailed-traj-run-$SEED.csv"
+# extract the Pareto front and check output
+grep -E "\[[0-9e. ]*,[0-9e. ]*\]" "$OUTFILE" | cut -d"\"" -f4 | perl -pe "s/[\[\] ]//g" | diff -q testconfig/assert.out -
