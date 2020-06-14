@@ -2,9 +2,9 @@ stages:
   - test
 
 test ECTS:
-  stage: test
+    stage: test
     rules:
-      - chages:
+      - changes:
         - ECTS
   script:
     - pushd ECTS
@@ -14,7 +14,7 @@ test ECTS:
 test paramils:
     stage: test
     rules:
-      - chages:
+      - changes:
         - paramils
     script:
       - paramils/test
