@@ -1,4 +1,4 @@
-algo = python3 -c "import numpy as np; print('Result: SUCCESS, {:.3f}, [{:.3f}, {:.3f}], 0'.format(*np.random.rand(3)))"
+algo = python3 -c "import numpy as np; print('Result of this algorithm run: SUCCESS, 0.01, 0.01, {:.3f}, 0'.format(np.random.rand()))"
 paramfile = param.pcs
 execdir = .
 deterministic = 0
