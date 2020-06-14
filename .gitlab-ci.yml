@@ -2,20 +2,19 @@ stages:
   - test
 
 test ECTS:
-    stage: test
-    rules:
-      - changes:
-        - ECTS
+  stage: test
+  rules:
+    - changes:
+      - ECTS
   script:
     - pushd ECTS
     - make test
     - pwd
 
 test paramils:
-    stage: test
-    rules:
-      - changes:
-        - paramils
-    script:
-      - paramils/test
-
+  stage: test
+  rules:
+    - changes:
+      - paramils
+  script:
+    - paramils/test
