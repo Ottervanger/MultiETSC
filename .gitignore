@@ -1,2 +1,4 @@
 # ignore data archive
 paramils/output
+*.swp
+experiments/output/

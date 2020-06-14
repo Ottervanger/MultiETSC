@@ -1,0 +1,19 @@
+#!/bin/bash
+
+ARGS=()
+while [[ $# -gt 0 ]]; do
+case "$1" in
+    -algorithm)
+        ALGO="$2"
+        shift; shift
+        ;;
+    *)
+        ARGS+=("$1")
+        shift
+        ;;
+esac
+done
+ARGS=${ARGS[*]}
+CMD="../${ALGO//[\'\"]/} -data ${ARGS//[\'\"]/}"
+$CMD
+
