@@ -6,6 +6,8 @@ test ECTS:
   rules:
     - changes:
       - ECTS
+      when: on_success
+    - when: manual
   script:
     - pushd ECTS
     - make test
@@ -16,5 +18,7 @@ test paramils:
   rules:
     - changes:
       - paramils
+      when: on_success
+    - when: manual
   script:
     - paramils/test
