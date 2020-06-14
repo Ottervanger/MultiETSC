@@ -1,0 +1,8 @@
+algo = python3 -c "import numpy as np; print('Result: SUCCESS, {:.3f}, [{:.3f}, {:.3f}], 0'.format(*np.random.rand(3)))"
+paramfile = param.pcs
+execdir = .
+deterministic = 0
+run_obj = runtime
+overall_obj = PAR10
+cutoff_time = 5
+wallclock-limit = 60
