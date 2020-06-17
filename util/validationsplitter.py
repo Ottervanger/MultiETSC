@@ -56,7 +56,8 @@ if __name__ == '__main__':
     if (outputpath[-1] != '/'):
         outputpath += '/'
     
-    shutil.rmtree(outputpath)
+    if os.path.isdir(outputpath):
+        shutil.rmtree(outputpath)
     os.makedirs(outputpath)
     idx = list(range(len(data)))
     np.random.shuffle(idx)
