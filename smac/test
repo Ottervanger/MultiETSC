@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-rm -r "output/run_0"
+rm -rf "output/run_0"
 python smac --scenario scenario.txt \
             --output-dir output \
             --algo "./alg.py" \
