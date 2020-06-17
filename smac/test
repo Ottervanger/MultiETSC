@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+rm -rf "output/run_0"
+python smac --scenario scenario.txt \
+            --output-dir output \
+            --algo "./alg.py" \
+            --paramfile param.pcs \
+            --seed 0 \
+            --deterministic 1 \
+            --run_obj "quality" \
+            --wallclock-limit 10

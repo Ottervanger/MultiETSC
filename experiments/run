@@ -12,12 +12,9 @@ SEED=1
 DATASET="ECG200"
 TIMEOUT="3600"
 METHOD="mo"
-MO="TRUE"
+CONFIGURATOR="../paramils/paramils"
 
-# standard and computed files and directories
-OUTDIR="output"
-RUNGROUP="results"
-EXECDIR="." # directory containing the algorithm wrapper
+# computed file locations
 ABS_PATH_TRAIN=$UCR$DATASET"/"$DATASET"_TRAIN.tsv"
 ABS_PATH_TEST=$UCR$DATASET"/"$DATASET"_TEST.tsv"
 
@@ -47,7 +44,7 @@ case "$1" in
         ;;
     --SO)
         METHOD="so"
-        MO="FALSE"
+        CONFIGURATOR="python ../smac/smac"
         shift
         ;;
     *)
@@ -60,26 +57,23 @@ done
 INSTANCE=$(python ../util/validationsplitter.py "$VALIDATION" --seed=$SEED "$ABS_PATH_TRAIN")
 
 # Start the configurator
-../paramils/paramils --MO "${MO}" \
-                     --algo "./${METHOD}wrapper" \
-                     --paramfile "params.txt" \
-                     --deterministic 1 \
-                     --run_obj "quality" \
-                     --overall_obj "mean" \
-                     --tuner-timeout "$TIMEOUT" \
-                     --seed "$SEED" \
-                     --execdir "$EXECDIR" \
-                     --outdir "$OUTDIR" \
-                     --rungroup "$RUNGROUP" \
-                     --instance_file "$INSTANCE" \
-                     --validation "false"
+${CONFIGURATOR} --scenario "${METHOD}scenario.txt" \
+                --seed "$SEED" \
+                --instance_file "$INSTANCE" \
+                --tuner-timeout "$TIMEOUT" \
 
-# Config validation
 # note that we use mo validation regardless of the optimization method
-configs=$(realpath "output/results/configs${SEED}.txt")
-validation_out=$(realpath "output/results/validation-${SEED}.csv")
+configs=$(realpath "output/${METHOD}/configs${SEED}.txt")
+validation_out=$(realpath "output/${METHOD}/validation-${SEED}.csv")
+
+if [[ $METHOD == "so" ]]; then
+    rm -rf output/*.OLD
+    ../smac/configs.py "output/run_${SEED}/traj.json" > "${configs}"
+fi
+
+echo "Starting off-line validation"
 >"$validation_out"
 while read conf; do
-    echo $(./mowrapper "$ABS_PATH_TRAIN" "$ABS_PATH_TEST" $conf)", $conf" | tee -a "$validation_out"
+    echo $(./wrapper --MO "true" "$ABS_PATH_TRAIN" "$ABS_PATH_TEST" $conf)", $conf" | tee -a "$validation_out"
 done<"${configs}"
 
