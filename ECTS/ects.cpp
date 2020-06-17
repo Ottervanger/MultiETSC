@@ -24,7 +24,7 @@ namespace GLOBAL {
     std::string TRAIN_FILE_NAME;
     std::string TEST_FILE_NAME;
     std::string OUT_FILE = "";
-    bool OUT_SHORT = false;
+    bool OUT_SHORT = true;
     // ALgorithm parameters
     double MIN_SUPPORT = 0;
     Version version = LOOSE;
@@ -86,7 +86,7 @@ void argparse(int argc, char* argv[]) {
                 GLOBAL::OUT_FILE = argv[++i];
                 break;
               case 's': // short output (for paramILS)
-                GLOBAL::OUT_SHORT = true;
+                GLOBAL::OUT_SHORT = false;
                 break;
               case 'm': // min support
                 GLOBAL::MIN_SUPPORT = std::stod(argv[++i]);
