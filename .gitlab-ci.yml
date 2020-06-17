@@ -5,7 +5,8 @@ test ECTS:
   stage: test
   rules:
     - changes:
-      - ECTS
+      - ECTS/*
+      - ECTS/**/*
       when: on_success
     - when: manual
   script:
@@ -17,8 +18,20 @@ test paramils:
   stage: test
   rules:
     - changes:
-      - paramils
+      - paramils/*
+      - paramils/**/*
       when: on_success
     - when: manual
   script:
     - paramils/test
+
+test smac:
+  stage: test
+  rules:
+    - changes:
+      - smac/*
+      - smac/**/*
+      when: on_success
+    - when: manual
+  script:
+    - cd smac; ./test
