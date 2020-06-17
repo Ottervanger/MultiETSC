@@ -1,0 +1,8 @@
+algo = ./wrapper --MO false
+paramfile = smacparams.txt
+deterministic = 0
+run_obj = quality
+overall_obj = mean
+execdir = ../experiments/
+outdir = ../experiments/output
+rungroup = so

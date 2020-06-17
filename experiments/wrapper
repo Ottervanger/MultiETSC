@@ -1,0 +1,37 @@
+#!/bin/bash
+
+ARGS=()
+MO='true'
+while [[ $# -gt 0 ]]; do
+case "$1" in
+    -algorithm)
+        ALGO="$2"
+        shift; shift
+        ;;
+    --MO)
+        MO="$2"
+        shift; shift
+        ;;
+    *)
+        ARGS+=("$1")
+        shift
+        ;;
+esac
+done
+
+function hmean {
+    [[ $1 =~ \[(.*),[[:space:]](.*)\] ]]
+    hm=$(python -c "print((lambda x,y: 1-(2/((1-x)**-1 + (1-y)**-1)))(${BASH_REMATCH[1]}, ${BASH_REMATCH[2]}))")
+    [[ $1 =~ (.*)\[.*\](.*) ]]
+    res="${BASH_REMATCH[1]}0, ${hm}${BASH_REMATCH[2]}"
+    echo "${res/Result/Result of this algorithm run}"
+}
+
+ARGS=${ARGS[*]}
+CMD="../${ALGO//[\'\"]/} -data ${ARGS//[\'\"]/}"
+
+if [[ $MO == 'true' ]]; then
+    $CMD
+else
+    hmean "$($CMD)"
+fi

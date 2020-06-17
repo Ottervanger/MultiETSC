@@ -7,8 +7,6 @@ if len(sys.argv) < 2:
     exit(1)
 
 with open(sys.argv[1]) as f:
-    for line in f.readlines():
-        for k, v in json.loads(line)['incumbent'].items():
-            print('-{} {} '.format(k, v), end='')
-        print()
-    
+    for l in f.readlines():
+        print(' '.join(['-{} {}'.format(*p) for p in json.loads(l)['incumbent'].items()]))
+
