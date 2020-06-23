@@ -1,0 +1,7 @@
+"CPU Time Used","Estimated Training Performance","Wallclock Time","Incumbent ID","Automatic Configurator (CPU) Time","Full Configuration"
+"0.0"," 1.7976931348623157E308","0.0","1","0.0", " algorithm='ECTS/bin/ects', constr='boxco', ldg='0', min_support='0.0', tau='1e-4', version='strict'"
+"0.1"," [0.770443, 0.3]","0.114","1","0.06077933999999996", " algorithm='ECTS/bin/ects', constr='boxco', ldg='0', min_support='0.0', tau='1e-4', version='strict'"
+"0.2"," [0.942969, 0.2]","0.173","2","0.06949423900000001", " algorithm='ECTS/bin/ects', constr='Naive', ldg='1', min_support='0.21', tau='0.05', version='strict'"
+"1.1156320000000002"," [0.8013675, 0.15000000000000002]","1.476","4","0.128737716", " algorithm='ECTS/bin/ects', constr='Cheby', ldg='1', min_support='0.27', tau='.5', version='loose'"
+"1.1156320000000002"," [Infinity, Infinity]","1.479","2","0.13150802099999997", " algorithm='ECTS/bin/ects', constr='Naive', ldg='1', min_support='0.21', tau='0.05', version='strict'"
+"9.852217999999999"," [0.67578125, 0.17500000000000002]","10.875","6","0.23344667200000002", " algorithm='RelClass/run', constr='Cheby', ldg='1', min_support='0.49', tau='.9', version='strict'"

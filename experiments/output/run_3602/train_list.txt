@@ -1,0 +1,5 @@
+/tmp/paramilsdata/UCR/ECG200/TRAIN-000.tsv /tmp/paramilsdata/UCR/ECG200/VALID-000.tsv
+/tmp/paramilsdata/UCR/ECG200/TRAIN-001.tsv /tmp/paramilsdata/UCR/ECG200/VALID-001.tsv
+/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv /tmp/paramilsdata/UCR/ECG200/VALID-002.tsv
+/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv /tmp/paramilsdata/UCR/ECG200/VALID-003.tsv
+/tmp/paramilsdata/UCR/ECG200/TRAIN-004.tsv /tmp/paramilsdata/UCR/ECG200/VALID-004.tsv

@@ -1,0 +1,3 @@
+{"cpu_time": 0.0, "wallclock_time": 0.00024771690368652344, "evaluations": 0, "cost": 2147483648, "incumbent": {"algorithm": "ECTS/bin/ects", "min_support": 0.0, "version": "strict"}, "budget": 0, "origin": "Default"}
+{"cpu_time": 0.002375, "wallclock_time": 0.04796147346496582, "evaluations": 1, "cost": 0.713542, "incumbent": {"algorithm": "ECTS/bin/ects", "min_support": 0.0, "version": "strict"}, "budget": 0, "origin": "Default"}
+{"cpu_time": 0.439993, "wallclock_time": 1.799626111984253, "evaluations": 13, "cost": 0.01145836, "incumbent": {"algorithm": "RelClass/run", "constr": "boxco", "ldg": "1", "tau": 3.136407966477836e-24}, "budget": 0, "origin": "Random Search (sorted)"}

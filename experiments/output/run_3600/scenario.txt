@@ -1,0 +1,14 @@
+ta = ./wrapper --MO false
+execdir = ../experiments/
+deterministic = False
+run_obj = quality
+overall_obj = mean
+par_factor = 1
+cost_for_crash = 2147483647.0
+algo_runs_timelimit = 3600.0
+wallclock_limit = inf
+always_race_default = False
+ta_run_limit = inf
+train_inst_fn = ../experiments/output/run_3600/train_list.txt
+initial_incumbent = DEFAULT
+pcs_fn = ../experiments/output/run_3600/smacparams.txt
