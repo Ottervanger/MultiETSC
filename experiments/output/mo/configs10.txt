@@ -1,0 +1,2 @@
+-algorithm 'RelClass/run' -constr 'Naive' -ldg '0' -tau '6.1e-05'
+-algorithm 'ECTS/bin/ects' -min_support '0.4' -version 'loose'

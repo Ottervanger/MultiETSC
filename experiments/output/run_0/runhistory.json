@@ -1,0 +1,1028 @@
+{
+  "data": [
+    [
+      [
+        1,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-000.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.714844,
+        0.008291,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        1,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-004.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.703646,
+        0.001879,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        2,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-004.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.907422,
+        0.001486,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        1,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.602865,
+        0.002388,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        3,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-000.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.657422,
+        0.004407,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        3,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-004.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.651823,
+        0.004107,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        3,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.594401,
+        0.011842,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        3,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-001.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.557292,
+        0.005346,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        4,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.6625,
+        1.57152,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        3,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.626432,
+        0.002294,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        5,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.302083,
+        1.4712,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        5,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.294271,
+        1.42468,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        5,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-000.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.327083,
+        1.50933,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        5,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-004.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.323958,
+        1.43154,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        5,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-001.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.3,
+        1.43386,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        6,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.078518,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        6,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-001.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.11875,
+        0.258186,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        6,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-000.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.076172,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        6,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-004.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.294792,
+        0.579759,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        6,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.235937,
+        0.440967,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        7,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-001.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.61875,
+        2.28331,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        8,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.896875,
+        0.001602,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        9,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.570833,
+        1.53586,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        10,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0119792,
+        0.109354,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        10,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-004.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0463542,
+        0.159312,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        10,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.10224,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        10,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-001.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.112602,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        10,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-000.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.07804,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        11,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.075694,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        11,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0119792,
+        0.101641,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        11,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-000.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.076363,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        11,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-001.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.084206,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        11,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-004.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0453125,
+        0.156571,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        12,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-001.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.076671,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        12,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.101044,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        12,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-000.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.076054,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        12,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.076622,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        12,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-004.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0234375,
+        0.108149,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        13,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.896875,
+        0.001584,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        14,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.392187,
+        1.74166,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        15,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.983594,
+        0.001187,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        16,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-001.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.083842,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        16,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.079716,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        16,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-000.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.079516,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        16,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0130208,
+        0.103647,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        16,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-004.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0984375,
+        0.289386,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        17,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-002.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.082737,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        17,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-000.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0104167,
+        0.104816,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        17,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.0119792,
+        0.118773,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ],
+    [
+      [
+        18,
+        "/tmp/paramilsdata/UCR/ECG200/TRAIN-003.tsv",
+        0,
+        0.0
+      ],
+      [
+        0.755729,
+        14.6557,
+        {
+          "__enum__": "StatusType.SUCCESS"
+        },
+        {
+          "additional_info": "0"
+        }
+      ]
+    ]
+  ],
+  "config_origins": {
+    "1": "Default",
+    "2": "Random Search (sorted)",
+    "3": "Random Search",
+    "4": "Random Search (sorted)",
+    "5": "Random Search",
+    "6": "Random Search (sorted)",
+    "7": "Random Search (sorted)",
+    "8": "Random Search",
+    "9": "Random Search",
+    "10": "Random Search (sorted)",
+    "11": "Random Search (sorted)",
+    "12": "Random Search (sorted)",
+    "13": "Random Search",
+    "14": "Random Search",
+    "15": "Random Search",
+    "16": "Random Search (sorted)",
+    "17": "Random Search (sorted)",
+    "18": "Random Search"
+  },
+  "configs": {
+    "1": {
+      "algorithm": "ECTS/bin/ects",
+      "min_support": 0.0,
+      "version": "strict"
+    },
+    "2": {
+      "algorithm": "ECTS/bin/ects",
+      "min_support": 0.4846770039106737,
+      "version": "loose"
+    },
+    "3": {
+      "algorithm": "ECTS/bin/ects",
+      "min_support": 0.003878253925047148,
+      "version": "loose"
+    },
+    "4": {
+      "algorithm": "RelClass/run",
+      "constr": "boxco",
+      "ldg": "0",
+      "tau": 0.00023287209907849296
+    },
+    "5": {
+      "algorithm": "RelClass/run",
+      "constr": "Naive",
+      "ldg": "0",
+      "tau": 5.7792510068905785e-15
+    },
+    "6": {
+      "algorithm": "RelClass/run",
+      "constr": "Naive",
+      "ldg": "1",
+      "tau": 3.136479708303282e-11
+    },
+    "7": {
+      "algorithm": "RelClass/run",
+      "constr": "Cheby",
+      "ldg": "1",
+      "tau": 1.5537912578241522e-09
+    },
+    "8": {
+      "algorithm": "ECTS/bin/ects",
+      "min_support": 0.46667178035787915,
+      "version": "loose"
+    },
+    "9": {
+      "algorithm": "RelClass/run",
+      "constr": "boxco",
+      "ldg": "0",
+      "tau": 7.659086884666065e-09
+    },
+    "10": {
+      "algorithm": "RelClass/run",
+      "constr": "Naive",
+      "ldg": "1",
+      "tau": 1.2706062936115848e-27
+    },
+    "11": {
+      "algorithm": "RelClass/run",
+      "constr": "Naive",
+      "ldg": "1",
+      "tau": 6.271213864831405e-28
+    },
+    "12": {
+      "algorithm": "RelClass/run",
+      "constr": "Naive",
+      "ldg": "1",
+      "tau": 3.8943988416633745e-30
+    },
+    "13": {
+      "algorithm": "ECTS/bin/ects",
+      "min_support": 0.7079501980475488,
+      "version": "loose"
+    },
+    "14": {
+      "algorithm": "RelClass/run",
+      "constr": "Naive",
+      "ldg": "0",
+      "tau": 8.397689463153478e-08
+    },
+    "15": {
+      "algorithm": "ECTS/bin/ects",
+      "min_support": 0.7251479029016167,
+      "version": "strict"
+    },
+    "16": {
+      "algorithm": "RelClass/run",
+      "constr": "Naive",
+      "ldg": "1",
+      "tau": 8.165433265521096e-24
+    },
+    "17": {
+      "algorithm": "RelClass/run",
+      "constr": "Naive",
+      "ldg": "1",
+      "tau": 1.7244709711016783e-25
+    },
+    "18": {
+      "algorithm": "RelClass/run",
+      "constr": "Cheby",
+      "ldg": "0",
+      "tau": 0.14832332825191674
+    }
+  }
+}

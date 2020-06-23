@@ -1,0 +1,4 @@
+Result: SUCCESS, 0.009018, [0.729479, 0.120000], 0, -algorithm 'ECTS/bin/ects' -min_support '0.52' -version 'loose'
+Result: SUCCESS, 1.22191, [0.168854, 0.21], 0, -algorithm 'RelClass/run' -constr 'Naive' -ldg '1' -tau '5.82e-11'
+Result: SUCCESS, 9.19251, [0.404062, 0.16], 0, -algorithm 'RelClass/run' -constr 'boxco' -ldg '0' -tau '1.36e-20'
+Result: SUCCESS, 2.85729, [0.456562, 0.11], 0, -algorithm 'RelClass/run' -constr 'Naive' -ldg '1' -tau '0.000488'

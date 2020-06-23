@@ -1,0 +1,10 @@
+"CPU Time Used","Estimated Training Performance","Wallclock Time","Incumbent ID","Automatic Configurator (CPU) Time","Configuration..."
+0.000000, 2147483648.000000, 0.000243, 1, 0.000243, algorithm=''ECTS/bin/ects'', min_support='0.0', version=''strict''
+0.008512, 0.458935, 0.102718, 1, 0.094206, algorithm=''ECTS/bin/ects'', min_support='0.0', version=''strict''
+3.755279, 0.222623, 5.101034, 2, 1.345755, algorithm=''RelClass/run'', constr=''Naive'', ldg=''0'', tau='2.3076340589043985e-15'
+76.582997, 0.266969, 82.638687, 3, 6.055690, algorithm=''RelClass/run'', constr=''Naive'', ldg=''0'', tau='5.368302798502407e-19'
+101.150037, 0.255931, 108.735332, 4, 7.585295, algorithm=''RelClass/run'', constr=''Naive'', ldg=''0'', tau='2.185312051667573e-20'
+151.260899, 0.249572, 163.313920, 5, 12.053021, algorithm=''RelClass/run'', constr=''Naive'', ldg=''0'', tau='1.702815985761518e-20'
+203.718062, 0.214396, 218.864947, 6, 15.146885, algorithm=''RelClass/run'', constr=''Naive'', ldg=''0'', tau='4.999009605205864e-28'
+1703.069905, 0.209632, 1922.774910, 7, 219.705005, algorithm=''RelClass/run'', constr=''boxco'', ldg=''1'', tau='5.593389952625588e-09'
+2122.066053, 0.194291, 2452.836594, 8, 330.770541, algorithm=''RelClass/run'', constr=''Naive'', ldg=''1'', tau='4.539726493244803e-11'

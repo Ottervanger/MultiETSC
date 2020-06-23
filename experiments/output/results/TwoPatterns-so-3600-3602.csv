@@ -1,0 +1,9 @@
+Result: SUCCESS, 0.018859, [0.790833, 0.110000], 0, -algorithm ECTS/bin/ects -min_support 0.0 -version strict
+Result: SUCCESS, 0.012627, [0.790833, 0.110000], 0, -algorithm ECTS/bin/ects -min_support 0.0 -version strict
+Result: SUCCESS, 6.99816, [0.326042, 0.16], 0, -algorithm RelClass/run -constr Naive -ldg 0 -tau 2.3076340589043985e-15
+Result: SUCCESS, 6.41255, [0.287917, 0.19], 0, -algorithm RelClass/run -constr Naive -ldg 0 -tau 5.368302798502407e-19
+Result: SUCCESS, 6.25235, [0.275417, 0.19], 0, -algorithm RelClass/run -constr Naive -ldg 0 -tau 2.185312051667573e-20
+Result: SUCCESS, 6.26606, [0.274583, 0.19], 0, -algorithm RelClass/run -constr Naive -ldg 0 -tau 1.702815985761518e-20
+Result: SUCCESS, 5.28771, [0.227187, 0.21], 0, -algorithm RelClass/run -constr Naive -ldg 0 -tau 4.999009605205864e-28
+Result: SUCCESS, 1.2122, [0.265833, 0.19], 0, -algorithm RelClass/run -constr boxco -ldg 1 -tau 5.593389952625588e-09
+Result: SUCCESS, 1.15184, [0.168021, 0.21], 0, -algorithm RelClass/run -constr Naive -ldg 1 -tau 4.539726493244803e-11

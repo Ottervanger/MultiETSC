@@ -1,0 +1,25 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{pgffor}
+\title{EarlyECTS Results}
+
+\newcommand*{\plotList}{%
+\input|"for g in ../output/plots/*.pdf; do echo ${g}, ; done"%
+}
+
+\begin{document}
+\foreach \plot in \plotList {%
+    \plot
+}
+    \begin{figure}[h]
+        %\makebox[\textwidth][c]{
+        %\includegraphics[width=1.5\textwidth]{\plot}}
+        \caption{Comparison of the Earliness Accuracy tradeoff between single objective and multi objective optimization.}
+    \end{figure}
+
+\makeatletter
+\@@input|"cat table*.tex"
+\makeatother
+
+\end{document}
