@@ -1,28 +1,21 @@
-loadData<-function(databasename){
+loadData<-function(datapath){
 
-##Access data
-load(paste(getwd(),"/databases/",databasename,".RData",sep=""))
-data<-database[[1]]
-data$class<-database[[2]]
-data$class<-factor(data$class)
-clus<-unique(database[[2]])
-assign("numclus", length(clus), envir = .GlobalEnv)
-rm(database)
+    ##Access data
+    d = read.table(datapath)
+    data = list()
+    data$ts = d[,-1]
+    data$class = factor(d[,1])
 
-if(numclus>2){
-  levels(data$class)<-c(1:numclus)
-}else{
-  levels(data$class)<-c(-1,1)
-}
+    # TODO: numclus is here globally defined and used throughout 
+    # run :grep numclus code/.R to show 
+    assign("numclus", nlevels(data$class), envir = .GlobalEnv)
 
-## Build training and testing sets set: 
+    # GO I dont see the problem with class labels c(1,2) why add this elaborate code?
+    if(numclus>2){
+        levels(data$class)<-c(1:numclus)
+    }else{
+        levels(data$class)<-c(-1,1)
+    }
 
-#Train/test
-train <- data[data$tt==0,]
-test <- data[data$tt==1,]
-train$tt<-NULL
-test$tt<-NULL
-rm(data)
-
-return(list(train,test))
+    return(data)
 }

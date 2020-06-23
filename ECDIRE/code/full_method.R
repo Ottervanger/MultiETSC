@@ -1,37 +1,43 @@
 
-#Set path to folder
-setwd("")
+# Get commandline arguments
+suppressMessages(require('R.utils'));
+suppressMessages(require('utils'));
+defaults = list(validation = FALSE,
+                HPO = TRUE,
+                acc_perc = 100,
+                kernel = 1)
+params = commandArgs(asValues=TRUE, 
+                     adhoc=TRUE,
+                     defaults=defaults)
+datapaths = base::commandArgs(trailingOnly=TRUE)[c(2,3)]
 
-#Define database name
-databasename<-"UCR-4"
+setwd(dirname(dirname(params$file)))
+
+trainpath = datapaths[1]
+testpath = datapaths[2]
 
 #Cross validation process necessary?
-cvprocess<-FALSE
+cvprocess = params$validation
 
 #Hyperparameter estimation necessary?
-estimatehyp<-TRUE
+estimatehyp = params$HPO
 
 #Choose derired level of accuracy
-accuracythreshold<-100
+accuracythreshold = params$acc_perc
 
 #Distance measure (Only Euclidean distance implemented)
 distance<-1
 
 #DEFINE KERNEL (INNER PRODUCT)
-kernel<-1
+kernel = params$kernel
 
 #Source all necessary internal files
 source("code/sources.R")
 
-#EXECUTE relGP METHOD
-
-  #If necessary, execute cross validation process
-  if(cvprocess){
+# cross validation is used to get estimate of full len accuracy
+if(cvprocess){
     crossvalidation(databasename,distance, kernel, estimatehyp)
-  }
+}
 
-  #Extract first and second level reliability information
-  reliability(databasename, accuracythreshold)
-
-  #Train relGP classifier framework and save results in results/finalresults
-  relGP(databasename, distance, kernel, estimatehyp)
+#Train relGP classifier framework and save results in results/finalresults
+relGP(trainpath, testpath, distance, kernel, estimatehyp)
