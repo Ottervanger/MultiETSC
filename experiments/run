@@ -64,7 +64,7 @@ ${CONFIGURATOR} --scenario "${METHOD}scenario.txt" \
 
 # note that we use mo validation regardless of the optimization method
 configs=$(realpath "output/${METHOD}/configs${SEED}.txt")
-validation_out=$(realpath "output/${METHOD}/validation-${SEED}.csv")
+validation_out=$(realpath "output/results/${DATASET}-${METHOD}-${TIMEOUT}-${SEED}.csv")
 
 if [[ $METHOD == "so" ]]; then
     rm -rf output/*.OLD
