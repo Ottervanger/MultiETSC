@@ -1,27 +1,19 @@
-reliability<-function(databasename,accuracythreshold){
-  
-#COLLECT FULL LENGTH ACCURACY 
+reliability<-function(trainpath, distance, kernel, estimatehyp, accuracythreshold){
 
-file<-paste(getwd(),"/results/accuracies/acc-",databasename,"-100.txt",sep="")
-accuracy<-read.table(file)
-accuracy<-colMeans(accuracy,na.rm=TRUE)
-accuracy[which(accuracy=="NaN")]<-0
-#We remove the classes that have an accuracy lower than 1/|C|
-accuracy[which(accuracy<1/length(accuracy))]<-0 
-numclus<-length(accuracy)
-  
-#CALCULATE LEVEL OF ACCURACY (% of the total accuracy)
-acc<-accuracy*accuracythreshold/100
+    cachepath = paste(".cache/rel/", gsub("^.*/([^/]*)_.*$", "\\1", trainpath),
+                      "-", distance, "-", kernel, "-", estimatehyp, "-", accuracythreshold, ".rds", sep="")
 
-#CALCULATE RELIABILITY 1 
-rel1<-reliability1(databasename,numclus,acc)
+    # retrieve cache if its there
+    if (file.exists(cachepath)) {
+        return(readRDS(cachepath))
+    }
 
-file<-paste(getwd(),"/results/reliabilities/rel1-",databasename,".txt",sep="")
-write.table(rel1,file=file)
+    #CALCULATE RELIABILITY 1 
+    rel1<-reliability1(databasename, numclus, acc)
+    #EXTRACT THRESHOLDS FOR RELIABILITY 2
+    rel2<-reliability2(databasename, numclus)
 
-#EXTRACT THRESHOLDS FOR RELIABILITY 2
-rel2<-reliability2(databasename, numclus)
-file<-paste(getwd(),"/results/reliabilities/rel2-",databasename,".txt",sep="")
-write.table(rel2,file=file)
-
+    rel = list(rel1, rel2)
+    saveRDS(rel, file=cachepath, compress=FALSE)
+    return(rel)
 }

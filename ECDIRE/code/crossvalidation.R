@@ -1,61 +1,90 @@
+crossvalidation = function(trainpath, distance, kernel, estimatehyp) {
+    cachename = paste('crossvalidation', distance, kernel, estimatehyp, sep='-')
+    cachepath = paste(".cache/", gsub("^.*/([^/]*)_.*$", "\\1", trainpath), "/",
+                      cachename, ".rds", sep="")
 
-crossvalidation<-function(databasename,distance,kernel,estimatehyp){
-#LOAD DATA
-data<-loadData(databasename)
-trainclass<-data[[1]]$class
-train<-data[[1]]
-train$class<-NULL
-rm(data)
+    # GO-TODO: set globally?
+    seed = 100
 
-#CREATE the sets for the 10 times repeat 5-fold cross validation.
-set.seed(100)
-cv<-generateCVRuns(as.numeric(trainclass),ntimes=10,nfold=5,stratified=TRUE)
+    # retrieve cache if its there
+    if (file.exists(cachepath)) {
+        return(readRDS(cachepath))
+    }
+    # create dir if not there yet
+    dir.create(dirname(cachepath), recursive=TRUE, showWarnings=FALSE)
 
-#Initilize results
-acc<-matrix(nrow=0,ncol=numclus)
-probabilities<-matrix(nrow=0,ncol=numclus+1)
+    #LOAD DATA
+    data = loadData(trainpath)
+    trainclass = data$class
+    train = data$ts
 
-for(earlynessperc in c(1:20)*5){
-for(rep in 1:10){
-for(fold in 1:5){
+    #CREATE the sets for the 10 times repeat 5-fold cross validation.
+    set.seed(seed)
+    reps = 10
+    folds = 5
+    cv = generateCVRuns(as.numeric(trainclass),ntimes=reps,nfold=folds,stratified=TRUE)
+    require("parallel")
 
-#CREATE DATASETS for this repetition and fold
-traincv<-train[-cv[[rep]][[fold]],]
-testcv<-train[cv[[rep]][[fold]],]
-trainclasscv<-trainclass[-cv[[rep]][[fold]]]
-testclasscv<-trainclass[cv[[rep]][[fold]]]
+    #Initilize results
+    accuracies = list()
+    probabilities = list()
 
-#CALCULATE early timestamp
-earlyness<-earlynessperc*(dim(train)[2])/100
+    # core cluster
+    cl = makeCluster(detectCores(), type="FORK")
+    on.exit(stopCluster(cl))
+    # list for the parallel loop
+    repsXfolds = list()
+    for(rep in 1:reps) {
+        for(fold in 1:folds) {
+            repsXfolds = append(repsXfolds,list(list(rep=rep, fold=fold)))
+        }
+    }
 
-#CALCULATE DISTANCE MATRIX for given early timestamp.
-DMtrain<-distanceMatrix(train=traincv, earlyness=earlyness, distance=distance)
-DMtest<-distanceMatrix(train=traincv, test=testcv, earlyness=earlyness, distance=distance)
+    # function to loop over
+    loop = function(repfold) {
+        rep = repfold$rep
+        fold = repfold$fold
+        # we need to set a unique seed for each thread
+        set.seed(seed+rep+reps*fold)
+        #CREATE DATASETS for this repetition and fold
+        traincv = train[-cv[[rep]][[fold]],]
+        testcv = train[cv[[rep]][[fold]],]
+        trainclasscv = trainclass[-cv[[rep]][[fold]]]
+        testclasscv = trainclass[cv[[rep]][[fold]]]
 
-#TRAIN the GP . Hyperparameter estimation set to true
-model<-GP(DMtrain,trainclasscv,DMtest,testclasscv,kernel,estimatehyp)
+        #CALCULATE early timestamp
+        earlyness = earlynessperc*(dim(train)[2])/100
 
-#EXTRACT the accuracy for each class
-accaux<-obtainaccuracy(model)
-acc<-rbind(acc,accaux)
+        #CALCULATE DISTANCE MATRIX for given early timestamp.
+        DMtrain = distanceMatrix(train=traincv, earlyness=earlyness, distance=distance)
+        DMtest = distanceMatrix(train=traincv, test=testcv, earlyness=earlyness, distance=distance)
 
-#EXTRACT  of the posterior probabilities of the correctly classified series
-correct<-which(predClass(model,numclus)==testclasscv)
-probabilitiesaux<-matrix(nrow=length(correct),ncol=numclus+1)
-probabilitiesaux[,(1:numclus)]<-model$Ptest[correct,]
-probabilitiesaux[,(numclus+1)]<-testclasscv[correct]
-probabilities<-rbind(probabilities,probabilitiesaux)
+        #TRAIN the GP . Hyperparameter estimation set to true
+        model = GP(DMtrain,trainclasscv,DMtest,testclasscv,kernel,estimatehyp)
 
+        #EXTRACT the accuracy for each class
+        accaux = obtainaccuracy(model, testclasscv)
+
+        #EXTRACT  of the posterior probabilities of the correctly classified series
+        correct = which(predClass(model,numclus)==testclasscv)
+        probabilitiesaux = matrix(nrow=length(correct),ncol=numclus+1)
+        probabilitiesaux[,(1:numclus)] = model$Ptest[correct,]
+        probabilitiesaux[,(numclus+1)] = testclasscv[correct]
+
+        return(list(acc=accaux, prob=probabilitiesaux))
+    }
+
+    for(earlynessperc in c(1:20)*5) {
+        clusterExport(cl, "earlynessperc", env=environment())
+        res = parLapply(cl, repsXfolds, loop)
+        accprob = Reduce(function(c,e) list(acc=rbind(c$acc, e$acc), prob=rbind(c$prob, e$prob)), res)
+        accuracies[[earlynessperc]] = accprob$acc
+        probabilities[[earlynessperc]] = accprob$prob
+    }
+    ret = list(accuracies=accuracies, probabilities=probabilities)
+    # save to cache
+    saveRDS(ret, file=cachepath, compress=FALSE)
+    return(ret)
 }
-}
 
-#SAVE results
-
-file1<-paste(getwd(),"/results/accuracies/acc-",databasename,"-",earlynessperc,".txt",sep="")
-write.table(acc,file=file1,row.names=FALSE, col.names=FALSE)
-file2<-paste(getwd(),"/results/probabilities/prob-",databasename,"-",earlynessperc,".txt",sep="")
-write.table(probabilities,file=file2, row.names=FALSE, col.names=FALSE)
-}
-
-}
 

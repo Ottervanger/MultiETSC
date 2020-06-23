@@ -1,16 +1,17 @@
-
-relGP<-function(databasename, distance, kernel, estimatehyp){
+relGP<-function(trainpath, testpath, distance, kernel, estimatehyp){
   
 #LOAD DATA
-data<-loadData(databasename)
-trainclass<-data[[1]]$class
-trainclass<-as.numeric(levels(trainclass))[trainclass] 
-train<-data[[1]]
-train$class<-NULL
-testclass<-data[[2]]$class
-testclass<-as.numeric(levels(testclass))[testclass] 
-test<-data[[2]]
-test$class<-NULL
+data<-loadData(trainpath)
+trainclass<-as.numeric(data$class)
+train<-data$ts
+
+data<-loadData(testpath)
+testclass<-as.numeric(data$class)
+test<-data$ts
+
+
+#Extract first and second level reliability information
+reliability(databasename, accuracythreshold)
 
 #COLLECT RELIABILITIES
 file<-paste(getwd(),"/results/reliabilities/rel1-",databasename,".txt",sep="")
@@ -49,46 +50,46 @@ targetclasses<-c()
   
 for(i in c(1:length(listaclasses))){
 
-#DEFINE target classes in this timestamp
-targetclasses<-c(targetclasses,listaclasses[[i]])
+    #DEFINE target classes in this timestamp
+    targetclasses<-c(targetclasses,listaclasses[[i]])
 
-#If no instances are left in the testing set, the process is ended
-if(length(indicestest)==0){break;}
+    #If no instances are left in the testing set, the process is ended
+    if(length(indicestest)==0){break;}
 
-#TESTING SET DATA AND CLASSES
-testaux<-test[indicestest,]
-testauxclass<-testclass[indicestest]
-  
-#SAVE CLASSES AS FACTORS
-testauxclass<-factor(testauxclass)
-trainauxclass<-factor(trainclass) 
-  
-#CREATE THE DISTANCE MATRICES
-DMtrain<-distanceMatrix(train=train, earlyness=timestamps[i], distance=distance)
-DMtest<-distanceMatrix(train=train, test=testaux, earlyness=timestamps[i], distance=distance)
+    #TESTING SET DATA AND CLASSES
+    testaux<-test[indicestest,]
+    testauxclass<-testclass[indicestest]
+      
+    #SAVE CLASSES AS FACTORS
+    testauxclass<-factor(testauxclass)
+    trainauxclass<-factor(trainclass) 
+      
+    #CREATE THE DISTANCE MATRICES
+    DMtrain<-distanceMatrix(train=train, earlyness=timestamps[i], distance=distance)
+    DMtest<-distanceMatrix(train=train, test=testaux, earlyness=timestamps[i], distance=distance)
 
-#CREATE THE CLASSIFIER
-model<-GP(DMtrain,trainclass,DMtest,testauxclass,kernel,estimatehyp)
+    #CREATE THE CLASSIFIER
+    model<-GP(DMtrain,trainclass,DMtest,testauxclass,kernel,estimatehyp)
 
-#CLASS PREDICTIONS
-classes<-predClass(model,numclus)  
-classes<-factor(classes, levels=levels(trainauxclass))
-  
-#CHECK SECOND LEVEL RELIABILITY
-root<-FALSE
-if(i==length(listaclasses)){root<-TRUE}
-aux<-checkrel2(model,targetclasses,classes,reliability2[timestamps2[i]/5,],root,numclus)
-classified<-aux[[1]]
-results[indicestest[classified]]<-aux[[2]]
-  
-  
-#STATISTICS
-numseries[i]<-length(which(!is.na(results)))/dim(test)[1]
-numcorrectseries[i]<-length(which(results==testclass))/dim(test)[1]
-    
-  
-#CALCULATE THE NEW TEST INDEXES OF ELEMENTS THAT HAVE NOT BEEN CLASSIFIED YET
-indicestest<-indicestest[-classified]
+    #CLASS PREDICTIONS
+    classes<-predClass(model,numclus)  
+    classes<-factor(classes, levels=levels(trainauxclass))
+      
+    #CHECK SECOND LEVEL RELIABILITY
+    root<-FALSE
+    if(i==length(listaclasses)){root<-TRUE}
+    aux<-checkrel2(model,targetclasses,classes,reliability2[timestamps2[i]/5,],root,numclus)
+    classified<-aux[[1]]
+    results[indicestest[classified]]<-aux[[2]]
+      
+      
+    #STATISTICS
+    numseries[i]<-length(which(!is.na(results)))/dim(test)[1]
+    numcorrectseries[i]<-length(which(results==testclass))/dim(test)[1]
+        
+      
+    #CALCULATE THE NEW TEST INDEXES OF ELEMENTS THAT HAVE NOT BEEN CLASSIFIED YET
+    indicestest<-indicestest[-classified]
   
 }
 
@@ -99,40 +100,42 @@ indicestest<-indicestest[-classified]
 
 earlynessperc<-max(timestamps2)+5
 
+# GO-TODO: I think this is where the number of classifiers is hard-coded. 
+# This needs to be turned into a parameter.
 while(earlynessperc<=100 && length(indicestest)!=0 ){
-  earlyness<-earlynessperc*length(train[1,])/100
-  #TESTING SET DATA AND CLASSES
-  testaux<-test[indicestest,]
-  testauxclass<-testclass[indicestest]
-  
-  #TRAINING SET
-  trainclass<-factor(trainclass)
-  
-  #CREATE THE DISTANCE MATRICES
-  DMtrain<-distanceMatrix(train=train, earlyness=earlyness, distance=distance)
-  DMtest<-distanceMatrix(train=train, test=testaux, earlyness=earlyness, distance=distance)
-  
-  #CREATE THE CLASSIFIER
-  model<-GP(DMtrain,trainclass,DMtest,testauxclass,kernel,estimatehyp)
-  classes<-predClass(model,numclus)
-  classes<-factor(classes, levels=levels(trainclass))
+    earlyness<-earlynessperc*length(train[1,])/100
+    #TESTING SET DATA AND CLASSES
+    testaux<-test[indicestest,]
+    testauxclass<-testclass[indicestest]
+    
+    #TRAINING SET
+    trainclass<-factor(trainclass)
+    
+    #CREATE THE DISTANCE MATRICES
+    DMtrain<-distanceMatrix(train=train, earlyness=earlyness, distance=distance)
+    DMtest<-distanceMatrix(train=train, test=testaux, earlyness=earlyness, distance=distance)
+    
+    #CREATE THE CLASSIFIER
+    model<-GP(DMtrain,trainclass,DMtest,testauxclass,kernel,estimatehyp)
+    classes<-predClass(model,numclus)
+    classes<-factor(classes, levels=levels(trainclass))
 
-  #CHECK SECOND LEVEL RELIABILITY
-  aux<-checkrel2(model,as.numeric(levels(classes)),classes,reliability2[earlynessperc/5,],root=TRUE,numclus)
-  classified<-aux[[1]]
-  results[indicestest[classified]]<-aux[[2]]
-  
-  #SET CLASSES 
-  numseries<-c(numseries,length(which(!is.na(results)))/dim(test)[1])
-  numcorrectseries<-c(numcorrectseries,length(which(results==testclass))/dim(test)[1])
-  
-  #CALCULATE THE NEW INDEXES!! 
-  if(length(classified)!=0){
-    indicestest<-indicestest[-classified]
-  }
-  
-  timestamps2<-c(timestamps2,earlynessperc)
-  earlynessperc<-earlynessperc+5
+    #CHECK SECOND LEVEL RELIABILITY
+    aux<-checkrel2(model,as.numeric(levels(classes)),classes,reliability2[earlynessperc/5,],root=TRUE,numclus)
+    classified<-aux[[1]]
+    results[indicestest[classified]]<-aux[[2]]
+    
+    #SET CLASSES 
+    numseries<-c(numseries,length(which(!is.na(results)))/dim(test)[1])
+    numcorrectseries<-c(numcorrectseries,length(which(results==testclass))/dim(test)[1])
+    
+    #CALCULATE THE NEW INDEXES!! 
+    if(length(classified)!=0){
+        indicestest<-indicestest[-classified]
+    }
+    
+    timestamps2<-c(timestamps2,earlynessperc)
+    earlynessperc<-earlynessperc+5
 }
 
 #CALCULATE STATISTICS
@@ -148,3 +151,7 @@ file<-paste(getwd(),"/results/finalresults/results-",databasename,".txt",sep="")
 write.table(resultados,file=file)
 
 }
+
+# GO-TODO:
+# Print the results in configurator-friendly ouput.
+
