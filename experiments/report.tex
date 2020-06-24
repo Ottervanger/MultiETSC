@@ -2,24 +2,35 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{pgffor}
+\usepackage{caption}
 \title{EarlyECTS Results}
 
-\newcommand*{\plotList}{%
-\input|"for g in ../output/plots/*.pdf; do echo ${g}, ; done"%
-}
+% load all plot files into the \plotList variable
+\begingroup\makeatletter\endlinechar=\m@ne\everyeof{\noexpand}
+\edef\x{\endgroup\def\noexpand\texList{\@@input|"ls -m output/tex/*.tex" }}\x
 
-\begin{document}
-\foreach \plot in \plotList {%
-    \plot
-}
-    \begin{figure}[h]
-        %\makebox[\textwidth][c]{
-        %\includegraphics[width=1.5\textwidth]{\plot}}
-        \caption{Comparison of the Earliness Accuracy tradeoff between single objective and multi objective optimization.}
-    \end{figure}
-
+% turn tex path into plot file path
 \makeatletter
-\@@input|"cat table*.tex"
+\def\cle@n@#1>#2{#2}
+\newcommand{\setCompid}[1]{%
+\ifnum\pdfmatch subcount 5 {(.+tex/)(.*?).tex}{#1}=1%
+\gdef\compid{\expandafter\cle@n@\pdflastmatch2}%
+\else\fi
+}
 \makeatother
 
+\begin{document}
+\foreach \plot in \texList {%
+    \setCompid{\plot}
+    \begin{figure}[!ht]%
+        \makebox[\textwidth][c]{\includegraphics[width=1.6\textwidth]{output/plots/\compid.pdf}}%
+        \caption{Comparison of the Earliness Accuracy tradeoff between single objective and multi objective optimization.}%
+    \end{figure}%
+    \begin{table}[!hb]%
+        \centering
+        \input{\plot}%
+        \caption\expandafter{\compid}%
+    \end{table}
+    \pagebreak
+}
 \end{document}
