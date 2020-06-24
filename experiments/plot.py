@@ -91,6 +91,22 @@ def getData(csvPath):
     metadata = data[:,2]
     return Y, metadata
 
+def printTable(d):
+    formats = dict(int='{:3d}'+' '*5, float='{:8.4f}', float64='{:8.4f}', str='{:>8s}')
+    for k, v in d.items():
+         print(('{:>12s}'+formats[v[0].__class__.__name__]*len(v)).format(k, *v))
+
+def latexTable(d):
+    formats = dict(int='{:3d}'+' '*5, float='{:8.4f}', float64='{:8.4f}', str='{:>8s}')
+    tex = '\\begin{tabular}{l r r}\n'
+    for k, v in d.items():
+        tex += ' &'.join([formats[i.__class__.__name__].format(i) for i in [k]+v]) + '\\\\'
+        if k == 'method':
+            tex += '\\hline'
+        tex += '\n'
+    tex += '\\end{tabular}\n'
+    return tex
+
 def main():
     color = colors()
     ruler = 1.02
@@ -105,25 +121,29 @@ def main():
         print('  '+f)
     from matplotlib import pyplot as plt
     fig, ax = plt.subplots(figsize=(8,4.8))
+    metricTable = {}
     for f in files:
         try:
             Y, metadata = getData(f)
             label = f.split('/')[-1].split('.')[0]
+            method = label.split('-')[1]
             pareto = Pareto(Y, metadata, label=label)
             pareto.plot(ax, c=next(color), textoffset=textoffset)
             textoffset['xy'][1] -= 0.05
-            sf = '|{:>12s}: {:8.4f}'
-            sd = '|{:>12s}: {:3d}'
-            print('| {}'.format(label))
-            print(sd.format('size', pareto.size))
-            print(sf.format('delta', pareto.delta()))
-            print(sf.format('M3', pareto.M3()))
-            print(sf.format('min hmean', pareto.hmean()))
-            print(sf.format('hypervolume', pareto.hypervolume()))
-            print()
-            
+            metrics = dict(
+                method=method,
+                size=pareto.size,
+                delta=pareto.delta(),
+                M3=pareto.M3(),
+                hmean=pareto.hmean(),
+                hypervolume=pareto.hypervolume()
+            )
+            metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
         except FileNotFoundError:
             continue
+    
+    # print metrics to terminal
+    printTable(metricTable)
     dataname = files[0].split('/')[-1].split('-')[0]
     seed = re.sub('.*-([0-9]*)\\..*', '\\1', files[0])
     ax.set_xlim([0, 1])
@@ -135,7 +155,11 @@ def main():
     plt.ylabel("Error rate")
 
     fig.tight_layout()
+    # save plot
     plt.savefig('output/plots/{}-{}.pdf'.format(dataname, seed))
+    # save tex table
+    with open('output/tex/{}-{}.tex'.format(dataname, seed), 'w') as f:
+        f.write(latexTable(metricTable))
 
 if __name__ == '__main__':
     main()
