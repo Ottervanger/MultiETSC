@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2019.7.22)  23 JUN 2020 19:17
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2019.7.22)  25 JUN 2020 12:17
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
-**report.tex
-(./report.tex
+**report/report.tex
+(./report/report.tex
 LaTeX2e <2016/02/01>
 Babel <3.9q> and hyphenation patterns for 81 language(s) loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -443,34 +443,51 @@ Package: pgffor 2013/12/13 v3.0.1a (rcs-revision 1.25)
 \pgffor@stack=\toks24
 \pgffor@toks=\toks25
 ))
-(output/report//report.aux)
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2016/02/21 v3.3-144 Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2016/02/04 v1.7-139 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 67.
+\captionmargin=\dimen118
+\captionmargin@=\dimen119
+\captionwidth=\dimen120
+\caption@tempdima=\dimen121
+\caption@indent=\dimen122
+\caption@parindent=\dimen123
+\caption@hangindent=\dimen124
+)
+\c@ContinuedFloat=\count94
+)
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty)
+(./report/report.aux)
 \openout1 = `report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 11.
-LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count94
-\scratchdimen=\dimen118
+\scratchcounter=\count95
+\scratchdimen=\dimen125
 \scratchbox=\box28
-\nofMPsegments=\count95
-\nofMParguments=\count96
+\nofMPsegments=\count96
+\nofMParguments=\count97
 \everyMPshowfont=\toks26
-\MPscratchCnt=\count97
-\MPscratchDim=\dimen119
-\MPnumerator=\count98
-\makeMPintoPDFobject=\count99
+\MPscratchCnt=\count98
+\MPscratchDim=\dimen126
+\MPnumerator=\count99
+\makeMPintoPDFobject=\count100
 \everyMPtoPDFconversion=\toks27
 ) (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
@@ -520,36 +537,57 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-ABD: EveryShipout initializing macros () (
+ABD: EveryShipout initializing macros
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
 
-LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 1.
+<output/plots/ECG200-3600.pdf, id=1, 578.16pt x 346.89601pt>
+File: output/plots/ECG200-3600.pdf Graphic file (type pdf)
 
+<use output/plots/ECG200-3600.pdf>
+Package pdftex.def Info: output/plots/ECG200-3600.pdf used on input line 35.
+(pdftex.def)             Requested size: 552.0021pt x 331.21669pt.
+ (./output/tex/ECG200-3600.tex
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 3.
+(Font)              <7> on input line 1.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 3.
-) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+(Font)              <5> on input line 1.
+) [1
 
-]
-(output/report//report.aux)
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./output/plots/ECG200-3600
+.pdf>]
+<output/plots/TwoPatterns-3602.pdf, id=63, 578.16pt x 346.89601pt>
+File: output/plots/TwoPatterns-3602.pdf Graphic file (type pdf)
 
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+<use output/plots/TwoPatterns-3602.pdf>
+Package pdftex.def Info: output/plots/TwoPatterns-3602.pdf used on input line 3
+5.
+(pdftex.def)             Requested size: 552.0021pt x 331.21669pt.
+ (./output/tex/TwoPatterns-3602.tex)
+[2 <./output/plots/TwoPatterns-3602.pdf>]
+<output/plots/Wafer-3601.pdf, id=120, 578.16pt x 346.89601pt>
+File: output/plots/Wafer-3601.pdf Graphic file (type pdf)
 
- ) 
+<use output/plots/Wafer-3601.pdf>
+Package pdftex.def Info: output/plots/Wafer-3601.pdf used on input line 35.
+(pdftex.def)             Requested size: 552.0021pt x 331.21669pt.
+ (./output/tex/Wafer-3601.tex) [3 <./output/plots/Wafer-3601.pdf>] (./report/re
+port.aux) ) 
 Here is how much of TeX's memory you used:
- 6803 strings out of 493029
- 127911 string characters out of 6136234
- 156308 words of memory out of 5000000
- 10254 multiletter control sequences out of 15000+600000
- 3640 words of font info for 14 fonts, out of 8000000 for 9000
+ 7898 strings out of 493029
+ 147860 string characters out of 6136234
+ 177353 words of memory out of 5000000
+ 11331 multiletter control sequences out of 15000+600000
+ 4247 words of font info for 16 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 40i,7n,40p,384b,184s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
-Output written on output/report//report.pdf (1 page, 17802 bytes).
+ 40i,7n,40p,411b,347s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb>
+Output written on ./report/report.pdf (3 pages, 92639 bytes).
 PDF statistics:
- 12 PDF objects out of 1000 (max. 8388607)
- 7 compressed objects within 1 object stream
+ 187 PDF objects out of 1000 (max. 8388607)
+ 35 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

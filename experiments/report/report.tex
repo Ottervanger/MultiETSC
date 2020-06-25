@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{pgffor}
-\usepackage{caption}
+\usepackage[font=small,labelfont=bf]{caption}
 \title{EarlyECTS Results}
 
 % load all plot files into the \plotList variable
@@ -29,7 +29,7 @@
     \begin{table}[!hb]%
         \centering
         \input{\plot}%
-        \caption\expandafter{\compid}%
+        \caption{Comparison of Pareto front metrics for run ``\compid''.}%
     \end{table}
     \pagebreak
 }

@@ -39,7 +39,7 @@ class Pareto:
         self.size = len(self.P)
         self.label = label
 
-    def plot(self, ax, c, textoffset):
+    def plot(self, ax, c, textoffset, angle):
         ax.plot(self.P[:,0],self.P[:,1], '-o', c=c, label=self.label, linewidth=1, markersize=3)
         # adding labels
         labels = [re.sub('^-algorithm ([^/]*)[^\s]* (.*)$', '\\1 \\2', i.replace("'", '')) for i in self.metadata]
@@ -49,8 +49,8 @@ class Pareto:
                         ha='left', va='center', fontsize=8, clip_on=False,
                         bbox=dict(boxstyle="round", fc=(1,1,1,.8), ec='.8'),
                         arrowprops=dict(arrowstyle='-|>', linestyle='--', color=c+'aa',
-                        connectionstyle="angle,angleA=180,angleB=75", relpos=(0., .5),
-                        shrinkA=10, shrinkB=10))
+                        connectionstyle="angle,angleA=180,angleB={}".format(angle),
+                        relpos=(0., .5), shrinkA=10, shrinkB=10))
             textoffset['xy'][1] -= 0.06
 
     def hmean(self):
@@ -110,7 +110,6 @@ def latexTable(d):
 def main():
     color = colors()
     ruler = 1.02
-    textoffset = dict(xy=[ruler,.98])
     if (len(sys.argv) < 2):
         usage()
     files = glob.glob('output/results/'+sys.argv[1])
@@ -119,17 +118,22 @@ def main():
     print('Files found:')
     for f in files:
         print('  '+f)
+
+    # prepare for plotting
     from matplotlib import pyplot as plt
     fig, ax = plt.subplots(figsize=(8,4.8))
     metricTable = {}
+    textoffset = dict(xy=[ruler,.98])
+    angle = 75
     for f in files:
         try:
             Y, metadata = getData(f)
             label = f.split('/')[-1].split('.')[0]
-            method = label.split('-')[1]
-            pareto = Pareto(Y, metadata, label=label)
-            pareto.plot(ax, c=next(color), textoffset=textoffset)
+            method = label.split('-')[1].upper()
+            pareto = Pareto(Y, metadata, label=method)
+            pareto.plot(ax, c=next(color), textoffset=textoffset, angle=angle)
             textoffset['xy'][1] -= 0.05
+            angle -= 15
             metrics = dict(
                 method=method,
                 size=pareto.size,

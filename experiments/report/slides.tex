@@ -1,0 +1,97 @@
+\batchmode
+\documentclass[t,11pt,aspectratio=169]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{pgffor}
+\usepackage[font=scriptsize,labelfont=bf]{caption}
+
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{parskip}
+\setlength{\parskip}{8pt}
+\usetikzlibrary{calc,trees,positioning,arrows,chains,shapes.geometric,%
+    decorations.pathreplacing,decorations.pathmorphing,shapes,%
+    matrix,shapes.symbols}
+\usepackage{array}
+
+\usetheme{Madrid}
+%\definecolor{UBCblue}{rgb}{0.04706, 0.13725, 0.26667} % UBC Blue (primary)
+%\usecolortheme[named=UBCblue]{structure}
+
+% Beamer version theme settings
+\usetheme[
+    faculty=sciences,  % humanities, law, medicine, sciences, socialsciences
+    lang=en,           % en, nl
+    rmfont=pmn,
+    logofont=fpi
+]{leiden}
+
+\setbeamertemplate{navigation symbols}{}%remove navigation symbols
+% Fonts
+\usepackage{iwona}
+\usepackage[textfont={scriptsize,it}]{caption}
+\setbeamerfont{caption}{size=\scriptsize}
+\renewcommand*{\familydefault}{\sfdefault}
+\captionsetup{labelformat=empty}
+
+\setbeameroption{hide notes}
+
+\nonstopmode % Include issues with the slides
+
+
+% Header settings
+\def\lecturename{ETSC}
+\subtitle{Gilles Ottervanger}
+\date{\today}
+\title{AutoML for Early Time Series Classification}
+\author{Supervised by: Can Wang, Mitra Baratchi, Holger H. Hoos}
+\institute{}
+\subject{}
+\def\footerbartext{Gilles Ottervanger \hspace{.2cm}\rule[-\dp\strutbox]{1pt}{1.2\baselineskip}\hspace{.2cm} AutoML for Early Time Series Classification}
+
+%\title{EarlyECTS Results}
+%\author{G.B.Ottervanger}
+
+% load all plot files into the \plotList variable
+\begingroup\makeatletter\endlinechar=\m@ne\everyeof{\noexpand}
+\edef\x{\endgroup\def\noexpand\texList{\@@input|"ls -m output/tex/*.tex" }}\x
+
+% turn tex path into plot file path
+\makeatletter
+\def\cle@n@#1>#2{#2}
+\newcommand{\setCompid}[1]{%
+\ifnum\pdfmatch subcount 5 {(.+tex/)(.*?).tex}{#1}=1%
+\gdef\compid{\expandafter\cle@n@\pdflastmatch2}%
+\else\fi
+}
+\makeatother
+
+\begin{document}
+\setcounter{framenumber}{12}
+\foreach \plot in \texList {%
+    \setCompid{\plot}
+    \begin{frame}\frametitle{Run: \compid}
+    \begin{minipage}{\textwidth}
+        \begin{minipage}[b]{0.63\textwidth}
+
+        \begin{figure}[!ht]%
+            \includegraphics[width=\textwidth]{output/plots/\compid.pdf}%
+            \caption{Comparison of the Earliness Accuracy tradeoff between single objective and multi objective optimization.}%
+        \end{figure}%
+        \end{minipage}
+        \hfill
+        \begin{minipage}[b]{0.35\textwidth}
+        \begin{table}[!hb]%
+            \small
+            \centering
+            \input{\plot}%
+            \caption{Comparison of Pareto front metrics for run ``\compid''.}%
+        \end{table}
+        \end{minipage}
+    \end{minipage}
+    \end{frame}
+}
+\end{document}
