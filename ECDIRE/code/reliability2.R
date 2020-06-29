@@ -1,12 +1,11 @@
 #This function calculates the thresholds for the 2nd level reliability.
-reliability2 = function (databasename, numclus) {
+reliability2 = function (probabilities, rel1, numclus) {
     thresholds = matrix(nrow=20,ncol=numclus)
+
     #For each early timestamp
     for (earlyness in c(1:20)*5) { 
-        #Collect posterior probabilities of the cross validation process
-        file = paste(getwd(),"/results/probabilities/prob-",databasename,"-",earlyness,".txt",sep="")
-        #Read the data and some type modifications
-        aux = read.table(file,stringsAsFactors =FALSE)
+        #Collect posterior probabilities of the cross validation process and some type modifications
+        aux = as.data.frame(probabilities[[earlyness]])
         errores = which(aux[,1]=="V1")
         if (length(errores) != 0) {
             aux = aux[-errores,]
@@ -15,8 +14,7 @@ reliability2 = function (databasename, numclus) {
             aux = as.data.frame(sapply(aux, as.numeric))
         }
         #Read first level reliability
-        fichero = paste(getwd(),"/results/reliabilities/rel1-",databasename,".txt",sep="")
-        rel1 = as.numeric(t(read.table(fichero)))
+        rel1 = as.numeric(t(as.data.frame(rel1)))
     
         #For each class that surpasses the accuracy limit
         for(clus in c(1:numclus)){

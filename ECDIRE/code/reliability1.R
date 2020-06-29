@@ -1,26 +1,14 @@
 #This function calculates the timestamps from the
 #1st level reliability
 
-reliability1<-function(databasename){
-
-    #COLLECT FULL LENGTH ACCURACY 
-    accuracies = crossvalidation(trainpath, distance, kernel, estimatehyp)$accuracies
-    accuracy = colMeans(accuracies[[100]],na.rm=TRUE)
-    accuracy[which(accuracy=="NaN")]<-0
-    #We remove the classes that have an accuracy lower than 1/|C|
-    accuracy[which(accuracy<1/length(accuracy))]<-0 
-    numclus<-length(accuracy)
-      
-    #CALCULATE LEVEL OF ACCURACY (% of the total accuracy)
-    acc<-accuracy*accuracythreshold/100
+reliability1<-function(accuracies, acc, numclus){
     
     accuracy<-matrix(nrow=numclus,ncol=20)
     
     #For each early timestamp
     for(earlyness in c(1:20)*5){
         #Collect the accuracy results
-        file<-paste(getwd(),"/results/accuracies/acc-",databasename,"-",earlyness,".txt",sep="")
-        aux = accuracies[[earlyness]]
+        aux = as.data.frame(accuracies[[earlyness]])
         #Calculate the mean accuracy of the cross validation
         accuracy[,earlyness/5]<-colMeans(aux,na.rm=TRUE)
         #For a more conservative option, calculate the minimum
