@@ -96,11 +96,23 @@ def printTable(d):
     for k, v in d.items():
          print(('{:>12s}'+formats[v[0].__class__.__name__]*len(v)).format(k, *v))
 
-def latexTable(d):
+def best(metric, val, l):
+    if metric == 'method':
+        return False
+    if metric in ['delta', 'hmean']:
+        return val == min(l)
+    return val == max(l)
+
+def hlfmt(metric, val, l):
     formats = dict(int='{:3d}'+' '*5, float='{:8.4f}', float64='{:8.4f}', str='{:>8s}')
+    if best(metric, val, l):
+        return '\\textbf{'+formats[val.__class__.__name__].format(val)+'}'
+    return formats[val.__class__.__name__].format(val)
+
+def latexTable(d):
     tex = '\\begin{tabular}{l r r}\n'
     for k, v in d.items():
-        tex += ' &'.join([formats[i.__class__.__name__].format(i) for i in [k]+v]) + '\\\\'
+        tex += ' &'.join([hlfmt(k, i, v) for i in [k]+v]) + '\\\\'
         if k == 'method':
             tex += '\\hline'
         tex += '\n'
