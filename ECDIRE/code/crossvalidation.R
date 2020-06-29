@@ -1,17 +1,17 @@
-crossvalidation = function(trainpath, distance, kernel, estimatehyp) {
+crossvalidation = function(trainpath, cachepath, distance, kernel, estimatehyp) {
     cachename = paste('crossvalidation', distance, kernel, estimatehyp, sep='-')
-    cachepath = paste(".cache/", gsub("^.*/([^/]*)_.*$", "\\1", trainpath), "/",
-                      cachename, ".rds", sep="")
+    cachename = paste(cachepath, cachename, '.rds',  sep='')
 
     # GO-TODO: set globally?
     seed = 100
 
     # retrieve cache if its there
-    if (file.exists(cachepath)) {
-        return(readRDS(cachepath))
+    if (file.exists(cachename)) {
+        return(readRDS(cachename))
     }
+
     # create dir if not there yet
-    dir.create(dirname(cachepath), recursive=TRUE, showWarnings=FALSE)
+    dir.create(dirname(cachename), recursive=TRUE, showWarnings=FALSE)
 
     #LOAD DATA
     data = loadData(trainpath)
@@ -83,7 +83,7 @@ crossvalidation = function(trainpath, distance, kernel, estimatehyp) {
     }
     ret = list(accuracies=accuracies, probabilities=probabilities)
     # save to cache
-    saveRDS(ret, file=cachepath, compress=FALSE)
+    saveRDS(ret, file=cachename, compress=FALSE)
     return(ret)
 }
 

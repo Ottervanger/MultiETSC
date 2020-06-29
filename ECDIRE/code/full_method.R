@@ -2,42 +2,36 @@
 # Get commandline arguments
 suppressMessages(require('R.utils'));
 suppressMessages(require('utils'));
-defaults = list(validation = FALSE,
-                HPO = TRUE,
-                acc_perc = 100,
-                kernel = 1)
-params = commandArgs(asValues=TRUE, 
-                     adhoc=TRUE,
-                     defaults=defaults)
+defaults = list(doHPO = TRUE,       # do hyperparameter estimation?
+                acc_perc = 100,     # desired level of accuracy
+                distance = 1,       # 1 = Euclidean (only one implemented)
+                kernel = 1)         # 1 = INNER PRODUCT
+params = commandArgs(asValues=TRUE, adhoc=TRUE, defaults=defaults)
 datapaths = base::commandArgs(trailingOnly=TRUE)[c(2,3)]
 
-setwd(dirname(dirname(params$file)))
+if (is.na(datapaths[2])) {
+    stop(paste('Please provide train and test data as follows:\n    Rscript', params$file,
+               '-data /path/to/train /path/to/test [params]'))
+}
 
 trainpath = datapaths[1]
 testpath = datapaths[2]
 
-#Cross validation process necessary?
-cvprocess = params$validation
-
-#Hyperparameter estimation necessary?
-estimatehyp = params$HPO
-
-#Choose derired level of accuracy
-accuracythreshold = params$acc_perc
-
-#Distance measure (Only Euclidean distance implemented)
-distance<-1
-
-#DEFINE KERNEL (INNER PRODUCT)
-kernel = params$kernel
+setwd(dirname(dirname(params$file)))
 
 #Source all necessary internal files
 source("code/sources.R")
 
-# cross validation is used to get estimate of full len accuracy
-if(cvprocess){
-    crossvalidation(databasename,distance, kernel, estimatehyp)
+errorCallback = function() {
+    Sys.sleep(1)
+    traceback()
+    recover()
+    debugger()
 }
+options(error=errorCallback, warn=2)
 
-#Train relGP classifier framework and save results in results/finalresults
-relGP(trainpath, testpath, distance, kernel, estimatehyp)
+#Train relGP classifier framework
+out = relGP(trainpath, testpath, params$distance, params$kernel, params$doHPO, params$acc_perc)
+saveRDS(out, file='output.rds', compress=FALSE)
+# GO-TODO:
+# Print the results in configurator-friendly ouput.

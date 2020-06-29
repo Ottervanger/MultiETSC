@@ -1,5 +1,10 @@
-relGP<-function(trainpath, testpath, distance, kernel, estimatehyp){
-  
+relGP<-function(trainpath, testpath, distance, kernel, estimatehyp, accuracythreshold){
+
+#COLLECT RELIABILITIES
+reliabilities = reliability(trainpath, distance, kernel, estimatehyp, accuracythreshold)
+reliability1 = reliabilities[[1]]
+reliability2 = as.data.frame(reliabilities[[2]])
+
 #LOAD DATA
 data<-loadData(trainpath)
 trainclass<-as.numeric(data$class)
@@ -8,18 +13,6 @@ train<-data$ts
 data<-loadData(testpath)
 testclass<-as.numeric(data$class)
 test<-data$ts
-
-
-#Extract first and second level reliability information
-reliability(databasename, accuracythreshold)
-
-#COLLECT RELIABILITIES
-file<-paste(getwd(),"/results/reliabilities/rel1-",databasename,".txt",sep="")
-reliability1<-read.table(file)  
-reliability1<-as.numeric(reliability1[,1])
-
-file<-paste(getwd(),"/results/reliabilities/rel2-",databasename,".txt",sep="")
-reliability2<-read.table(file)
 
 #CREATE TIMELINE
 timestamps<-unique(reliability1[order(reliability1)])
@@ -144,14 +137,13 @@ accuracy<-numcorrectseries[length(numcorrectseries)] #Accuracy of the whole proc
 numseries<-numseries[!is.na(numseries)] #Number of classified series in each step (%)
 timestamps2<-timestamps2[1:length(numseries)]#Timestamps in which series are classified
 meanearlyness<-sum(timestamps2*c(numseries[1],diff(numseries))/numseries[length(numseries)]) #Mean earlyness
-resultados<-c(accuracy,meanearlyness,numseries[length(numseries)]) #Array of results
+resultados<-list(
+    accuracy=accuracy,
+    meanearlyness=meanearlyness,
+    numseries=numseries,
+    timestamps2=timestamps2,
+    numcorrectseries=numcorrectseries) #Array of results
 
-#SAVE RESULTS
-file<-paste(getwd(),"/results/finalresults/results-",databasename,".txt",sep="")
-write.table(resultados,file=file)
-
+return(resultados)
 }
-
-# GO-TODO:
-# Print the results in configurator-friendly ouput.
 
