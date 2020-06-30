@@ -233,7 +233,7 @@ function(X, t.class, X.TEST, t.class.TEST, theta,  control = list()) {
             #Acc <- 100 - testErr[its];
             vbmultiprob.obj <- structure( list(
                Ptest=Ptest, X=X, invPHI=invPHI, Y=Y, Kc=Kc, M=M,
-               sKernelType=con$sKernelType, THETA=THETA, con=con,
+               sKernelType=con$sKernelType, THETA=theta, con=con,
                lowerBound=lowerBound,testErr=testErr, PL=PL),  class="VBMP.obj");
         }
         if (! is.null(con$tmpSave)) save(vbmultiprob.obj, file=con$tmpSave);

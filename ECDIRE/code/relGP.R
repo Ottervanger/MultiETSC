@@ -6,13 +6,13 @@ reliability1 = reliabilities[[1]]
 reliability2 = as.data.frame(reliabilities[[2]])
 
 #LOAD DATA
-data<-loadData(trainpath)
-trainclass<-as.numeric(data$class)
-train<-data$ts
+data = loadData(trainpath)
+trainclass = as.numeric(levels(data$class))[data$class]
+train = data$ts
 
-data<-loadData(testpath)
-testclass<-as.numeric(data$class)
-test<-data$ts
+data = loadData(testpath)
+testclass = as.numeric(levels(data$class))[data$class]
+test = data$ts
 
 #CREATE TIMELINE
 timestamps<-unique(reliability1[order(reliability1)])
@@ -137,13 +137,13 @@ accuracy<-numcorrectseries[length(numcorrectseries)] #Accuracy of the whole proc
 numseries<-numseries[!is.na(numseries)] #Number of classified series in each step (%)
 timestamps2<-timestamps2[1:length(numseries)]#Timestamps in which series are classified
 meanearlyness<-sum(timestamps2*c(numseries[1],diff(numseries))/numseries[length(numseries)]) #Mean earlyness
-resultados<-list(
+resultOut<-list(
     accuracy=accuracy,
     meanearlyness=meanearlyness,
     numseries=numseries,
     timestamps2=timestamps2,
     numcorrectseries=numcorrectseries) #Array of results
 
-return(resultados)
+return(resultOut)
 }
 
