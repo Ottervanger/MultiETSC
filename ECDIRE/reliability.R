@@ -19,7 +19,6 @@ reliability<-function(trainpath, distance, kernel, estimatehyp, accuracythreshol
     #COLLECT FULL LENGTH ACCURACY
     cv = crossvalidation(trainpath, cachepath, distance, kernel, estimatehyp)
     accuracy = cv$accuracies[[length(cv$accuracies)]]
-    print(accuracy)
     #We remove the classes that have an accuracy lower than 1/|C|
     accuracy[which(accuracy<1/length(accuracy))]<-0
     numclus<-length(accuracy)
