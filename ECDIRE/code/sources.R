@@ -1,4 +1,6 @@
-library("TSdist")
+require("parallel")		# for manual parallelism
+require("RhpcBLASctl")	# for suppressing OpenBLAS parallelism
+require("fastDistSqrd") # using a cpp implementation for better performance
 
 #Functions for GP training
 source("code/fullearlytrainaccuracy.R")
@@ -15,7 +17,6 @@ source("code/reliability1.R")
 source("code/reliability2.R")
 source("code/checkrel2.R")
 
-
 #modified vbmp functions
 source("code/modified-vbmp/genCPP.binary.R")
 source("code/modified-vbmp/predClass.R")
@@ -27,7 +28,6 @@ source("code/modified-vbmp/vbmp.R")
 source("code/basic-vbmp/printTrace.R")
 source("code/basic-vbmp/computeKernel.R")
 source("code/basic-vbmp/covParams.R")
-source("code/basic-vbmp/distSqrd.R")
 source("code/basic-vbmp/genCPP.classic.R")
 source("code/basic-vbmp/gaussQuad.R")
 source("code/basic-vbmp/genCPP.quad.R")

@@ -4,6 +4,9 @@ relGP<-function(trainpath, testpath, distance, kernel, estimatehyp, accuracythre
 reliabilities = reliability(trainpath, distance, kernel, estimatehyp, accuracythreshold)
 reliability1 = reliabilities[[1]]
 reliability2 = as.data.frame(reliabilities[[2]])
+# since the reliability function consumes random numbers,
+# depening on wether data is cached, we need to reset the seed
+set.seed(seed+1)
 
 #LOAD DATA
 data = loadData(trainpath)
