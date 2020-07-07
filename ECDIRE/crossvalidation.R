@@ -12,7 +12,7 @@ crossvalidation = function(trainpath, cachepath, distance, kernel, estimatehyp) 
 
     
     set.seed(seed)
-    reps = 3
+    reps = 1
     folds = 5
     nClassifiers = 20
     #CREATE the sets for cross validation.

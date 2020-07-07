@@ -12,13 +12,14 @@ reliability<-function(trainpath, distance, kernel, estimatehyp, accuracythreshol
     } else {
         # if not valid, reinit
         unlink(cachepath, recursive=T)
-        dir.create(cachepath, showWarnings=F)
+        dir.create(cachepath, showWarnings=F, recursive=T)
         system(sprintf('sha1sum %s > %s.sha1', trainpath, cachepath))
     }
 
     #COLLECT FULL LENGTH ACCURACY
     cv = crossvalidation(trainpath, cachepath, distance, kernel, estimatehyp)
     accuracy = cv$accuracies[[length(cv$accuracies)]]
+    print(accuracy)
     #We remove the classes that have an accuracy lower than 1/|C|
     accuracy[which(accuracy<1/length(accuracy))]<-0
     numclus<-length(accuracy)
