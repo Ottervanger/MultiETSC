@@ -17,6 +17,9 @@ data = loadData(testpath)
 testclass = as.numeric(levels(data$class))[data$class]
 test = data$ts
 
+if (length(trainclass) > 300)
+    blas_set_num_threads(8)
+
 #CREATE TIMELINE
 timestamps<-unique(reliability1[order(reliability1)])
 timestamps<-timestamps[!is.na(timestamps)]

@@ -46,7 +46,7 @@ testpath = datapaths[2]
 setwd(dirname(dirname(params$file)))
 
 #Source all necessary internal files
-suppressMessages(source("code/sources.R"))
+suppressMessages(source("sources.R"))
 
 # set number of cores for explicit parallelization
 assign("num_cores", params$np, envir = .GlobalEnv)
