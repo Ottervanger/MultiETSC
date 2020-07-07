@@ -7,29 +7,30 @@
 ## -acc_perc the desired percentage of accuracy on the full lenght ts.
 # controlls the tradeoff between earliness and accuracy
 
-## distance
+## -distance
 # the distance function used. At this point only 1 for Eucledean is implemented
 
-## Kernel
+## -np
+# number of threads used in parallel crossvalidation step
+
+## -seed
+# seed used to initialize the random number generator
+
+## -kernel
 # the GP kernel that is used for the interal GP classifiers chose one of the following:
 # 'gauss'     ##  Gaussian
 # 'iprod'     ##  Inner product
-# 'tps'       ##  'Thin-plate' spline
 # 'cauchy'    ##  Cauchy (heavy tailed) in distance
-# 'cubic'     ##  Cube of distance
-# 'r'         ##  Distance
-# 'neighbour' ##  Neighbourhood indicator
 # 'laplace'   ##  Laplacian
-# 'poly'      ##  polinomial (X + 1)^p;
-# 'hpoly'     ##  homogeneous polynomial  X^p;
-# 'lsp'       ##  'linear' spline kernel
 
 # Get commandline arguments
 suppressMessages(require('R.utils'));
 suppressMessages(require('utils'));
-defaults = list(doHPO = FALSE,      # do hyperparameter estimation? Turning it off is much quicker, can we get away with that?
+defaults = list(doHPO = T,       # toggle GP HP search
                 acc_perc = 100,
                 distance = 1,
+                np = 12,
+                seed = 0,
                 kernel = 'iprod')
 params = commandArgs(asValues=TRUE, adhoc=TRUE, defaults=defaults)
 datapaths = base::commandArgs(trailingOnly=TRUE)[c(2,3)]
@@ -46,7 +47,15 @@ setwd(dirname(dirname(params$file)))
 
 #Source all necessary internal files
 suppressMessages(source("code/sources.R"))
-options(width = as.numeric(system('tput cols', intern=T)))
+
+# set number of cores for explicit parallelization
+assign("num_cores", params$np, envir = .GlobalEnv)
+# globally defined seed
+assign("seed", params$seed, envir = .GlobalEnv)
+set.seed(seed)
+
+# suppress parallel BLAS routines
+blas_set_num_threads(1)
 
 start = proc.time()
 #Train relGP classifier framework
