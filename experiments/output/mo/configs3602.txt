@@ -1,4 +1,0 @@
--algorithm 'ECTS/bin/ects' -min_support '0.52' -version 'loose'
--algorithm 'RelClass/run' -constr 'Naive' -ldg '1' -tau '5.82e-11'
--algorithm 'RelClass/run' -constr 'boxco' -ldg '0' -tau '1.36e-20'
--algorithm 'RelClass/run' -constr 'Naive' -ldg '1' -tau '0.000488'

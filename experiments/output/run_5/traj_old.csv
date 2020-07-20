@@ -1,4 +1,0 @@
-"CPU Time Used","Estimated Training Performance","Wallclock Time","Incumbent ID","Automatic Configurator (CPU) Time","Configuration..."
-0.000000, 2147483648.000000, 0.000248, 1, 0.000248, algorithm=''ECTS/bin/ects'', min_support='0.0', version=''strict''
-0.002375, 0.713542, 0.047961, 1, 0.045586, algorithm=''ECTS/bin/ects'', min_support='0.0', version=''strict''
-0.439993, 0.011458, 1.799626, 2, 1.359633, algorithm=''RelClass/run'', constr=''boxco'', ldg=''1'', tau='3.136407966477836e-24'

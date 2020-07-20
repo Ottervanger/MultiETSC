@@ -1,3 +1,0 @@
-Result: SUCCESS, 0.018525, [0.790833, 0.110000], 0, -algorithm ECTS/bin/ects -min_support 0.0 -version strict
-Result: SUCCESS, 0.00999, [0.790833, 0.110000], 0, -algorithm ECTS/bin/ects -min_support 0.0 -version strict
-Result: SUCCESS, 0.165158, [0.0104167, 0.36], 0, -algorithm RelClass/run -constr boxco -ldg 1 -tau 3.136407966477836e-24

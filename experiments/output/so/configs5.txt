@@ -1,3 +1,0 @@
--algorithm ECTS/bin/ects -min_support 0.0 -version strict
--algorithm ECTS/bin/ects -min_support 0.0 -version strict
--algorithm RelClass/run -constr boxco -ldg 1 -tau 3.136407966477836e-24
