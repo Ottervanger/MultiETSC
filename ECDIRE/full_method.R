@@ -43,7 +43,7 @@ if (is.na(datapaths[2])) {
 trainpath = datapaths[1]
 testpath = datapaths[2]
 
-setwd(dirname(dirname(params$file)))
+setwd(dirname(params$file))
 
 #Source all necessary internal files
 suppressMessages(source("sources.R"))
