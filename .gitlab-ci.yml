@@ -8,7 +8,6 @@ test ECTS:
       - ECTS/*
       - ECTS/**/*
       when: on_success
-    - when: manual
   script:
     - pushd ECTS
     - make test
@@ -21,7 +20,6 @@ test paramils:
       - paramils/*
       - paramils/**/*
       when: on_success
-    - when: manual
   script:
     - paramils/test
 
@@ -32,6 +30,5 @@ test smac:
       - smac/*
       - smac/**/*
       when: on_success
-    - when: manual
   script:
     - cd smac; ./test
