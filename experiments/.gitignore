@@ -1,3 +1,4 @@
 output
-report
+report/*
+!report
 !report/*.tex

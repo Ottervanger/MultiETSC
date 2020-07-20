@@ -1,6 +1,0 @@
-"CPU Time Used","Estimated Training Performance","Wallclock Time","Incumbent ID","Automatic Configurator (CPU) Time","Configuration..."
-0.0, 1.7976931348623157E308, 0.0, 1, 0.0,  algorithm='ECTS/bin/ects', constr='boxco', ldg='0', min_support='0.0', tau='8.88e-16', version='strict'
-0.1, [0.679818, 0.3], 0.103, 1, 0.05809378300000001,  algorithm='ECTS/bin/ects', constr='boxco', ldg='0', min_support='0.0', tau='8.88e-16', version='strict'
-9.65304, [0.491797, 0.225], 10.228, 2, 0.08765940299999997,  algorithm='RelClass/run', constr='Naive', ldg='0', min_support='0.42', tau='6.1e-05', version='strict'
-9.65304, [Infinity, Infinity], 10.228, 1, 0.08815336600000001,  algorithm='ECTS/bin/ects', constr='boxco', ldg='0', min_support='0.0', tau='8.88e-16', version='strict'
-10.05304, [0.8089845, 0.1375], 10.443, 3, 0.10342177699999999,  algorithm='ECTS/bin/ects', constr='boxco', ldg='0', min_support='0.4', tau='8.08e-28', version='loose'

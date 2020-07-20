@@ -1,3 +1,0 @@
-Result: SUCCESS, 0.021544, [0.790833, 0.110000], 0, -algorithm 'ECTS/bin/ects' -min_support '0.0' -version 'strict'
-Result: SUCCESS, 0.009342, [0.717292, 0.120000], 0, -algorithm 'ECTS/bin/ects' -min_support '0.27' -version 'loose'
-Result: SUCCESS, 19.277, [0.908333, 0.11], 0, -algorithm 'RelClass/run' -constr 'Cheby' -ldg '1' -tau '.9'

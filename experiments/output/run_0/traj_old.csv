@@ -1,9 +1,0 @@
-"CPU Time Used","Estimated Training Performance","Wallclock Time","Incumbent ID","Automatic Configurator (CPU) Time","Configuration..."
-0.000000, 2147483648.000000, 0.000199, 1, 0.000199, algorithm=''ECTS/bin/ects'', min_support='0.0', version=''strict''
-0.008291, 0.714844, 0.075508, 1, 0.067217, algorithm=''ECTS/bin/ects'', min_support='0.0', version=''strict''
-0.034400, 0.634549, 0.514552, 2, 0.480152, algorithm=''ECTS/bin/ects'', min_support='0.003878253925047148', version=''loose''
-8.884170, 0.309479, 10.428524, 3, 1.544354, algorithm=''RelClass/run'', constr=''Naive'', ldg=''0'', tau='5.7792510068905785e-15'
-10.317772, 0.134062, 12.421043, 4, 2.103271, algorithm=''RelClass/run'', constr=''Naive'', ldg=''1'', tau='3.136479708303282e-11'
-14.700092, 0.017917, 17.652631, 5, 2.952539, algorithm=''RelClass/run'', constr=''Naive'', ldg=''1'', tau='1.2706062936115848e-27'
-15.194567, 0.017708, 18.558762, 6, 3.364195, algorithm=''RelClass/run'', constr=''Naive'', ldg=''1'', tau='6.271213864831405e-28'
-15.633107, 0.013021, 19.629627, 7, 3.996520, algorithm=''RelClass/run'', constr=''Naive'', ldg=''1'', tau='3.8943988416633745e-30'

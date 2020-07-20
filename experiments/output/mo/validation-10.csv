@@ -1,2 +1,0 @@
-Result: SUCCESS, 11.417, [0.508125, 0.11], 0, -algorithm 'RelClass/run' -constr 'Naive' -ldg '0' -tau '6.1e-05'
-Result: SUCCESS, 0.006904, [0.717292, 0.120000], 0, -algorithm 'ECTS/bin/ects' -min_support '0.4' -version 'loose'

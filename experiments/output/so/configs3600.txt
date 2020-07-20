@@ -1,9 +1,0 @@
--algorithm ECTS/bin/ects -min_support 0.0 -version strict
--algorithm ECTS/bin/ects -min_support 0.0 -version strict
--algorithm RelClass/run -constr Cheby -ldg 1 -tau 7.185379158426766e-05
--algorithm RelClass/run -constr boxco -ldg 1 -tau 2.8422844882112548e-08
--algorithm RelClass/run -constr Naive -ldg 1 -tau 6.782274091635262e-30
--algorithm RelClass/run -constr boxco -ldg 1 -tau 3.2985840613676566e-28
--algorithm RelClass/run -constr boxco -ldg 1 -tau 1.837497443491456e-21
--algorithm RelClass/run -constr boxco -ldg 1 -tau 1.771336713019985e-22
--algorithm RelClass/run -constr boxco -ldg 1 -tau 6.467010603608265e-23
