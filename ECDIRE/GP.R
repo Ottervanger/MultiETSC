@@ -9,6 +9,6 @@ GP<-function(traindata,trainclass,testdata,testclass,kernel,estimatehyp, theta=r
   #TRAIN the GP model
   model <- vbmp(traindata, trainclass, testdata,testclass,theta,
            control=list(bThetaEstimate=estimatehyp,bPlotFitting=F,
-          maxIts=max.train.iter,sKernelType=kernel, Thresh=Thresh, nSampsIS=1000));
+          maxIts=max.train.iter,sKernelType=kernel, Thresh=Thresh, nSampsIS=100));
   return(model)
 }

@@ -1,4 +1,4 @@
-algo = ./wrapper --MO false
+algo = ./wrapper --MO false --timeout 60
 paramfile = smacparams.txt
 deterministic = 0
 run_obj = quality
