@@ -1,5 +1,5 @@
 # algorithms
-algorithm {ECTS/bin/ects, RelClass/run}[ECTS/bin/ects]
+algorithm {ECTS/bin/ects, RelClass/run, ECDIRE/run}[ECTS/bin/ects]
 
 # ects parameters
 min_support {0.0,0.01..1.0}[0.0]
@@ -14,3 +14,11 @@ ldg {0,1}[0]
 tau | algorithm in {RelClass/run}
 constr | algorithm in {RelClass/run}
 ldg | algorithm in {RelClass/run}
+
+# ECDIRE parameters
+kernel {'gauss','iprod','cauchy','laplace'}['iprod']
+acc_perc {0,1..100}[100]
+doHPO {TRUE,FALSE}[TRUE]
+kernel | algorithm in {ECDIRE/run}
+acc_perc | algorithm in {ECDIRE/run}
+doHPO | algorithm in {ECDIRE/run}

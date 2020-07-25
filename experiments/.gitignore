@@ -1,2 +1,4 @@
-conf/.test*
-pareto.pdf
+output
+report/*
+!report
+!report/*.tex

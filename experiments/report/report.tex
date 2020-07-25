@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{pgffor}
+\usepackage[font=small,labelfont=bf]{caption}
+\title{EarlyECTS Results}
+
+% load all plot files into the \plotList variable
+\begingroup\makeatletter\endlinechar=\m@ne\everyeof{\noexpand}
+\edef\x{\endgroup\def\noexpand\texList{\@@input|"ls -m output/tex/*.tex" }}\x
+
+% turn tex path into plot file path
+\makeatletter
+\def\cle@n@#1>#2{#2}
+\newcommand{\setCompid}[1]{%
+\ifnum\pdfmatch subcount 5 {(.+tex/)(.*?).tex}{#1}=1%
+\gdef\compid{\expandafter\cle@n@\pdflastmatch2}%
+\else\fi
+}
+\makeatother
+
+\begin{document}
+\foreach \plot in \texList {%
+    \setCompid{\plot}
+    \begin{figure}[!ht]%
+        \makebox[\textwidth][c]{\includegraphics[width=1.6\textwidth]{output/plots/\compid.pdf}}%
+        \caption{Comparison of the Earliness Accuracy tradeoff between single objective and multi objective optimization.}%
+    \end{figure}%
+    \begin{table}[!hb]%
+        \centering
+        \input{\plot}%
+        \caption{Comparison of Pareto front metrics for run ``\compid''.}%
+    \end{table}
+    \pagebreak
+}
+\end{document}

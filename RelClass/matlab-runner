@@ -4,21 +4,26 @@
 # starting and stopping instances of MATLAB.
 
 # Usage:
+# starting the runner
+# ./matlab-runner start
 # ./matlab-runner [expression]
 # to quit the runner:
 # ./matlab-runner exit
 
 IN_PIPE=".inpipe"
 OUT_PIPE=".outpipe"
+# location of matlab binary
 MATLAB_PATH="/vol/share/software/matlab/liacs/R2015b/bin/"
 cd "${0%/*}"
 
-# if instance is not running
-if [[ ! -e $IN_PIPE ]]; then
+restart() {
     # input pipe
+    rm -f "$IN_PIPE"
+    rm -f "$OUT_PIPE"
     mkfifo "$IN_PIPE"
     mkfifo "$OUT_PIPE"
-    # location of matlab binary
+
+    pkill MATLAB
 
     #MATLAB instructions to watch for commands sent to the IN_PIPE
     RUNNER="warning('off','all');while 1;clear;rng('default');[v,o]=system('cat $IN_PIPE');if v;break;end;try;r=evalc(o);catch ME;r=ME.message;end;f=fopen('$OUT_PIPE','a');fprintf(f,'%s\n', strtrim(r));fclose(f);end;exit;"
@@ -27,6 +32,17 @@ if [[ ! -e $IN_PIPE ]]; then
     $MATLAB_PATH"matlab" -nodisplay -nojvm -nosplash -r "$RUNNER" > /dev/null &
     echo "disp('Runner ready and waiting');" >> $IN_PIPE
     cat $OUT_PIPE > /dev/null
+    exit
+}
+
+if [[ "$1" = "start" ]]; then
+    restart
+fi
+
+# if instance is not running
+if [[ ! -e $IN_PIPE ]]; then
+    echo "matlab-runner not active"
+    exit
 fi
 
 # check if MATLAB is still running
@@ -39,6 +55,7 @@ fi
 
 # check for input commands
 if [[ $# -eq 1 ]]; then
+    trap restart SIGINT
     echo $1 >> "$IN_PIPE"
     if [[ $1 == exit ]]; then
         echo "exiting";
