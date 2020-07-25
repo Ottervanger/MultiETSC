@@ -2,6 +2,7 @@
 
 ARGS=()
 MO='true'
+TIMEOUT="60"
 while [[ $# -gt 0 ]]; do
 case "$1" in
     -algorithm)
@@ -10,6 +11,10 @@ case "$1" in
         ;;
     --MO)
         MO="$2"
+        shift; shift
+        ;;
+    --timeout)
+        TIMEOUT="$2"
         shift; shift
         ;;
     *)
@@ -29,9 +34,13 @@ function hmean {
 
 ARGS=${ARGS[*]}
 CMD="../${ALGO//[\'\"]/} -data ${ARGS//[\'\"]/}"
+ret=$(timeout -s2 $TIMEOUT $CMD)
+if [ $? -ne 0 ]; then
+    ret="Result: TIMEOUT, 60, [1.0, 1.0], 0"
+fi
 
 if [[ $MO == 'true' ]]; then
-    $CMD
+    echo $ret
 else
-    hmean "$($CMD)"
+    hmean $ret
 fi
