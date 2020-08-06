@@ -1,5 +1,5 @@
 # algorithms
-algorithm {ECTS/bin/ects, RelClass/run, ECDIRE/run}[ECTS/bin/ects]
+algorithm {ECTS/bin/ects, RelClass/run, ECDIRE/run, SR-CF/run}[ECTS/bin/ects]
 
 # ects parameters
 min_support {0.0,0.01..1.0}[0.0]
@@ -16,9 +16,25 @@ constr | algorithm in {RelClass/run}
 ldg | algorithm in {RelClass/run}
 
 # ECDIRE parameters
-kernel {'gauss','iprod','cauchy','laplace'}['iprod']
+kernel {gauss,iprod,cauchy,laplace}[iprod]
 acc_perc {0,1..100}[100]
 doHPO {TRUE,FALSE}[TRUE]
-kernel | algorithm in {ECDIRE/run}
+kernel | algorithm in {ECDIRE/run, SR-CF/run}
 acc_perc | algorithm in {ECDIRE/run}
 doHPO | algorithm in {ECDIRE/run}
+
+# SR-CF parameters
+distance {euclidean, dtw, edr, fourier, tquest}[euclidean]
+optimizer {ga, optim, sa, pso}[ga]
+alpha {0.0,0.01..1.0}[0.8]
+sr {sr1, sr2}[sr1]
+# according to the paper regularization should not be applied when sr1 is used
+reg {none, L0, L1}[none]
+lambda {0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10,20,50}[0.5]
+reg | sr in {sr2}
+lambda | sr in {sr2}
+distance | algorithm in {SR-CF/run}
+optimizer | algorithm in {SR-CF/run}
+alpha | algorithm in {SR-CF/run}
+sr | algorithm in {SR-CF/run}
+
