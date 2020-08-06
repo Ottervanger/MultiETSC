@@ -1,4 +1,4 @@
-algo = ./wrapper --MO true --timeout 60
+algo = ./wrapper --MO true --timeout 120
 MO = TRUE
 paramfile = params.txt
 deterministic = 0
