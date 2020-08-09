@@ -96,8 +96,10 @@ blas_set_num_threads(1)
 
 start = proc.time()
 # run
+sink(file('/dev/null', open = 'wt'), type='message')
 result = prediction(trainpath, testpath, distance=params$distance, kernel=params$kernel,
     optimizer=params$optimizer, alpha=params$alpha, sr=params$sr, reg=params$reg,
     lambda=params$lambda, np=params$np, seed=params$seed)
+sink()
 
 cat(sprintf('Result: SUCCESS, %g, [%g, %g], 0\n', (proc.time() - start)['elapsed'], result$earliness, 1-result$accuracy))
