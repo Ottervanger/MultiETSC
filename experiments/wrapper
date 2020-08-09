@@ -34,6 +34,7 @@ function hmean {
 
 ARGS=${ARGS[*]}
 CMD="../${ALGO//[\'\"]/} -data ${ARGS//[\'\"]/}"
+>&2 echo "$CMD"
 ret=$(timeout -s2 $TIMEOUT $CMD)
 if [ $? -ne 0 ]; then
     ret="Result: TIMEOUT, 60, [1.0, 1.0], 0"

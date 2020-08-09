@@ -48,11 +48,6 @@ done
 ABS_PATH_TRAIN=$UCR$DATASET"/"$DATASET"_TRAIN.tsv"
 ABS_PATH_TEST=$UCR$DATASET"/"$DATASET"_TEST.tsv"
 
-# running initialization scripts for each algorithms needing it
-for alg in {'RelClass',}; do
-    timeout 600 "../${alg}/init"
-done
-
 # Produce train-validate split from training data
 INSTANCE=$(python ../util/validationsplitter.py "$VALIDATION" --seed=$SEED "$ABS_PATH_TRAIN")
 
@@ -76,6 +71,4 @@ echo "Starting off-line validation"
 while read conf; do
     echo $(./wrapper --timeout 9999 --MO "true" "$ABS_PATH_TRAIN" "$ABS_PATH_TEST" $conf)", $conf" | tee -a "$validation_out"
 done<"${configs}"
-
-../RelClass/matlab-runner exit
 

@@ -1,4 +1,4 @@
-function run(trainfile, testfile, tau, constraint_type, pred_type, use_LDG)
+function runn(trainfile, testfile, tau, constraint_type, pred_type, use_LDG, seed = 0)
 %{
 ___________INPUT_____________
     trainfile, testfile - (path to) train and test files
@@ -18,9 +18,12 @@ ___________INPUT_____________
 %}
 
 % add paths
+warning('off');
 restoredefaultpath;
 addpath('Reliable_Early_Classification');
 addpath(genpath('Utilities'));
+pkg load statistics;
+rand("state", seed);
 
 % load data
 test = load(testfile);
@@ -31,8 +34,14 @@ data.train.labels = train(:,1);
 data.train.data = train(:,2:end);
 min_d = [];
 
-[early_l, ~, early_t, ~, ~, ~, training_time, testing_time, ~, ~, ~] = ...
-    multi_class_incomplete_classification(data, tau, constraint_type, pred_type, use_LDG, min_d);
+try
+    [early_l, ~, early_t, ~, ~, ~, training_time, testing_time, ~, ~, ~] = ...
+        multi_class_incomplete_classification(data, tau, constraint_type, pred_type, use_LDG, min_d);
+catch err
+    fprintf(2, '%s %s\n',err.identifier, err.message);
+    fprintf('Result: SUCCESS, 0, [1, 1], 0');
+    exit;
+end
 
 min_d = early_t;
 
