@@ -77,7 +77,7 @@ if __name__ == '__main__':
         with open(outputpath+trainFileName, 'w') as f:
             for line in train:
                 f.write(line)
-        splits += ['{path}{train} {path}{valid}\n'.format(path=outputpath, train=trainFileName, valid=validFileName)]
+        splits += ['{path}{train}:{path}{valid}\n'.format(path=outputpath, train=trainFileName, valid=validFileName)]
 
     with open(outputpath+'train_list.txt', 'w') as f:
         for line in splits:
