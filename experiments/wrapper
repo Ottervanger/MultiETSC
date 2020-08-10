@@ -22,7 +22,7 @@ done
 
 function hmean {
     [[ $1 =~ \[(.*),[[:space:]](.*)\] ]]
-    hm=$(python -c "print((lambda x,y: 1-(2/((1-x)**-1 + (1-y)**-1)))(${BASH_REMATCH[1]}, ${BASH_REMATCH[2]}))")
+    hm=$(python -c "print((lambda x,y: 1 if x == 1 or y == 1 else 1-(2/((1-x)**-1 + (1-y)**-1)))(${BASH_REMATCH[1]}, ${BASH_REMATCH[2]}))")
     [[ $1 =~ (.*)\[.*\](.*) ]]
     res="${BASH_REMATCH[1]}0, ${hm}${BASH_REMATCH[2]}"
     echo "${res/Result/Result of this algorithm run}"
