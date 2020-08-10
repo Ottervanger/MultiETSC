@@ -72,5 +72,5 @@ done
 [[ $TRAIN ]] && [[ $TEST ]] || usage
 CMD="runn('$TRAIN', '$TEST', $TAU, '$CONSTR', '$PRED', $LDG, $SEED);"
 cd "${0%/*}"
-octave --eval "$CMD"
+octave --quiet --eval "$CMD"
 

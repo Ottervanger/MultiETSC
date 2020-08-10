@@ -17,7 +17,7 @@ ldg | algorithm in {RelClass/run}
 
 # ECDIRE parameters
 kernel {gauss,iprod,cauchy,laplace}[iprod]
-acc_perc [0, 100]][100]
+acc_perc [0, 100] [100]
 doHPO {TRUE,FALSE}[TRUE]
 kernel | algorithm in {ECDIRE/run}
 acc_perc | algorithm in {ECDIRE/run}
