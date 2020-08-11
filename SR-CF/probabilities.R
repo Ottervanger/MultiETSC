@@ -40,7 +40,7 @@ getProbabilities = function(trainpath, testpath, cachepath,
     ret = list()
 
     fun = function(item) {
-        set.seed(seed*1000+item$fold*nClassifiers+item$earliness)
+        set.seed(seed+item$fold*nClassifiers+item$earliness)
         traincv = train[-cv[[1]][[item$fold]],]
         testcv = train[cv[[1]][[item$fold]],]
         trainclasscv = classestrain[-cv[[1]][[item$fold]]]
