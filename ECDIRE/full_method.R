@@ -44,6 +44,7 @@ trainpath = datapaths[1]
 testpath = datapaths[2]
 
 setwd(dirname(params$file))
+options(warn=1, showWarnCalls=T, showErrorCalls=T)
 
 #Source all necessary internal files
 suppressMessages(source("sources.R"))

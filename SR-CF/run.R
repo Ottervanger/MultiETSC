@@ -83,7 +83,6 @@ if (is.na(datapaths[2])) {
 
 trainpath = datapaths[1]
 testpath = datapaths[2]
-options(warn=1, showWarnCalls=T, showErrorCalls=T)
 
 setwd(dirname(dirname(params$file)))
 
