@@ -10,7 +10,6 @@
 # 'dtw'         ## dynamic time warping
 # 'edr'         ## edit distance on real sequence
 # 'fourier'
-# 'tquest'
 
 ## -kernel
 # the GP kernel that is used for the interal GP classifiers chose one of the following:
@@ -62,7 +61,7 @@
 # Get commandline arguments
 suppressMessages(require('R.utils'));
 defaults = list(
-    distance = 'euclidean',  # distance metric {'euclidean', 'dtw', 'edr', 'fourier', 'tquest'}
+    distance = 'euclidean',  # distance metric {'euclidean', 'dtw', 'edr', 'fourier'}
     kernel = 'iprod',        # GP kernel {'iprod', 'gauss', 'cauchy', 'laplace'}
 
     optimizer = 'ga',        # optimization method
@@ -84,6 +83,7 @@ if (is.na(datapaths[2])) {
 
 trainpath = datapaths[1]
 testpath = datapaths[2]
+options(warn=1, showWarnCalls=T, showErrorCalls=T)
 
 setwd(dirname(dirname(params$file)))
 
@@ -96,10 +96,10 @@ blas_set_num_threads(1)
 
 start = proc.time()
 # run
-sink(file('/dev/null', open = 'wt'), type='message')
+# sink(file('/dev/null', open = 'wt'), type='message')
 result = prediction(trainpath, testpath, distance=params$distance, kernel=params$kernel,
     optimizer=params$optimizer, alpha=params$alpha, sr=params$sr, reg=params$reg,
     lambda=params$lambda, np=params$np, seed=params$seed)
-sink()
+# sink()
 
 cat(sprintf('Result: SUCCESS, %g, [%g, %g], 0\n', (proc.time() - start)['elapsed'], result$earliness, 1-result$accuracy))

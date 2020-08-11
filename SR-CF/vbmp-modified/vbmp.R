@@ -115,15 +115,17 @@ function(X, t.class, X.TEST, t.class.TEST, theta,  control = list()) {
         for (n in 1:N) {
           #####Esto hay que cambiar!!
             if(Kc>2){
-            scan.tm <- tmean(M[n,], t.class[n], Nsamps);
-            }else{
-            scan.tm <- tmean(M[n,], t.class[n]);
+                scan.tm <- tmean(M[n,], t.class[n], Nsamps);
+            } else {
+                scan.tm <- tmean(M[n,], t.class[n]);
             }
-            if (! is.null(scan.tm)) {
+            if (! is.null(scan.tm) && !anyNA(scan.tm$tm)) {
                 Y[n,] <- scan.tm$tm;
                 scan.lower.bound <- scan.lower.bound + safeLog(scan.tm$z);
                 rm(scan.tm); scan.tm <- NULL;
-            } else stop("tmean error.....");
+            } else {
+                stop("tmean error.....");
+            }
         }
         if (con$bThetaEstimate) {
             printTrace(paste(its, "> update the posterior mean estimates of the",

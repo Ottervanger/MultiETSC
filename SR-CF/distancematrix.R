@@ -34,11 +34,11 @@ distanceMatrix<-function(train, test, earlyness, distance, param){
           dtrain[i,j]<-earlyDP(truncatedx,y,"edr",paramm)}}
     }else if(distance=="fourier"){
     paramm<-min(c(round(seq(4,32,4)*dim(train)[2]/100),dim(train)[2])[param], dim(truncatedtrain)[2])
-    dtrain<-as.matrix(tsDatabaseDistances(truncatedtrain, method="fourier",
+    dtrain<-as.matrix(TSDatabaseDistances(truncatedtrain, distance="fourier",
                                             n=paramm, upper=TRUE, diag=TRUE))  
     }else if(distance=="tquest"){
       paramm<-seq(mean(as.matrix(train))-sd(as.matrix(train)),mean(as.matrix(train))+sd(as.matrix(train)),0.4)[param]
-      dtrain<-as.matrix(tsDatabaseDistances(truncatedtrain, method="tquest",
+      dtrain<-as.matrix(TSDatabaseDistances(truncatedtrain, distance="tquest",
                                             tau=paramm, upper=TRUE, diag=TRUE))  
     }
     return(dtrain)
@@ -81,11 +81,11 @@ distanceMatrix<-function(train, test, earlyness, distance, param){
             
         }else if(distance=="fourier"){
           paramm<-min(c(round(seq(4,32,4)*dim(train)[2]/100),dim(train)[2])[param], dim(truncatedtrain)[2])
-          dtest[k,]<-apply(as.matrix(truncatedtrain), 1, tsDistances, 
+          dtest[k,]<-apply(as.matrix(truncatedtrain), 1, TSDistances, 
                   x=truncatedtest, distance="fourier", n=paramm)
         }else if(distance=="tquest"){
           paramm<-seq(mean(as.matrix(train))-sd(as.matrix(train)),mean(as.matrix(train))+sd(as.matrix(train)),0.4)[param]
-          dtest[k,]<-apply(as.matrix(truncatedtrain), 1, tsDistances, 
+          dtest[k,]<-apply(as.matrix(truncatedtrain), 1, TSDistances, 
                            x=truncatedtest, distance="tquest", tau=paramm)
         }
       }
