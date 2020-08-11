@@ -24,7 +24,7 @@ acc_perc | algorithm in {ECDIRE/run}
 doHPO | algorithm in {ECDIRE/run}
 
 # SR-CF parameters
-distance {euclidean, dtw, edr, fourier, tquest}[euclidean]
+distance {euclidean, dtw, edr, fourier}[euclidean]
 optimizer {ga, optim, sa, pso}[ga]
 alpha {0.0,0.01..1.0}[0.8]
 sr {sr1, sr2}[sr1]
