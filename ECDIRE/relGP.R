@@ -9,13 +9,13 @@ reliability2 = as.data.frame(reliabilities[[2]])
 set.seed(seed+1)
 
 #LOAD DATA
-data = loadData(trainpath)
-trainclass = as.numeric(levels(data$class))[data$class]
-train = data$ts
-
 data = loadData(testpath)
 testclass = as.numeric(levels(data$class))[data$class]
 test = data$ts
+
+data = loadData(trainpath)
+trainclass = as.numeric(levels(data$class))[data$class]
+train = data$ts
 
 if (length(trainclass) > 300)
     blas_set_num_threads(8)
@@ -53,7 +53,8 @@ for(i in c(1:length(listaclasses))){
     targetclasses<-c(targetclasses,listaclasses[[i]])
 
     #If no instances are left in the testing set, the process is ended
-    if(length(indicestest)==0){break;}
+    if(length(indicestest)==0)
+        break;
 
     #TESTING SET DATA AND CLASSES
     testaux<-test[indicestest,]
@@ -88,6 +89,8 @@ for(i in c(1:length(listaclasses))){
         
       
     #CALCULATE THE NEW TEST INDEXES OF ELEMENTS THAT HAVE NOT BEEN CLASSIFIED YET
+    if (is.null(classified))
+        next;
     indicestest<-indicestest[-classified]
   
 }
