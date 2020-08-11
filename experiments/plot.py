@@ -172,7 +172,7 @@ def main():
 
     fig.tight_layout()
     # save plot
-    plt.savefig('output/plots/{}-{}.pdf'.format(dataname, seed))
+    plt.savefig('output/plot/{}-{}.pdf'.format(dataname, seed))
     # save tex table
     with open('output/tex/{}-{}.tex'.format(dataname, seed), 'w') as f:
         f.write(latexTable(metricTable))

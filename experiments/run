@@ -65,7 +65,7 @@ INSTANCE=$(python ../util/validationsplitter.py "$VALIDATION" --seed=$SEED "$ABS
 ${CONFIGURATOR} --scenario "${METHOD}scenario.txt" \
                 --seed "$SEED" \
                 --instance_file "$INSTANCE" \
-                --tuner-timeout "$TIMEOUT" \
+                --wallclock-limit "$TIMEOUT" \
                 --cutoff-time "$CUTOFF" 
 
 # note that we use mo validation regardless of the optimization method
