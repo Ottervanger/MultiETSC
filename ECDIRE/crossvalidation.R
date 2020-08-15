@@ -19,7 +19,7 @@ crossvalidation = function(trainpath, cachepath, distance, kernel, estimatehyp) 
     cv = generateCVRuns(as.numeric(trainclass),ntimes=reps,nfold=folds,stratified=TRUE)
 
     # core cluster
-    if (num_cores) {
+    if (num_cores > 1) {
         cl = makeCluster(num_cores, type="FORK")
         on.exit(stopCluster(cl))
     }
@@ -68,7 +68,7 @@ crossvalidation = function(trainpath, cachepath, distance, kernel, estimatehyp) 
     }
 
     # run parallel loop
-    if (num_cores)
+    if (num_cores > 1)
         res = parLapply(cl, repList, loop)
     else
         res = lapply(repList, loop)
