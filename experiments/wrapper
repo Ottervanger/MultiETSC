@@ -13,10 +13,6 @@ case "$1" in
         MO="$2"
         shift; shift
         ;;
-    --timeout)
-        TIMEOUT="$2"
-        shift; shift
-        ;;
     *)
         ARGS+=("$1")
         shift
@@ -26,21 +22,26 @@ done
 
 function hmean {
     [[ $1 =~ \[(.*),[[:space:]](.*)\] ]]
-    hm=$(python -c "print((lambda x,y: 1-(2/((1-x)**-1 + (1-y)**-1)))(${BASH_REMATCH[1]}, ${BASH_REMATCH[2]}))")
+    hm=$(python -c "print((lambda x,y: 1 if x == 1 or y == 1 else 1-(2/((1-x)**-1 + (1-y)**-1)))(${BASH_REMATCH[1]}, ${BASH_REMATCH[2]}))")
     [[ $1 =~ (.*)\[.*\](.*) ]]
     res="${BASH_REMATCH[1]}0, ${hm}${BASH_REMATCH[2]}"
     echo "${res/Result/Result of this algorithm run}"
 }
 
-ARGS=${ARGS[*]}
-CMD="../${ALGO//[\'\"]/} -data ${ARGS//[\'\"]/}"
-ret=$(timeout -s2 $TIMEOUT $CMD)
+>&2 echo "${ARGS[*]}"
+DATA=$(tr ":" " "<<<"${ARGS[0]}")
+TIMEOUT="${ARGS[2]}"
+SEED="${ARGS[4]}"
+ARGS=${ARGS[*]:5}
+CMD="../${ALGO//[\'\"]/} -data $DATA -seed $SEED ${ARGS//[\'\"]/}"
+>&2 echo "$CMD"
+ret="$(timeout -s2 $TIMEOUT $CMD)"
 if [ $? -ne 0 ]; then
-    ret="Result: TIMEOUT, 60, [1.0, 1.0], 0"
+    ret="Result: TIMEOUT, ${TIMEOUT}, [1.0001, 1.0001], 0"
 fi
 
 if [[ $MO == 'true' ]]; then
-    echo $ret
+    echo "$ret"
 else
-    hmean $ret
+    hmean "$ret"
 fi

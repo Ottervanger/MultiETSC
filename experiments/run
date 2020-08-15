@@ -6,13 +6,15 @@ cd "${0%/*}"
 # config
 VALIDATION="--folds=5"
 UCR="/vol/share/groups/liacs/scratch/UCR/"
+NVALID=10
 
 # default arguments
 SEED=1
 DATASET="ECG200"
 TIMEOUT="3600"
+CUTOFF="60"
 METHOD="mo"
-CONFIGURATOR="../paramils/paramils"
+CONFIGURATOR="../paramils/paramils --log-details true"
 
 # TODO
 # Everything is identified based on the seed. This is not a proper id. Ids
@@ -33,9 +35,13 @@ case "$1" in
         TIMEOUT="$2"
         shift; shift
         ;;
+    --cutoff-time|--cutoff|-c)
+        CUTOFF="$2"
+        shift; shift
+        ;;
     --SO)
         METHOD="so"
-        CONFIGURATOR="python ../smac/smac"
+        CONFIGURATOR="python ../smac/smac --verbose_level DEBUG"
         shift
         ;;
     *)
@@ -48,34 +54,35 @@ done
 ABS_PATH_TRAIN=$UCR$DATASET"/"$DATASET"_TRAIN.tsv"
 ABS_PATH_TEST=$UCR$DATASET"/"$DATASET"_TEST.tsv"
 
-# running initialization scripts for each algorithms needing it
-for alg in {'RelClass',}; do
-    timeout 600 "../${alg}/init"
-done
+if [[ $METHOD == "mo" ]]; then
+    CONFIGURATOR="${CONFIGURATOR} --rungroup run_${SEED}"
+fi
 
 # Produce train-validate split from training data
 INSTANCE=$(python ../util/validationsplitter.py "$VALIDATION" --seed=$SEED "$ABS_PATH_TRAIN")
+exit
 
 # Start the configurator
-${CONFIGURATOR} --scenario "${METHOD}scenario.txt" \
-                --seed "$SEED" \
-                --instance_file "$INSTANCE" \
-                --tuner-timeout "$TIMEOUT" 
+# ${CONFIGURATOR} --scenario "${METHOD}scenario.txt" \
+#                 --seed "$SEED" \
+#                 --instance_file "$INSTANCE" \
+#                 --wallclock-limit "$TIMEOUT" \
+#                 --cutoff-time "$CUTOFF" 
 
 # note that we use mo validation regardless of the optimization method
-configs=$(realpath "output/${METHOD}/configs${SEED}.txt")
+configs=$(realpath "output/${METHOD}/run_${SEED}/configs${SEED}.txt")
 validation_out=$(realpath "output/results/${DATASET}-${METHOD}-${TIMEOUT}-${SEED}.csv")
 
 if [[ $METHOD == "so" ]]; then
-    rm -rf output/*.OLD
-    ../smac/configs.py "output/run_${SEED}/traj.json" > "${configs}"
+    rm -rf output/so/*.OLD
+    ../smac/configs.py "output/so/run_${SEED}/traj.json" > "${configs}"
 fi
 
 echo "Starting off-line validation"
 >"$validation_out"
 while read conf; do
-    echo $(./wrapper --timeout 9999 --MO "true" "$ABS_PATH_TRAIN" "$ABS_PATH_TEST" $conf)", $conf" | tee -a "$validation_out"
+    while read data_i; do
+        echo $(./wrapper --MO "true" $data_i 0 9999 0 $SEED $conf)", $conf" | tee -a "$validation_out"
+    done<$INSTANCE
 done<"${configs}"
-
-../RelClass/matlab-runner exit
 

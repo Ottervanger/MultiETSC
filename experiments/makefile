@@ -5,14 +5,14 @@ REPORT:=./report/report.pdf
 SLIDES:=./report/slides.pdf
 
 # find the tables and plots that can be made using the results
-TABLES=$(wildcard $(patsubst %,$(TABLEDIR)%,$(shell ls -1 ./output/results/ | perl -pe "s/(.*?)-.*-(.*?)\..*/\1-\2.\*/" | sort | uniq)))
-PLOTS=$(wildcard $(patsubst %,$(PLOTDIR)%,$(shell ls -1 ./output/results/ | perl -pe "s/(.*?)-.*-(.*?)\..*/\1-\2.\*/" | sort | uniq)))
+TABLES=$(wildcard $(patsubst %,$(TABLEDIR)%,$(shell ls -1 ./output/results/ | perl -pe "s/(.*?)-.*-(.*?)\..*/\1-\*/" | sort | uniq)))
+PLOTS=$(wildcard $(patsubst %,$(PLOTDIR)%,$(shell ls -1 ./output/results/ | perl -pe "s/(.*?)-.*-(.*?)\..*/\1-\*/" | sort | uniq)))
 
 all: $(REPORT) $(SLIDES)
 
 %.pdf: %.tex $(TABLES) $(PLOTS)
-	@export TEXINPUTS=.:./report/theme:$$TEXINPUTS
-	pdflatex -shell-escape -output-directory ./report $< > /dev/null
+	export TEXINPUTS=".:./report/theme:$$TEXINPUTS"
+	pdflatex -shell-escape -output-directory ./report $<
 
 .SECONDEXPANSION:
 

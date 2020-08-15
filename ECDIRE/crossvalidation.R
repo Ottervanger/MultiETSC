@@ -1,5 +1,5 @@
 crossvalidation = function(trainpath, cachepath, distance, kernel, estimatehyp) {
-    cachename = paste('crossvalidation', kernel, sep='-')
+    cachename = paste('crossvalidation', kernel, estimatehyp, seed, sep='-')
     cachename = paste(cachepath, cachename, '.rds',  sep='')
 
     if (file.exists(cachename))
