@@ -1,8 +1,7 @@
-algo = ./wrapper --MO false --timeout 60
+algo = ./wrapper --MO false
 paramfile = smacparams.txt
 deterministic = 0
 run_obj = quality
 overall_obj = mean
 execdir = ../experiments/
-outdir = ../experiments/output
-rungroup = so
+output_dir = ../experiments/output/so

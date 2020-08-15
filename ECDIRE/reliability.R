@@ -1,7 +1,7 @@
 reliability<-function(trainpath, distance, kernel, estimatehyp, accuracythreshold){
     # GO-TODO: this path only works for original UCR filenames
     cachepath = paste(".cache/", gsub("^.*/([^/]*/[^/]*).*\\..*$", "\\1", trainpath), "/", sep="")
-    cachename = paste('reliability', kernel, accuracythreshold, sep='-')
+    cachename = paste('reliability', kernel, estimatehyp, accuracythreshold, seed, sep='-')
     cachename = paste(cachepath, cachename, '.rds', sep="")
     
     # check cache integrety

@@ -52,10 +52,6 @@ if ~exist('min_d')
     min_d = [];
 end;
 
-if ~exist('localQDA_Mex')
-    %This needs to point to the folder with the Local QDA code
-    addpath('C:\Users\nparrish\Documents\Research\Matlab_Code\Early_Classification_For_Web\Utilities\Classifier');
-end;
 LDG_necessary = 0;
 
 % load test and training data
@@ -118,11 +114,6 @@ knn = knn_check(ind_knn);
 
 %% Perform dimensionality reduction
 if dim_red
-    if ~exist('LDG_for_Early')
-        %This needs to point to the folder with the LDG Code
-        addpath('C:\Users\nparrish\Documents\Research\Matlab_Code\Early_Classification_For_Web\Utilities\LDG');
-    end;
-    
     gam_range = 0.9;
     cv_acc = zeros(length(gam_range),dim);  %(i,j) will hold the cv accuracy for gam_range(i) and j dimensions.
     for count_gam = 1:length(gam_range)

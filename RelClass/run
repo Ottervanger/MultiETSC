@@ -27,6 +27,7 @@ TAU="0.9"
 CONSTR='boxco'
 PRED='Corr'
 LDG="0"
+SEED="0"
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -56,6 +57,11 @@ while [[ $# -gt 0 ]]; do
             LDG="$2"
             shift; shift
             ;;
+        -seed)
+            [ "$2" ] || usage
+            SEED="$2"
+            shift; shift
+            ;;
         *)
             # ignore positionals
             shift
@@ -64,7 +70,7 @@ while [[ $# -gt 0 ]]; do
 done
 # TRAIN and TEST are required
 [[ $TRAIN ]] && [[ $TEST ]] || usage
-CMD="run('$TRAIN', '$TEST', $TAU, '$CONSTR', '$PRED', $LDG);"
-
-"${0%/*}"/matlab-runner "$CMD"
+CMD="runn('$TRAIN', '$TEST', $TAU, '$CONSTR', '$PRED', $LDG, $SEED);"
+cd "${0%/*}"
+octave --quiet --eval "$CMD"
 

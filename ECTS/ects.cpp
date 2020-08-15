@@ -85,9 +85,6 @@ void argparse(int argc, char* argv[]) {
               case 'o': // output file
                 GLOBAL::OUT_FILE = argv[++i];
                 break;
-              case 's': // short output (for paramILS)
-                GLOBAL::OUT_SHORT = false;
-                break;
               case 'm': // min support
                 GLOBAL::MIN_SUPPORT = std::stod(argv[++i]);
                 break;
