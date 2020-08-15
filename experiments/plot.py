@@ -189,7 +189,6 @@ def processData(title, labels):
             metricTable[k] += [np.mean(metricTable[k])]
         else:
             metricTable[k] += ['mean']
-    print(metricTable)
 
     # print metrics to terminal
     printTable(metricTable)
