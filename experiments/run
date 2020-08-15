@@ -1,10 +1,12 @@
 #!/bin/bash
+set -e
 # change dir to script location
 cd "${0%/*}"
 
 # config
 VALIDATION="--folds=5"
 UCR="/vol/share/groups/liacs/scratch/UCR/"
+NVALID=10
 
 # default arguments
 SEED=1
@@ -52,21 +54,20 @@ done
 ABS_PATH_TRAIN=$UCR$DATASET"/"$DATASET"_TRAIN.tsv"
 ABS_PATH_TEST=$UCR$DATASET"/"$DATASET"_TEST.tsv"
 
-mkdir -p "output/${METHOD}/run_${SEED}"
-
 if [[ $METHOD == "mo" ]]; then
     CONFIGURATOR="${CONFIGURATOR} --rungroup run_${SEED}"
 fi
 
 # Produce train-validate split from training data
 INSTANCE=$(python ../util/validationsplitter.py "$VALIDATION" --seed=$SEED "$ABS_PATH_TRAIN")
+exit
 
 # Start the configurator
-${CONFIGURATOR} --scenario "${METHOD}scenario.txt" \
-                --seed "$SEED" \
-                --instance_file "$INSTANCE" \
-                --wallclock-limit "$TIMEOUT" \
-                --cutoff-time "$CUTOFF" 
+# ${CONFIGURATOR} --scenario "${METHOD}scenario.txt" \
+#                 --seed "$SEED" \
+#                 --instance_file "$INSTANCE" \
+#                 --wallclock-limit "$TIMEOUT" \
+#                 --cutoff-time "$CUTOFF" 
 
 # note that we use mo validation regardless of the optimization method
 configs=$(realpath "output/${METHOD}/run_${SEED}/configs${SEED}.txt")
@@ -80,6 +81,8 @@ fi
 echo "Starting off-line validation"
 >"$validation_out"
 while read conf; do
-    echo $(./wrapper --MO "true" "$ABS_PATH_TRAIN:$ABS_PATH_TEST" 0 9999 0 $SEED $conf)", $conf" | tee -a "$validation_out"
+    while read data_i; do
+        echo $(./wrapper --MO "true" $data_i 0 9999 0 $SEED $conf)", $conf" | tee -a "$validation_out"
+    done<$INSTANCE
 done<"${configs}"
 
