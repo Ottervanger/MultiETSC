@@ -1,32 +1,32 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 import sys
 import os
 import shutil
 import numpy as np
 
+
 def usage():
     print("""
-    Usage: python validationsplitter.py --folds=5 --holdout=.2 <path/to/UCR/data.tsv> [output/path]
+    Usage: python validationsplitter.py --folds=5 <path/to/UCR/data.tsv> [output/path]
 
-    This script generates train-validation splits either for cross validation
-    or for holdout validation. Additionally it produces the correct test and
-    train lists compatible with paramILS scenarios.
+    This script generates train-validation splits for stratified cross
+    validation using the scikit-learn StratifiedKFold method.
+    Additionally it produces the correct test and train lists compatible
+    with paramILS/SMAC scenarios.
     """)
+
 
 def argparse():
     folds = None
-    holdout = None
     datafile = None
     outputpath = None
     for arg in sys.argv[1:]:
-        if arg[:7] == '--folds':
-            folds = int(arg[8:])
+        argname, argval = (arg+'=').split('=')[0:2]
+        if 'folds' in argname:
+            folds = int(argval)
             continue
-        if arg[:9] == '--holdout':
-            folds = float(arg[10:])
-            continue
-        if arg[:6] == '--seed':
-            np.random.seed(int(arg[7:]))
+        if 'seed' in argname:
+            np.random.seed(int(argval))
             continue
         if not datafile:
             datafile = arg
@@ -35,42 +35,40 @@ def argparse():
             outputpath = arg
             continue
         break
-
-    if folds and holdout:
-        sys.exit('Error: either folds or holdout can be defined, not both.')
+    if not folds:
+        folds = 5
     if not datafile:
         usage()
         sys.exit('Error: no data path specified')
-    return folds, holdout, datafile, outputpath
-        
+    return folds, datafile, outputpath
+
+
 if __name__ == '__main__':
     np.random.seed(0)
-    folds, holdout, datafile, outputpath = argparse()
+    folds, datafile, outputpath = argparse()
 
+    # read data
+    y = np.genfromtxt(datafile)[:, 0]
     with open(datafile, 'r') as f:
-        data = np.array(f.readlines())
-    
+        lines = np.array(f.readlines())
+    from sklearn.model_selection import StratifiedKFold
+    skf = StratifiedKFold(n_splits=folds, shuffle=True)
+
+    # prepare output dir
     if not outputpath:
         dataname = datafile.split('/')[datafile.split('/').index('UCR')+1]
         outputpath = '/tmp/paramilsdata/UCR/{}/'.format(dataname)
     if (outputpath[-1] != '/'):
         outputpath += '/'
-    
     if os.path.isdir(outputpath):
         shutil.rmtree(outputpath)
     os.makedirs(outputpath)
-    idx = list(range(len(data)))
-    np.random.shuffle(idx)
-    if not folds:
-        folds = 1
-    if not holdout:
-        holdout = 1/folds
+
     splits = []
-    for i in range(folds):
-        validIdx = np.array([j%folds == i for j in idx], dtype=bool)
-        valid, train = data[validIdx], data[~validIdx]
-        validFileName = 'VALID-{:03d}.tsv'.format(i)
+    for i, (idx_train, idx_valid) in enumerate(skf.split(lines, y)):
+        train, valid = lines[idx_train], lines[idx_valid]
         trainFileName = 'TRAIN-{:03d}.tsv'.format(i)
+        validFileName = 'VALID-{:03d}.tsv'.format(i)
         with open(outputpath+validFileName, 'w') as f:
             for line in valid:
                 f.write(line)
