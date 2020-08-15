@@ -12,7 +12,7 @@ all: $(REPORT) $(SLIDES)
 
 %.pdf: %.tex $(TABLES) $(PLOTS)
 	export TEXINPUTS=".:./report/theme:$$TEXINPUTS"
-	pdflatex -shell-escape -output-directory ./report $< > /dev/null
+	pdflatex -shell-escape -output-directory ./report $<
 
 .SECONDEXPANSION:
 

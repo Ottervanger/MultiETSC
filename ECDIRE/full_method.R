@@ -61,5 +61,6 @@ blas_set_num_threads(1)
 start = proc.time()
 #Train relGP classifier framework
 out = relGP(trainpath, testpath, params$distance, params$kernel, params$doHPO, params$acc_perc)
-
-cat(sprintf('Result: SUCCESS, %g, [%g, %g], 0\n', (proc.time() - start)['elapsed'], out$meanearlyness/100, 1-out$accuracy))
+earliness = if(!is.nan(out$meanearlyness)) out$meanearlyness/100 else 1
+err = if(!is.nan(out$accuracy)) 1-out$accuracy else 1
+cat(sprintf('Result: SUCCESS, %g, [%g, %g], 0\n', (proc.time() - start)['elapsed'], earliness, err))
