@@ -28,7 +28,6 @@ function hmean {
     echo "${res/Result/Result of this algorithm run}"
 }
 
->&2 echo "${ARGS[*]}"
 DATA=$(tr ":" " "<<<"${ARGS[0]}")
 TIMEOUT="${ARGS[2]}"
 SEED="${ARGS[4]}"
