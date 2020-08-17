@@ -151,7 +151,7 @@ def namesFromFiles(files):
     # get files and extract the varying part as labels
     r = re.compile('.*/(.*)-(.*)-(.*)-(.*).csv')
     conds = [list(sorted(set([r.match(f).group(i) for f in files]))) for i in range(1, 5)]
-    flabels = [('output/results/'+'-'.join(i)+'.csv', '-'.join([v for j, v in enumerate(i) if len(conds[j]) > 1])) for i in itertools.product(*conds)]
+    flabels = [('output/validation/'+'-'.join(i)+'.csv', '-'.join([v for j, v in enumerate(i) if len(conds[j]) > 1])) for i in itertools.product(*conds)]
     title = '-'.join(c[0] for c in conds if len(c) == 1)
     return flabels, title
 
@@ -166,7 +166,7 @@ def processData(title, labels):
     angle = 80
     for label in labels:
         try:
-            Y, metadata = getData('output/results/'+title+'-'+label+'.csv')
+            Y, metadata = getData('output/validation/'+title+'-'+label+'.csv')
             pareto = Pareto(Y, metadata, label=label)
             pareto.plot(ax, c=next(color), textoffset=textoffset, angle=angle)
             textoffset['xy'][1] -= 0.01
@@ -213,9 +213,9 @@ def processData(title, labels):
 
 def main():
     os.chdir(os.path.dirname(sys.argv[0]))
-    files = glob.glob('output/results/*')
+    files = glob.glob('output/validation/*')
     if not len(files):
-        print('No files found in output/results/. Nothing to be done.')
+        print('No files found in output/validation/. Nothing to be done.')
         return
 
     # get files and extract the varying part as labels
@@ -223,7 +223,7 @@ def main():
     conds = [list(sorted(set([r.match(f).group(i) for f in files]))) for i in range(1, 4)]
 
     for title in ['-'.join(i) for i in itertools.product(*conds)]:
-        fls = glob.glob('output/results/{}*'.format(title))
+        fls = glob.glob('output/validation/{}*'.format(title))
         labels = list(sorted(set([r.match(f).group(4) for f in fls])))
         processData(title, labels)
 
