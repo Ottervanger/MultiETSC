@@ -64,7 +64,7 @@ if [[ $METHOD == "mo" ]]; then
 fi
 
 # Produce train-validate split from training data
-INSTANCE=$(python ../util/validationsplitter.py "$VALIDATION" --seed=$SEED "$ABS_PATH_TRAIN")
+INSTANCE=$(python util/validationsplitter.py "$VALIDATION" --seed=$SEED "$ABS_PATH_TRAIN")
 
 if $DOCONF ; then
     # Start the configurator
@@ -77,7 +77,7 @@ fi
 
 # note that we use mo validation regardless of the optimization method
 configs=$(realpath "output/${METHOD}/run_${SEED}/configs${SEED}.txt")
-validation_out=$(realpath "output/results/${DATASET}-${METHOD}-${TIMEOUT}-${SEED}.csv")
+validation_out=$(realpath "output/validation/${DATASET}-${METHOD}-${TIMEOUT}-${SEED}.csv")
 
 if [[ $METHOD == "so" ]]; then
     rm -rf output/so/*.OLD
