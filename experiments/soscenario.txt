@@ -1,7 +1,5 @@
 algo = ./wrapper --MO false
-paramfile = smacparams.txt
 deterministic = 0
 run_obj = quality
 overall_obj = mean
 execdir = ../experiments/
-output_dir = ../experiments/output/so
