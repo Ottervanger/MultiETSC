@@ -5,6 +5,7 @@ cd "${0%/*}"
 
 # config
 VALIDATION="--folds=5"
+MAX_R=10
 UCR="/vol/share/groups/liacs/scratch/UCR/"
 
 # default arguments
@@ -54,12 +55,14 @@ esac
 done
 
 SMAC="python ../smac/smac \
-        --verbose_level DEBUG"
+        --verbose_level DEBUG \
+        --maxR ${MAX_R}"
 PARAMILS="../paramils/paramils \
         --validation false \
         --MO true \
         --rungroup run_${SEED} \
-        --log-details true"
+        --log-details true \
+        --max-runs ${MAX_R}"
 
 if [[ $METHOD == "so" ]]; then
     CONFIGURATOR="${SMAC}"
@@ -95,29 +98,27 @@ if $DOCONF ; then
 fi
 
 # note that we use mo validation regardless of the optimization method
+echo "Starting off-line validation"
 VALID_OUT="output/validation/${CONDITION}/run_${SEED}.csv"
-if [[ ! -f VALID_OUT ]]; then
-    echo "Starting off-line validation"
-    mkdir -p "$(dirname "${VALID_OUT}")"
-    CONFIGS="${CONF_OUT}/run_${SEED}/configs${SEED}.txt"
-    if [[ $METHOD == "so" ]]; then
-        rm -rf "${CONF_OUT}/*.OLD"
-        ../smac/configs.py "${CONF_OUT}/run_${SEED}/traj.json" > "${CONFIGS}"
-    fi
-    while read CONF; do
-        while read data_i; do
-            (echo $(./wrapper --MO "true" $data_i 0 9999 0 $SEED $CONF -np 1)", $CONF" | tee -a "$VALID_OUT") &
-            sleep 1
-            while [[ $(grep -oP 'running \K[0-9]*' /proc/stat) -ge $(grep -c 'processor' /proc/cpuinfo) ]]; do
-                sleep 1
-            done
-        done<"${INSTANCE}"
-    done<"${CONFIGS}"
-    # wait for parallel jobs to finish
-    for p in `jobs -p`; do
-        wait $p
-    done
-else
-    echo "Using saved validation data"
+mkdir -p "$(dirname "${VALID_OUT}")"
+CONFIGS="${CONF_OUT}/run_${SEED}/configs${SEED}.txt"
+if [[ $METHOD == "so" ]]; then
+    rm -rf "${CONF_OUT}/*.OLD"
+    ../smac/configs.py "${CONF_OUT}/run_${SEED}/traj.json" > "${CONFIGS}"
 fi
+>"${VALID_OUT}"
+while read CONF; do
+    while read data_i; do
+        (echo $(./wrapper --MO "true" $data_i 0 9999 0 $SEED $CONF -np 1)", $CONF" | tee -a "$VALID_OUT") &
+        sleep 1
+        while [[ $(grep -oP 'running \K[0-9]*' /proc/stat) -ge $(grep -c 'processor' /proc/cpuinfo) ]]; do
+            sleep 1
+        done
+    done<"${INSTANCE}"
+done<"${CONFIGS}"
+# wait for parallel jobs to finish
+for p in `jobs -p`; do
+    wait $p
+done
+
 
