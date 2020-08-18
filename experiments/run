@@ -15,6 +15,7 @@ CUTOFF="180"
 METHOD="mo"
 ALGO="all"
 DOCONF=true
+WRAPPER="./wrapper"
 
 while [[ $# -gt 0 ]]; do
 case "$1" in
@@ -52,11 +53,17 @@ case "$1" in
 esac
 done
 
-SMAC="python ../smac/smac --verbose_level DEBUG"
-PARAMILS="../paramils/paramils --rungroup run_${SEED} --log-details true"
+SMAC="python ../smac/smac \
+        --verbose_level DEBUG"
+PARAMILS="../paramils/paramils \
+        --validation false \
+        --MO true \
+        --rungroup run_${SEED} \
+        --log-details true"
 
 if [[ $METHOD == "so" ]]; then
     CONFIGURATOR="${SMAC}"
+    WRAPPER="./wrapper --MO false"
 else
     CONFIGURATOR="${PARAMILS}"
 fi
@@ -73,11 +80,16 @@ mkdir -p "${CONF_OUT}"
 
 if $DOCONF ; then
     # Start the configurator
-    ${CONFIGURATOR} --scenario "${METHOD}scenario.txt" \
+    ${CONFIGURATOR} --scenario "scenario.txt" \
+                    --algo "$WRAPPER" \
                     --seed "$SEED" \
-                    --instance_file "$INSTANCE" \
+                    --instance-file "$INSTANCE" \
                     --wallclock-limit "$TIMEOUT" \
                     --cutoff-time "$CUTOFF" \
+                    --deterministic 0 \
+                    --run-obj "quality" \
+                    --overall-obj "mean" \
+                    --execdir "../experiments/" \
                     --output-dir "../experiments/${CONF_OUT}" \
                     --param-file "pcs/${METHOD}-${ALGO}.pcs"
 fi

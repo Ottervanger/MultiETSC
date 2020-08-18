@@ -1,7 +1,0 @@
-algo = ./wrapper --MO true
-MO = TRUE
-deterministic = 0
-run_obj = quality
-overall_obj = mean
-execdir = ../experiments/
-validation = false
