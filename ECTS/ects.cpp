@@ -23,27 +23,9 @@ namespace GLOBAL {
     int DIM = 0;
     std::string TRAIN_FILE_NAME;
     std::string TEST_FILE_NAME;
-    std::string OUT_FILE = "";
-    bool OUT_SHORT = true;
     // ALgorithm parameters
     double MIN_SUPPORT = 0;
     Version version = LOOSE;
-}
-
-inline std::string trainFile() {
-    return GLOBAL::TRAIN_FILE_NAME;
-}
-
-inline std::string testFile() {
-    return GLOBAL::TEST_FILE_NAME;
-}
-
-inline std::string distMatFile() {
-    return GLOBAL::TRAIN_FILE_NAME+".dist";
-}
-
-inline std::string distIdxFile() {
-    return GLOBAL::TRAIN_FILE_NAME+".idx";
 }
 
 // global variable
@@ -56,8 +38,6 @@ std::vector<int> predictionPrefix;
 std::vector<std::set<int>> nnSetList;// store the MNCS;
 std::vector<int> nnSetListLength;
 std::vector<int> nnSetListClassMap;// store the class label of the MNCS
-double classificationTime; // classification time of one instance
-double trainingTime; // classification time of one instance
 
 // changes classSupport to contain label frequency times minimalSupport for each label
 void computeClassSupport(const std::vector<int> &labels,
@@ -81,9 +61,6 @@ void argparse(int argc, char* argv[]) {
               case 'd': // name of the datset
                 GLOBAL::TRAIN_FILE_NAME = argv[++i];
                 GLOBAL::TEST_FILE_NAME = argv[++i];
-                break;
-              case 'o': // output file
-                GLOBAL::OUT_FILE = argv[++i];
                 break;
               case 'm': // min support
                 GLOBAL::MIN_SUPPORT = std::stod(argv[++i]);
@@ -354,58 +331,14 @@ inline double mean(std::vector<int> data) {
     return std::accumulate(data.begin(), data.end(), 0.0) / data.size();
 }
 
-void report(const std::vector<int> &labelTest, const std::vector<int> &labelPred, const std::vector<int> &predLen) {
-    int correct = 0;
-    // compute the false positive  and true positve
-    int FP = 0, TP = 0, TC = 0, FC = 0, n = labelPred.size();
-    for (int i = 0; i < n; i++) {
-        if (labelPred[i] == 1 && labelTest[i] == -1) FP++;
-        if (labelPred[i] == 1 && labelTest[i] ==  1) TP++;
-        if (labelPred[i] == labelTest[i]) correct++;
-
-        if (labelTest[i] == 1) {
-            TC++;
-        } else {
-            FC++;
-        }
-    }
-
-    double plTest  = mean(predLen);
-    double plTrain = mean(predictionPrefix);
-    double acc = double(correct) / n;
-
-    double FPRate = (double)FP / FC;
-    double TPRate = (double)TP / TC;
-
-    std::ostringstream ss;
-    ss << "Algorithm Report: using " << ((GLOBAL::version == LOOSE) ? "loose" : "strict") << " version\n"
-       << std::setprecision(3) << std::fixed
-       << "av. pred. len. test:  " << std::setw(7) << plTest  << "\n"
-       << "av. pred. len. train: " << std::setw(7) << plTrain << "\n"
-       << "accuracy:             " << std::setw(7) << acc << "\n"
-       << std::setprecision(6) << std::fixed
-       << "av. classif. time     " << std::setw(10) << classificationTime / n << "s\n"
-       << "    training time     " << std::setw(10) << trainingTime << "s\n"
-       << "FP rate:              " << std::setw(10) << FPRate << "\n"
-       << "TP rate:              " << std::setw(10) << TPRate << "\n\n";
-
-    // write output to console
-    std::cout << ss.str();
-
-    // write output to file
-    if (GLOBAL::OUT_FILE != "") {
-        std::ofstream outputFile(GLOBAL::OUT_FILE, std::ofstream::out | std::ofstream::app);
-        outputFile << ss.str();
-        outputFile.close();
-    }
-}
-
-void shortReport(const std::vector<int> &labelTest, const std::vector<int> &labelPred) {
+void shortReport(const std::vector<int> &labelTest,
+                 const std::vector<int> &labelPred,
+                 const double duration) {
     int correct = 0, n = labelPred.size();;
     for (int i = 0; i < n; i++) {
         if (labelPred[i] == labelTest[i]) correct++;
     }
-    std::cout << "Result: SUCCESS, " << classificationTime + trainingTime << ", [" 
+    std::cout << "Result: SUCCESS, " << duration << ", [" 
               << std::setprecision(6) << std::fixed << mean(predictionPrefix)/GLOBAL::DIM
               << ", "  << 1.0 - (double(correct) / n) << "], 0" << std::endl;
 }
@@ -605,31 +538,18 @@ void computeDist(const std::vector<std::vector<double> > &data,
     }
 }
 
-inline bool exists (const std::string &file) {
-      struct stat buffer;
-      return (stat (file.c_str(), &buffer) == 0);
-}
-
 int main (int argc, char* argv[]) {
     argparse(argc, argv);
     clock_t t;
     // load training data
     std::vector<std::vector<double> > dataTrain;
     bool ok;
-    ok = util::readUCRData(trainFile(), dataTrain, labelTrain);
+    ok = util::readUCRData(GLOBAL::TRAIN_FILE_NAME, dataTrain, labelTrain);
     if (!ok) exit(1);
     computeClassSupport(labelTrain, classSupport, GLOBAL::MIN_SUPPORT);
 
-    if (exists(distMatFile()) && exists(distIdxFile())) {
-        ok = util::readDMatrix(distMatFile(), distMat);
-        ok &= util::readDMatrix(distIdxFile(), distIdx);
-        if (!ok) exit(1);
-    } else {
-        computeDist(dataTrain, distIdx, distMat);
-        util::saveMatrix(distIdxFile(), distIdx);
-        util::saveMatrix(distMatFile(), distMat);
-    }
-    
+    // compute distance matrix
+    computeDist(dataTrain, distIdx, distMat);
     
     GLOBAL::DIM = dataTrain[0].size();
 
@@ -852,21 +772,13 @@ int main (int argc, char* argv[]) {
 
     }// end while
 
-    // end of heuristic algorithm
-    trainingTime = (double)(clock() - t) / CLOCKS_PER_SEC;
-
-    t = clock();
     std::vector<std::vector<double> > dataTest;
     std::vector<int> labelTest;
-    util::readUCRData(testFile(), dataTest, labelTest);
+    util::readUCRData(GLOBAL::TEST_FILE_NAME, dataTest, labelTest);
 
     std::vector<int> labelPred(labelTest.size());
     std::vector<int> predLen(labelTest.size()); // predicted length by the classifier
     classification(dataTest, dataTrain, labelPred, predLen, labelTrain);
 
-    classificationTime = ((double)(clock() - t))/CLOCKS_PER_SEC;
-    if (GLOBAL::OUT_SHORT)
-        shortReport(labelTest, labelPred);
-    else
-        report(labelTest, labelPred, predLen);
+    shortReport(labelTest, labelPred, ((double)(clock() - t))/CLOCKS_PER_SEC);
 }// end main
