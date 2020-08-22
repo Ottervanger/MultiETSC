@@ -774,7 +774,8 @@ int main (int argc, char* argv[]) {
 
     std::vector<std::vector<double> > dataTest;
     std::vector<int> labelTest;
-    util::readUCRData(GLOBAL::TEST_FILE_NAME, dataTest, labelTest);
+    if (!util::readUCRData(GLOBAL::TEST_FILE_NAME, dataTest, labelTest))
+        exit(1);
 
     std::vector<int> labelPred(labelTest.size());
     std::vector<int> predLen(labelTest.size()); // predicted length by the classifier
