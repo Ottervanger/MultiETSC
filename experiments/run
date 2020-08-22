@@ -110,7 +110,7 @@ fi
 while read CONF; do
     while read data_i; do
         (echo $(./wrapper --MO "true" $data_i 0 9999 0 $SEED $CONF -np 1)", $CONF" | tee -a "$VALID_OUT") &
-        sleep 1
+        sleep 0.1
         while [[ $(grep -oP 'running \K[0-9]*' /proc/stat) -ge $(grep -c 'processor' /proc/cpuinfo) ]]; do
             sleep 1
         done

@@ -215,8 +215,7 @@ def main():
     os.chdir(os.path.dirname(sys.argv[0]))
     files = glob.glob('output/validation/*')
     if not len(files):
-        print('No files found in output/validation/. Nothing to be done.')
-        return
+        sys.exit('No files found in output/validation/. Nothing to be done.')
 
     # get files and extract the varying part as labels
     r = re.compile('.*/(.*)-(.*)-(.*)-(.*).csv')
