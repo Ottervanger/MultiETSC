@@ -117,8 +117,5 @@ while read CONF; do
     done<"${INSTANCE}"
 done<"${CONFIGS}"
 # wait for parallel jobs to finish
-for p in `jobs -p`; do
-    wait $p
-done
-
+wait
 
