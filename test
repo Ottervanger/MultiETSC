@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 
-echo "Testing ECTS"
-pushd ECTS && make test && popd && echo "PASSED" || "FAILED"
+echo "TEST:   ECTS"
+pushd ECTS > /dev/null && make test && echo "PASSED: ECTS" || echo "FAILED: ECTS"
+popd > /dev/null
+
+echo "TEST:   RelClass"
+pushd RelClass > /dev/null && ./test  && echo "PASSED: RelClass" || echo "FAILED: RelClass"
+popd > /dev/null
