@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+echo "Testing ECTS"
+pushd ECTS && make test && popd && echo "PASSED" || "FAILED"
