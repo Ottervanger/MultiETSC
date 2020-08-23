@@ -1,10 +1,4 @@
-crossvalidation = function(trainpath, cachepath, distance, kernel, estimatehyp) {
-    cachename = paste('crossvalidation', kernel, estimatehyp, seed, sep='-')
-    cachename = paste(cachepath, cachename, '.rds',  sep='')
-
-    if (file.exists(cachename))
-        return(readRDS(cachename))
-
+crossvalidation = function(trainpath, distance, kernel, estimatehyp) {
     #LOAD DATA
     data = loadData(trainpath)
     trainclass = data$class
@@ -81,7 +75,6 @@ crossvalidation = function(trainpath, cachepath, distance, kernel, estimatehyp) 
     ret = Reduce(reducer, res, list(accuracies=vector('list',nClassifiers), probabilities=vector('list',nClassifiers)))
     ret$accuracies = lapply(ret$accuracies, function(x) colMeans(x, na.rm=T))
     # save to cache
-    saveRDS(ret, file=cachename, compress=FALSE)
     return(ret)
 }
 
