@@ -50,7 +50,7 @@ crossvalidation = function(trainpath, distance, kernel, estimatehyp) {
         model = GP(DMtrain,trainclasscv,DMtest,testclasscv,kernel,estimatehyp)
 
         #EXTRACT the accuracy for each class
-        accaux = obtainaccuracy(model, testclasscv)
+        accaux = classAccuracy(model, testclasscv)
 
         #EXTRACT  of the posterior probabilities of the correctly classified series
         correct = which(predClass(model,numclus)==testclasscv)
