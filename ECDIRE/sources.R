@@ -3,7 +3,7 @@ require("RhpcBLASctl")	# for suppressing OpenBLAS parallelism
 require("fastDistSqrd") # using a cpp implementation for better performance
 
 #Functions for GP training
-source("fullearlytrainaccuracy.R")
+source("classAccuracy.R")
 source("GP.R")
 source("distancematrix.R")
 source("cvStratified.R")
