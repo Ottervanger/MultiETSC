@@ -27,45 +27,45 @@ crossvalidation = function(trainpath, distance, kernel, estimatehyp) {
         }
     }
 
+    # PRECALCULATE distance matrices for each timestep
+    computeDistanceMatrix = function (earliness) {
+        distanceMatrix(train=train, earlyness=(dim(train)[2])*earliness/nClassifiers, distance=distance)
+    }
+
     # function to loop over
     loop = function(repfold) {
         rep = repfold$rep
         fold = repfold$fold
         # we need to set a unique seed for each thread
         set.seed(seed+rep+reps*fold+reps*folds*repfold$earliness)
-        #CREATE DATASETS for this repetition and fold
-        traincv = train[-cv[[rep]][[fold]],]
-        testcv = train[cv[[rep]][[fold]],]
-        trainclasscv = trainclass[-cv[[rep]][[fold]]]
-        testclasscv = trainclass[cv[[rep]][[fold]]]
+        idxTest = cv[[rep]][[fold]]
+        idxTrain = -idxTest
 
-        #CALCULATE early timestamp
-        timestamp = (dim(train)[2])*repfold$earliness/nClassifiers
-
-        #CALCULATE DISTANCE MATRIX for given early timestamp.
-        DMtrain = distanceMatrix(train=traincv, earlyness=timestamp, distance=distance)
-        DMtest = distanceMatrix(train=traincv, test=testcv, earlyness=timestamp, distance=distance)
-
-        #TRAIN the GP . Hyperparameter estimation set to true
-        model = GP(DMtrain,trainclasscv,DMtest,testclasscv,kernel,estimatehyp)
+        #TRAIN the GP.
+        model = GP(distanceMatrices[[repfold$earliness]][idxTrain,idxTrain], trainclass[idxTrain],
+                   distanceMatrices[[repfold$earliness]][idxTest,idxTrain] , trainclass[idxTest],
+                   kernel,estimatehyp)
 
         #EXTRACT the accuracy for each class
-        accaux = classAccuracy(model, testclasscv)
+        accaux = classAccuracy(model, trainclass[idxTest])
 
         #EXTRACT  of the posterior probabilities of the correctly classified series
-        correct = which(predClass(model,numclus)==testclasscv)
+        correct = which(predClass(model,numclus)==trainclass[idxTest])
         probabilitiesaux = matrix(nrow=length(correct),ncol=numclus+1)
         probabilitiesaux[,(1:numclus)] = model$Ptest[correct,]
-        probabilitiesaux[,(numclus+1)] = testclasscv[correct]
+        probabilitiesaux[,(numclus+1)] = trainclass[idxTest][correct]
 
         return(list(acc=accaux, prob=probabilitiesaux, earliness=repfold$earliness))
     }
 
     # run parallel loop
-    if (num_cores > 1)
+    if (num_cores > 1) {
+        distanceMatrices = parLapply(cl, c(1:nClassifiers), computeDistanceMatrix)
         res = parLapply(cl, repList, loop)
-    else
+    } else {
+        distanceMatrices = lapply(c(1:nClassifiers), computeDistanceMatrix)
         res = lapply(repList, loop)
+    }
     # reducing the list of results into the expected data structure
     reducer = function(c,e) {
         c[['accuracies']][[e$earliness]]=rbind(c[['accuracies']][[e$earliness]], e$acc)
@@ -74,7 +74,6 @@ crossvalidation = function(trainpath, distance, kernel, estimatehyp) {
     }
     ret = Reduce(reducer, res, list(accuracies=vector('list',nClassifiers), probabilities=vector('list',nClassifiers)))
     ret$accuracies = lapply(ret$accuracies, function(x) colMeans(x, na.rm=T))
-    # save to cache
     return(ret)
 }
 
