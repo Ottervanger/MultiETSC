@@ -1,5 +1,7 @@
-require("parallel")		# for manual parallelism
+require("parallel")		# for explicit parallelism
 require("RhpcBLASctl")	# for suppressing OpenBLAS parallelism
+options(rgl.useNULL=TRUE);
+require("TSdist") 		# Time Series distance lib
 require("fastDistSqrd") # using a cpp implementation for better performance
 
 #Functions for GP training
