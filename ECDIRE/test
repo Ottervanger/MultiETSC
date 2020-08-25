@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -e
+
+data="Herring"
+train="../data/${data}_TRAIN.tsv"
+test="../data/${data}_TEST.tsv"
+./run -data $train $test -acc_perc 80  -constr gauss   -doHPO FALSE -distance fourier
+./run -data $train $test -acc_perc 80  -constr gauss   -doHPO FALSE -distance fourier -dN 2
+./run -data $train $test -acc_perc 100 -constr iprod   -doHPO FALSE -distance edr
+
+data="Coffee"
+train="../data/${data}_TRAIN.tsv"
+test="../data/${data}_TEST.tsv"
+./run -data $train $test -acc_perc 100 -constr iprod   -doHPO TRUE  -distance euclidean
+./run -data $train $test -acc_perc 80  -constr gauss   -doHPO FALSE -distance dtw
+./run -data $train $test -acc_perc 60  -constr cauchy  -doHPO FALSE -distance edr
+./run -data $train $test -acc_perc 5   -constr laplace -doHPO FALSE -distance euclidean
+
+data="OliveOil"
+train="../data/${data}_TRAIN.tsv"
+test="../data/${data}_TEST.tsv"
+./run -data $train $test -acc_perc 60  -constr cauchy  -doHPO FALSE -distance tquest
+./run -data $train $test -acc_perc 60  -constr cauchy  -doHPO FALSE -distance tquest -dSigma -.2
