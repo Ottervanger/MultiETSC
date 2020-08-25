@@ -8,7 +8,7 @@
 # controlls the tradeoff between earliness and accuracy
 
 ## -distance
-# the distance function used. At this point only 1 for Eucledean is implemented
+# the distance function used.
 
 ## -np
 # number of threads used in parallel crossvalidation step
@@ -28,8 +28,11 @@ suppressMessages(require('R.utils'));
 suppressMessages(require('utils'));
 defaults = list(doHPO = T,       # toggle GP HP search
                 acc_perc = 100,
-                distance = 1,
-                np = 12,
+                distance = 'euclidean',
+                dSigma = .2,
+                dN = 20,
+                dTau = 0,
+                np = 4,
                 seed = 0,
                 kernel = 'iprod')
 params = commandArgs(asValues=TRUE, adhoc=TRUE, defaults=defaults)
@@ -58,9 +61,13 @@ set.seed(seed)
 # suppress parallel BLAS routines
 blas_set_num_threads(1)
 
+# set distance metric definition
+distance = list(metric=params$distance, sigma=params$dSigma,
+				n=params$dN, tau=params$dTau)
+
 start = proc.time()
 #Train relGP classifier framework
-out = relGP(trainpath, testpath, params$distance, params$kernel, params$doHPO, params$acc_perc)
+out = relGP(trainpath, testpath, distance, params$kernel, params$doHPO, params$acc_perc)
 earliness = if(!is.nan(out$meanearlyness)) out$meanearlyness/100 else 1
 err = if(!is.nan(out$accuracy)) 1-out$accuracy else 1
 cat(sprintf('Result: SUCCESS, %g, [%g, %g], 0\n', (proc.time() - start)['elapsed'], earliness, err))
