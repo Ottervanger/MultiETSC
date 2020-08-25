@@ -66,6 +66,7 @@ crossvalidation = function(trainpath, distance, kernel, estimatehyp) {
         distanceMatrices = lapply(c(1:nClassifiers), computeDistanceMatrix)
         res = lapply(repList, loop)
     }
+    assign("distanceMatrices", distanceMatrices, envir = .GlobalEnv)
     # reducing the list of results into the expected data structure
     reducer = function(c,e) {
         c[['accuracies']][[e$earliness]]=rbind(c[['accuracies']][[e$earliness]], e$acc)

@@ -18,7 +18,7 @@ trainclass = as.numeric(levels(data$class))[data$class]
 train = data$ts
 
 if (length(trainclass) > 300)
-    blas_set_num_threads(8)
+    blas_set_num_threads(2)
 
 #CREATE TIMELINE
 timestamps<-unique(reliability1[order(reliability1)])
@@ -65,11 +65,10 @@ for(i in c(1:length(listaclasses))){
     trainauxclass<-factor(trainclass) 
       
     #CREATE THE DISTANCE MATRICES
-    DMtrain<-distanceMatrix(train=train, earlyness=timestamps[i], distance=distance)
     DMtest<-distanceMatrix(train=train, test=testaux, earlyness=timestamps[i], distance=distance)
 
     #CREATE THE CLASSIFIER
-    model<-GP(DMtrain,trainclass,DMtest,testauxclass,kernel,estimatehyp)
+    model<-GP(distanceMatrices[[timestamps2[i]/5]],trainclass,DMtest,testauxclass,kernel,estimatehyp)
 
     #CLASS PREDICTIONS
     classes<-predClass(model,numclus)  
@@ -114,11 +113,10 @@ while(earlynessperc<=100 && length(indicestest)!=0 ){
     trainclass<-factor(trainclass)
     
     #CREATE THE DISTANCE MATRICES
-    DMtrain<-distanceMatrix(train=train, earlyness=earlyness, distance=distance)
     DMtest<-distanceMatrix(train=train, test=testaux, earlyness=earlyness, distance=distance)
     
     #CREATE THE CLASSIFIER
-    model<-GP(DMtrain,trainclass,DMtest,testauxclass,kernel,estimatehyp)
+    model<-GP(distanceMatrices[[earlynessperc/5]],trainclass,DMtest,testauxclass,kernel,estimatehyp)
     classes<-predClass(model,numclus)
     classes<-factor(classes, levels=levels(trainclass))
 
