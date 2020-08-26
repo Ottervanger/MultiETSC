@@ -28,6 +28,7 @@ CONSTR='boxco'
 PRED='Corr'
 LDG="0"
 SEED="0"
+NP=4
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -62,6 +63,11 @@ while [[ $# -gt 0 ]]; do
             SEED="$2"
             shift; shift
             ;;
+        -np)
+            [ "$2" ] || usage
+            NP="$2"
+            shift; shift
+            ;;
         *)
             # ignore positionals
             shift
@@ -70,6 +76,7 @@ while [[ $# -gt 0 ]]; do
 done
 # TRAIN and TEST are required
 [[ $TRAIN ]] && [[ $TEST ]] || usage
+export OPENBLAS_NUM_THREADS=$NP
 CMD="runn('$TRAIN', '$TEST', $TAU, '$CONSTR', '$PRED', $LDG, $SEED);"
 cd "${0%/*}"
 octave --quiet --eval "$CMD"
