@@ -62,6 +62,10 @@
 suppressMessages(require('R.utils'));
 defaults = list(
     distance = 'euclidean',  # distance metric {'euclidean', 'dtw', 'edr', 'fourier'}
+    dSigma = .2,
+    dN = 20,
+    dTau = 0,
+    np = 4,
     kernel = 'iprod',        # GP kernel {'iprod', 'gauss', 'cauchy', 'laplace'}
 
     optimizer = 'ga',        # optimization method
@@ -93,10 +97,13 @@ suppressMessages(require("RhpcBLASctl"))
 # suppress parallel BLAS routines
 blas_set_num_threads(1)
 
+distance = list(metric=params$distance, sigma=params$dSigma,
+                n=params$dN, tau=params$dTau)
+
 start = proc.time()
 # run
 sink(file('/dev/null', open = 'wt'), type='message')
-result = prediction(trainpath, testpath, distance=params$distance, kernel=params$kernel,
+result = prediction(trainpath, testpath, distance=distance, kernel=params$kernel,
     optimizer=params$optimizer, alpha=params$alpha, sr=params$sr, reg=params$reg,
     lambda=params$lambda, np=params$np, seed=params$seed)
 sink()
