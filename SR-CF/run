@@ -1,4 +1,4 @@
 #!/bin/bash
 set -e
 cd "${0%/*}"
-Rscriptblas run.R "$@"
+Rscrip run.R "$@"
