@@ -79,7 +79,7 @@ optimization = function(probabilities, optimizer='ga',
             #Particle swarm optimization
             suppressMessages(library("pso"))
             result<-psoptim(sigmainit,cost_uniclass, probabilities=probabilities,
-                alpha=alpha, regret=regret, reg=reg, lambda=lambda, control=c(trace=1, maxit=100))
+                alpha=alpha, regret=regret, reg=reg, lambda=lambda, control=c(maxit=100))
             sigma = result$par
         })
 

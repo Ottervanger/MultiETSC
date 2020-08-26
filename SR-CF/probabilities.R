@@ -30,29 +30,32 @@ getProbabilities = function(trainpath, testpath, distance, kernel='iprod', np, s
 
     fun = function(item) {
         set.seed(seed+item$fold*nClassifiers+item$earliness)
-        traincv = train[-cv[[1]][[item$fold]],]
-        testcv = train[cv[[1]][[item$fold]],]
-        trainclasscv = classestrain[-cv[[1]][[item$fold]]]
-        testclasscv = classestrain[cv[[1]][[item$fold]]]
+        idxTest = cv[[1]][[item$fold]]
+        idxTrain = -idxTest
         predicted = trainmodel(
-            traincv,
-            trainclasscv,
-            testcv,
-            testclasscv,
+            distanceMatrices[[item$earliness]][idxTrain,idxTrain],
+            classestrain[idxTrain],
+            distanceMatrices[[item$earliness]][idxTest,idxTrain] ,
+            classestrain[idxTest],
             kernel=kernel,
-            earlyness=round(item$earliness*dim(traincv)[2]/nClassifiers),
-            distance=distance,
             thetaestimate=thetaestimate)
         predicted = as.data.frame(predicted)
-        predicted$class = testclasscv
+        predicted$class = classestrain[idxTest]
         list(earliness=item$earliness, predicted=predicted)
     }
 
-    if (np >1) {
+    # PRECALCULATE distance matrices for each timestep
+    computeDistanceMatrix = function (earliness) {
+        distanceMatrix(train=train, earlyness=earliness*dim(train)[2]/nClassifiers, distance=distance)
+    }
+
+    if (np > 1) {
         cl = cl = makeCluster(np, type="FORK")
         on.exit(stopCluster(cl))
+        distanceMatrices = parLapply(cl, c(1:nClassifiers), computeDistanceMatrix)
         res = parLapply(cl, itemList, fun)
     } else {
+        distanceMatrices = lapply(c(1:nClassifiers), computeDistanceMatrix)
         res = lapply(itemList, fun)
     }
     set.seed(seed)
@@ -64,23 +67,24 @@ getProbabilities = function(trainpath, testpath, distance, kernel='iprod', np, s
     probabilities = lapply(seq(dim(probabilities)[3]), function(x) { r = as.data.frame(probabilities[,,x]); names(r) = pnames; r[,order(names(r))]} )
     ret$train = probabilities
 
-    pros = rep(list(data.frame()), nClassifiers)
-    for (earlynessperc in c(1:nClassifiers)) {
+    funAll = function(earlynessperc) {
+        distTest = distanceMatrix(train=train, test=test, earlyness=earlynessperc*dim(train)[2]/nClassifiers, distance=distance)
         predicted = trainmodel(
-            train,
+            distanceMatrices[[earlynessperc]],
             classestrain,
-            test,
+            distTest,
             classestest,
             kernel=kernel,
-            earlyness=round(earlynessperc*dim(train)[2]/nClassifiers),
-            distance=distance,
             thetaestimate=thetaestimate)
         predicted = as.data.frame(predicted)
         predicted$class = classestest
-
-        pros[[earlynessperc]] = rbind(pros[[earlynessperc]], predicted)
+        as.data.frame(predicted)
     }
-
+    if (np > 1) {
+        pros = parLapply(cl, c(1:nClassifiers), funAll)
+    } else {
+        pros = lapply(c(1:nClassifiers), funAll)
+    }
     pnames = names(pros[[1]])
     probabilities = aperm(array(unlist(pros), dim=c(dim(pros[[1]]),nClassifiers)), c(3,2,1))
     probabilities = lapply(seq(dim(probabilities)[3]), function(x) { r = as.data.frame(probabilities[,,x]); names(r) = pnames; r[,order(names(r))]} )
