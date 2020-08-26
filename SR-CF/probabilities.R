@@ -1,19 +1,8 @@
-getProbabilities = function(trainpath, testpath, cachepath,
-    distance='euclidean', kernel='iprod', np, seed=0) {
+getProbabilities = function(trainpath, testpath, distance, kernel='iprod', np, seed=0) {
 
-    # parameter passed to distance function with changing interpretation
-    # depending on the distance metric eg. dtw window, edit distance threshold, 
-    # number of Fourier coefficients considered for Fourier distance.
-    param = 5 
     thetaestimate = FALSE
     nfold = 5
     nClassifiers = 20
-    
-    cachename = paste('probabilities', distance, kernel, seed, sep='-')
-    cachename = paste(cachepath, cachename, '.rds', sep="")
-
-    if (file.exists(cachename))
-        return(readRDS(cachename))
 
     #Load sources
     options(rgl.useNULL=TRUE)
@@ -53,7 +42,6 @@ getProbabilities = function(trainpath, testpath, cachepath,
             kernel=kernel,
             earlyness=round(item$earliness*dim(traincv)[2]/nClassifiers),
             distance=distance,
-            param=param,
             thetaestimate=thetaestimate)
         predicted = as.data.frame(predicted)
         predicted$class = testclasscv
@@ -86,7 +74,6 @@ getProbabilities = function(trainpath, testpath, cachepath,
             kernel=kernel,
             earlyness=round(earlynessperc*dim(train)[2]/nClassifiers),
             distance=distance,
-            param=param,
             thetaestimate=thetaestimate)
         predicted = as.data.frame(predicted)
         predicted$class = classestest
@@ -98,7 +85,5 @@ getProbabilities = function(trainpath, testpath, cachepath,
     probabilities = aperm(array(unlist(pros), dim=c(dim(pros[[1]]),nClassifiers)), c(3,2,1))
     probabilities = lapply(seq(dim(probabilities)[3]), function(x) { r = as.data.frame(probabilities[,,x]); names(r) = pnames; r[,order(names(r))]} )
     ret$test = probabilities
-
-    saveRDS(ret, file=cachename, compress=FALSE)
     return(ret)
 }

@@ -17,19 +17,9 @@ prediction = function(trainpath, testpath, distance, kernel,
     rule$func = get(sr)
     rule$name = sr
 
-    cachepath = paste(".cache/", gsub("^.*/([^/]*/[^/]*).*\\..*$", "\\1", trainpath), "/", sep="")
-
-    # check cache integrety
-    if (system(sprintf('sha1sum -c %s.sha1', cachepath), ignore.stdout=T, ignore.stderr=T) != 0) {
-        # reinit
-        unlink(cachepath, recursive=T)
-        dir.create(cachepath, showWarnings=F, recursive=T)
-        system(sprintf('sha1sum %s > %s.sha1', trainpath, cachepath))
-    }
-
     #Load predicted probabilities
     source('probabilities.R')
-    probabilities_l = getProbabilities(trainpath, testpath, cachepath, distance=distance, kernel=kernel, np=np, seed=seed)
+    probabilities_l = getProbabilities(trainpath, testpath, distance=distance, kernel=kernel, np=np, seed=seed)
     probabilities = probabilities_l$test
     ordervariables = paste("V",c(1:(dim(probabilities[[1]])[2]-1)),sep="")
     cl = sort(unique(sapply(probabilities, function(i) { i$class[1] })))

@@ -2,11 +2,11 @@
 #######################AUXILIARY FUNCTIONS FOR TRAINING SVM####################################
 
 #Function to train GP models given a training set
-trainmodel<-function(traindata,trainclass,testdata,testclass,kernel, earlyness, distance, param,thetaestimate){
+trainmodel<-function(traindata,trainclass,testdata,testclass,kernel, earlyness, distance,thetaestimate){
   
   #Calculate feature matrix
-  DMtrain<-distanceMatrix(traindata, test=NULL, earlyness, distance, param)
-  DMtest<-distanceMatrix(traindata, test=testdata, earlyness, distance, param)
+  DMtrain<-distanceMatrix(traindata, earlyness=earlyness, distance=distance)
+  DMtest<-distanceMatrix(traindata, test=testdata, earlyness=earlyness, distance=distance)
   
   Thresh <- 1e-8;
   theta <- rep(1.0, ncol(DMtrain));
