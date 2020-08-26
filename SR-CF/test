@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+
+data="Herring"
+train="../data/${data}_TRAIN.tsv"
+test="../data/${data}_TEST.tsv"
+./run -data $train $test -alpha 0.8 -kernel iprod   -optimizer ga    -distance euclidean -sr sr1
+./run -data $train $test -alpha 1.0 -kernel gauss   -optimizer ga    -distance euclidean -sr sr1
+./run -data $train $test -alpha 1.0 -kernel iprod   -optimizer ga    -distance euclidean -sr sr2 -reg L0   -lambda 0.5 
+./run -data $train $test -alpha 1.0 -kernel iprod   -optimizer ga    -distance euclidean -sr sr2 -reg L1   -lambda 1.0 
+
+data="Coffee"
+train="../data/${data}_TRAIN.tsv"
+test="../data/${data}_TEST.tsv"
+./run -data $train $test -alpha 1.0 -kernel cauchy  -optimizer pso   -distance euclidean -sr sr1
+./run -data $train $test -alpha 0.8 -kernel cauchy  -optimizer optim -distance dtw       -sr sr1
+./run -data $train $test -alpha 0.6 -kernel laplace -optimizer sa    -distance edr       -sr sr1 -dSigma .5
+./run -data $train $test -alpha 0.5 -kernel laplace -optimizer ga    -distance fourier   -sr sr1
+
+data="OliveOil"
+train="../data/${data}_TRAIN.tsv"
+test="../data/${data}_TEST.tsv"
+./run -data $train $test -alpha 0.6 -kernel iprod   -optimizer optim -distance tquest    -sr sr1
+./run -data $train $test -alpha 0.6 -kernel iprod   -optimizer ga    -distance tquest    -sr sr1 -dTau -.2
