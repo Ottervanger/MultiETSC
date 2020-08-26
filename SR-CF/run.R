@@ -65,7 +65,6 @@ defaults = list(
     dSigma = .2,
     dN = 20,
     dTau = 0,
-    np = 4,
     kernel = 'iprod',        # GP kernel {'iprod', 'gauss', 'cauchy', 'laplace'}
 
     optimizer = 'ga',        # optimization method
@@ -75,7 +74,7 @@ defaults = list(
     reg = 'none',            # 'none' for CF1, L0 for CF2, L1 for CF3
     lambda = 0,              # non-negative real amount of regularization, only used when reg != 'none'
     seed = 0,
-    np = 12)
+    np = 4)
 
 params = commandArgs(asValues=TRUE, adhoc=TRUE, defaults=defaults)
 datapaths = base::commandArgs(trailingOnly=TRUE)[c(2,3)]
@@ -102,10 +101,8 @@ distance = list(metric=params$distance, sigma=params$dSigma,
 
 start = proc.time()
 # run
-sink(file('/dev/null', open = 'wt'), type='message')
 result = prediction(trainpath, testpath, distance=distance, kernel=params$kernel,
     optimizer=params$optimizer, alpha=params$alpha, sr=params$sr, reg=params$reg,
     lambda=params$lambda, np=params$np, seed=params$seed)
-sink()
 
 cat(sprintf('Result: SUCCESS, %g, [%g, %g], 0\n', (proc.time() - start)['elapsed'], result$earliness, 1-result$accuracy))
