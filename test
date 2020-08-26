@@ -4,6 +4,8 @@ echo "TEST:   ECTS"
 pushd ECTS > /dev/null && make test && echo "PASSED: ECTS" || echo "FAILED: ECTS"
 popd > /dev/null
 
-echo "TEST:   RelClass"
-pushd RelClass > /dev/null && ./test  && echo "PASSED: RelClass" || echo "FAILED: RelClass"
-popd > /dev/null
+for ALG in {RelClass,ECDIRE,SR-CF}; do
+	echo "TEST:   $ALG"
+	pushd $ALG > /dev/null && ./test  && echo "PASSED: $ALG" || echo "FAILED: $ALG"
+	popd > /dev/null
+done
