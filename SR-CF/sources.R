@@ -1,11 +1,11 @@
 library("TSdist")
+require("fastDistSqrd") # using a cpp implementation for better performance
 require("parallel")
 source("./GP.R")
 source("./distancematrix.R")
 source("./cvStratified.R")
 source("./vbmp-modified/computeKernel.R")
 source("./vbmp-modified/covParams.R")
-source("./vbmp-modified/distSqrd.R")
 source("./vbmp-modified/genCPP.binary.R")
 source("./vbmp-modified/genCPP.classic.R")
 source("./vbmp-modified/gaussQuad.R")
