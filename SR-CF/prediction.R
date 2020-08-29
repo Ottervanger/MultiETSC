@@ -2,15 +2,23 @@ prediction = function(trainpath, testpath, distance, kernel,
     optimizer, alpha, sr, reg, lambda, np, seed) {
 
     # Stopping rules
-    sr1 = function(probabilities, sigma) {
-        probabilities[1:(length(probabilities)-1)]<-sort(probabilities[1:length(probabilities)-1], decreasing=TRUE)
-        rule<-sigma[1]*probabilities[1]+sigma[2]*(probabilities[1]-probabilities[2])+sigma[3]*probabilities[length(probabilities)]
-        (rule>0)
+    sr1 = function(pr, pt, sigma) {
+        if (length(pr) == 2) {
+            o = if (pr[1] > pr[2]) 1:2 else c(2,1)
+        } else {
+            m = which.max(pr)
+            pr = c(pr[m], max(pr[-m]))
+        }
+        (sigma[1]*pr[1]+sigma[2]*(pr[1]-pr[2])+sigma[3]*pt) > 0
     }
 
-    sr2 = function(probabilities, sigma) {
-        rule<-sum(unlist(c(sort(probabilities[1:(length(probabilities)-1)]), probabilities[length(probabilities)]))*sigma)
-        (rule>0)
+    sr2 = function(pr, pt, sigma) {
+        if (length(pr) == 2) {
+            o = if (pr[1] < pr[2]) 1:2 else c(2,1)
+        } else {
+            o = order(pr)
+        }
+        sum(unlist(c(pr[o], pt))*sigma) > 0
     }
 
     rule = list()
@@ -43,17 +51,17 @@ prediction = function(trainpath, testpath, distance, kernel,
         
         #Calculate rule value for all earlyness stamps and choose first t
         #in which it is fulfilled
-        predictions = apply(cbind(probs,c(1:20)/20),1,sr,sigma)
-        t = which(predictions==1)[1]
-        if(is.na(t)) {
+        mat = t(probs)
+        for (ti in 1:20)
+            if (rule$func(mat[,ti], ti/20, sigma)==1) 
+                break;
+        if(is.na(ti)) {
             predictedclass[i] = as.numeric(which.max(probs[20,]))
             times[i] = 1
         } else {
-            t = t/20
             #Calculate predicted class
-            predictedclass[i] = as.numeric(which.max(probs[t*20,]))
-            predictedclass[i] = cl[predictedclass[i]]
-            times[i] = t
+            predictedclass[i] = cl[as.numeric(which.max(probs[ti,]))]
+            times[i] = ti/20
         }
     }
     result = list()

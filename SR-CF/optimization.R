@@ -27,14 +27,14 @@ optimization = function(probabilities, optimizer='ga',
             
             #For all the probabilities obtained for a series (at each timestamp, one set), we extract the first one in
             #which s HALTS
-            predictions<-apply(cbind(probs,c(1:20)/20),1,sr$func,sigma)
-            t<-which(predictions==1)[1]
-            if(is.na(t)){t<-20}
-            t<-t/20
+            mat = t(probs)
+            for (ti in 1:20)
+                if (sr$func(mat[,ti], ti/20, sigma)==1)
+                    break;
             
             #Add the cost of this series to the total expected cost
-            ce = ce + t
-            predictedclass<-as.numeric(which.max(probs[t*20,]))
+            ce = ce + ti/20
+            predictedclass<-as.numeric(which.max(probs[ti,]))
             if(predictedclass != trueclasses[1])
                 ca = ca + regret
         }
