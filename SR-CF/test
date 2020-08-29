@@ -22,3 +22,4 @@ train="../data/${data}_TRAIN.tsv"
 test="../data/${data}_TEST.tsv"
 ./run -data $train $test -alpha 0.6 -kernel iprod   -optimizer optim -distance tquest    -sr sr1
 ./run -data $train $test -alpha 0.6 -kernel iprod   -optimizer ga    -distance tquest    -sr sr1 -dTau -.2
+./run -data $train $test -alpha 0.6 -kernel iprod   -optimizer ga    -distance tquest    -sr sr2 -dTau -.2
