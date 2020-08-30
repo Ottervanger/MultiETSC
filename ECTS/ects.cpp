@@ -338,8 +338,8 @@ void shortReport(const std::vector<int> &labelTest,
     for (int i = 0; i < n; i++) {
         if (labelPred[i] == labelTest[i]) correct++;
     }
-    std::cout << "Result: SUCCESS, " << duration << ", [" 
-              << std::setprecision(6) << std::fixed << mean(predictionPrefix)/GLOBAL::DIM
+    std::cout << "Result: SUCCESS, " << std::setprecision(6) << std::fixed
+              << duration << ", [" << mean(predictionPrefix)/GLOBAL::DIM
               << ", "  << 1.0 - (double(correct) / n) << "], 0" << std::endl;
 }
 
