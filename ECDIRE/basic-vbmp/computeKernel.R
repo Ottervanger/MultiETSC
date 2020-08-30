@@ -5,7 +5,7 @@ computeKernel = function (X1, X2, kName, kParams) {
         'iprod'   = tcrossprod(X1, X2),
         'gauss'   = exp(-distSqrd(X1, X2)),
         'cauchy'  = 1./(1. + distSqrd(X1, X2)),
-        'laplace' = exp(-sqrt(distSqrd(X1, X2))),
+        'laplace' = exp(-sqrt(abs(distSqrd(X1, X2)))),
         stop(paste('kernel',kName,'not implemented'))
     )
 }
