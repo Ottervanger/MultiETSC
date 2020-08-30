@@ -79,5 +79,5 @@ done
 export OPENBLAS_NUM_THREADS=$NP
 CMD="runn('$TRAIN', '$TEST', $TAU, '$CONSTR', '$PRED', $LDG, $SEED);"
 cd "${0%/*}"
-octave --quiet --eval "$CMD"
+octave --no-gui --quiet --eval "$CMD"
 
