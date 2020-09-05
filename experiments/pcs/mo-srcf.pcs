@@ -1,0 +1,22 @@
+# algorithms
+algorithm {SR-CF/run}[SR-CF/run]
+
+# SR-CF parameters
+optimizer {ga, optim, sa, pso}[ga]
+alpha {0.0,0.01..1.0}[0.8]
+sr {sr1, sr2}[sr1]
+# according to the paper regularization should not be applied when sr1 is used
+reg {none, L0, L1}[none]
+lambda {0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10,20,50}[0.5]
+reg | sr in {sr2}
+lambda | sr in {sr2}
+
+# ECDIRE and SR-CF shared parameters
+kernel {gauss,iprod,cauchy,laplace}[iprod]
+distance {euclidean,dtw,edr,fourier,tquest}[euclidean]
+dSigma {.01,.02,.05,.1,.2,.5,1,1.5,2,3}[.2]
+dSigma | distance in {edr}
+dN {1,2,5,10,20,50}[20]
+dN | distance in {fourier}
+dTau {-3.,-2.,-1.5,-1.,-.5,-.2,-.1,0.,.1,.2,.5,1.,1.5,2.,3.}[0.]
+dTau | distance in {tquest}
