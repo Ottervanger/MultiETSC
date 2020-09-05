@@ -2,6 +2,7 @@
 #SBATCH --job-name=earlytsc-validate
 #SBATCH -c 4
 #SBATCH --mem=10G
+set -e
 
 # required positional arguments
 VALID_FILE=$1

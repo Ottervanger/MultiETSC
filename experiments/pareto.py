@@ -38,9 +38,11 @@ def mergeFronts(fronts):
     return rmDominated(Y, conf)
 
 
-def processData(dirname, resample=None):
-    condition = dirname.split('/')[-1]
+def processData(condition, resample=None):
+    dirname = 'output/validation/' + condition
     files = glob.glob(dirname+'/*')
+    if not len(files):
+        sys.exit('No files found in '+dirname)
     fronts = [rmDominated(*getData(f)) for f in files]
     pFronts = []
     if resample:
@@ -48,26 +50,24 @@ def processData(dirname, resample=None):
         for _ in range(resample['nSamples']):
             pSample = fronts[np.random.choice(len(fronts), resample['size'], replace=False)]
             Y, conf = mergeFronts(pSample)
-            pFronts += [list(conf)]
+            pFronts += [list(set(conf))]
             confs.concatenate([confs, conf])
     else:
         Y, confs = mergeFronts(fronts)
-        pFronts += [list(confs)]
-    with open('output/pareto/{}-confs.txt'.format(condition), 'w') as f:
-        for line in confs:
+        pFronts += [list(set(confs))]
+    os.makedirs('output/pareto/{}'.format(condition), exist_ok=True)
+    with open('output/pareto/{}/confs.txt'.format(condition), 'w') as f:
+        for line in set(confs):
             f.write('{:s}\n'.format(line))
-    with open('output/pareto/{}-fronts.json'.format(condition), 'w') as f:
+    with open('output/pareto/{}/fronts.json'.format(condition), 'w') as f:
         json.dump(pFronts, f, indent=2)
-    print('Found {:3d} nondominated configurations for {}'.format(len(Y), condition))
+    print('Found {:3d} nondominated configurations for {}'.format(len(set(confs)), condition))
 
 
 def main():
-    np.random.seed(sys.argv[1] if len(sys.argv) > 1 else 0)
-    dirs = glob.glob('output/validation/*')
-    if not len(dirs):
-        sys.exit('No files found in output/validation/')
-    for dirname in dirs:
-        processData(dirname)
+    # instance dependent random seed
+    np.random.seed(hash(sys.argv[1]) % 2**32)
+    processData(sys.argv[1])
 
 
 if __name__ == '__main__':
