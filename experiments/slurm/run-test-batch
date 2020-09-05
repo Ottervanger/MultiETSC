@@ -1,0 +1,9 @@
+#!/bin/bash
+#SBATCH --job-name=earlytsc-test
+#SBATCH -c 4
+#SBATCH --mem=10G
+set -e
+
+echo "$(date +%T.%3N) on $HOSTNAME"
+echo "./run-test-batch $@"
+sleep 1

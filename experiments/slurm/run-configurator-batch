@@ -1,0 +1,64 @@
+#!/bin/bash
+#SBATCH --job-name=earlytsc-configurator
+#SBATCH -c 4
+#SBATCH --mem=10G
+set -e
+SEED=$SLURM_ARRAY_TASK_ID
+echo "$(date +%T.%3N) on ${HOSTNAME} ARRAY_TASK_ID:${SEED} ARGS: $@"
+
+N_FOLDS=5
+ARGS=$@
+while [[ $# -gt 0 ]]; do
+case "$1" in
+    --dataset|--data|-d)
+        DATASET="$2"
+        shift; shift
+        ;;
+    --method|-m)
+        METHOD="$2"
+        shift; shift
+        ;;
+    --algorithm|--algo)
+        ALGO="$2"
+        shift; shift
+        ;;
+    *)
+        shift
+        ;;
+esac
+done
+
+for VAR in "DATASET" "METHOD" "ALGO" "UCR_ROOT"; do
+    if [ -z "${!VAR}" ]; then 
+        echo "Variable \"${VAR}\" is not set"
+        exit 1
+    fi
+done
+
+# Produce train-validate split from training data
+INSTANCE_FILE=$(python util/validationsplitter.py --folds=$N_FOLDS --seed=$SEED "${UCR_ROOT}${DATASET}/${DATASET}_TRAIN.tsv")
+
+CMD="./run-configurator "${ARGS}" --seed ${SEED} --instance-file ${INSTANCE_FILE} --time 180"
+echo $CMD
+# Run configurator
+srun $CMD
+
+# Add validation runs as separate jobs to the queue
+CONF_FILE="output/configurator/${DATASET}/${METHOD}-${ALGO}/run_${SEED}/configs${SEED}.txt"
+VALID_FILE="output/validation/${DATASET}/${METHOD}-${ALGO}/run_${SEED}.csv"
+mkdir -p $(dirname $VALID_FILE)
+>$VALID_FILE
+
+N_ARRAY=$(( $(wc -l < $CONF_FILE) * $N_FOLDS - 1))
+CMD="sbatch --parsable -a 0-$N_ARRAY -o /dev/null \
+            --partition=$PARTITION --exclude=$EXCLUDE \
+            slurm/run-validate-batch $VALID_FILE  $N_FOLDS $INSTANCE_FILE $CONF_FILE $SEED"
+echo "attempting to run: $CMD"
+JOB=$( $CMD )
+
+
+# find test jobs that depend on the current job and add validate jobs as dependency
+DJOBS=( $(squeue -u 1036 -ho "%E %A" | grep "afterok:$SLURM_JOB_ID" | perl -pe 's/.* ([0-9]+)/\1/g') )
+for DJOB in ${DJOBS[*]}; do
+    scontrol update jobid=$DJOB Dependency="$(squeue -j $DJOB -ho "%E"),afterok:$JOB"
+done

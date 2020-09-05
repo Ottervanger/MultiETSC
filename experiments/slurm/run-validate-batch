@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH --job-name=earlytsc-validate
+#SBATCH -c 4
+#SBATCH --mem=10G
+
+# required positional arguments
+VALID_FILE=$1
+N_FOLDS=$2
+INSTANCE_FILE=$3
+CONF_FILE=$4
+SEED=$5
+
+CONF_ID=$((SLURM_ARRAY_TASK_ID / $N_FOLDS + 1))
+INSTANCE_ID=$((SLURM_ARRAY_TASK_ID % $N_FOLDS + 1))
+INSTANCE=$(sed "${INSTANCE_ID}q;d" $INSTANCE_FILE)
+CONF=$(sed "${CONF_ID}q;d" $CONF_FILE)
+OUT="$(./wrapper --MO "true" $INSTANCE 0 9999 0 $SEED $CONF), $CONF"
+flock -x "$VALID_FILE" echo "$OUT" >> "$VALID_FILE"
