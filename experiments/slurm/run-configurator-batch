@@ -50,11 +50,9 @@ mkdir -p $(dirname $VALID_FILE)
 >$VALID_FILE
 
 N_ARRAY=$(( $(wc -l < $CONF_FILE) * $N_FOLDS - 1))
-CMD="sbatch --parsable -a 0-$N_ARRAY -o /dev/null \
-            --partition=$PARTITION --exclude=$EXCLUDE \
-            slurm/run-validate-batch $VALID_FILE  $N_FOLDS $INSTANCE_FILE $CONF_FILE $SEED"
-echo "attempting to run: $CMD"
-JOB=$( $CMD )
+JOB=$( sbatch --parsable -a 0-$N_ARRAY -o /dev/null --nice=2 \
+              --partition=$PARTITION --exclude=$EXCLUDE \
+              slurm/run-validate-batch $VALID_FILE $N_FOLDS $INSTANCE_FILE $CONF_FILE $SEED )
 
 
 # find test jobs that depend on the current job and add validate jobs as dependency

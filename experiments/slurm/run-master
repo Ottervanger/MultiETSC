@@ -19,20 +19,23 @@ for DATASET in ${DATASETS[*]}; do
     for i in ${!METHODS[*]}; do
         METHOD=${METHODS[i]}
         ALG=${ALGS[i]}
-        eval mkdir -p "output/configurator/${DATASET}/${METHOD}-${ALG}/run_{${START}..$((REPS - 1 - START))}"
-        # configuration and validation
-        CONFJOB=$( sbatch --parsable --hold --array=${START}-$((REPS - 1 - START)) --nice=1 \
-                          --partition=$PARTITION --exclude=$EXCLUDE \
-                          --output=output/configurator/${DATASET}/${METHOD}-${ALG}/run_%a/log \
-                          slurm/run-configurator-batch --dataset $DATASET --method $METHOD --algorithm $ALG )
-        CONFJOBS+=($CONFJOB)
-        mkdir -p output/test/${DATASET}/${METHOD}-${ALG}
+        if [ ! "$1" == "noconf" ]; then
+            eval mkdir -p "output/configurator/${DATASET}/${METHOD}-${ALG}/run_{${START}..$((REPS - 1 - START))}"
+            # configuration and validation
+            CONFJOB=$( sbatch --parsable --hold --array=${START}-$((REPS - 1 - START)) --nice=3 \
+                              --partition=$PARTITION --exclude=$EXCLUDE \
+                              --output=output/configurator/${DATASET}/${METHOD}-${ALG}/run_%a/log \
+                              slurm/run-configurator-batch --dataset $DATASET --method $METHOD --algorithm $ALG )
+            CONFJOBS+=($CONFJOB)
+            DEP="-d afterok:${CONFJOB}"
+        fi
         # pareto extraction and test evaluation
-        TESTJOB=$( sbatch --parsable -d afterok:${CONFJOB} --kill-on-invalid-dep=yes \
+        mkdir -p output/test/${DATASET}/${METHOD}-${ALG}
+        TESTJOB=$( sbatch --parsable $DEP --kill-on-invalid-dep=yes --nice=1 \
                           --partition=$PARTITION --exclude=$EXCLUDE \
                           --output=output/test/${DATASET}/${METHOD}-${ALG}/log \
-                          slurm/run-test-batch --dataset $DATASET --method $METHOD --algorithm $ALG ) && \
-                   scontrol release ${CONFJOB} || scancel ${CONFJOB}
+                          slurm/run-test-master $DATASET $METHOD $ALG )
+        [ -z "$CONFJOB" ] || scontrol release ${CONFJOB}
         TESTJOBS+=($TESTJOB)
     done
 done

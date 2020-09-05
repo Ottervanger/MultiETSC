@@ -1,9 +1,17 @@
 #!/bin/bash
-#SBATCH --job-name=earlytsc-test
+#SBATCH --job-name=earlytsc-test-batch
 #SBATCH -c 4
 #SBATCH --mem=10G
 set -e
 
-echo "$(date +%T.%3N) on $HOSTNAME"
-echo "./run-test-batch $@"
-sleep 1
+# required positional arguments
+INSTANCE=$1
+TEST_FILE=$2
+CONF_FILE=$3
+SEED=$4
+
+echo "run-test-batch args: $@"
+
+CONF=$(sed "${SLURM_ARRAY_TASK_ID}q;d" $CONF_FILE)
+OUT="$(./wrapper --MO "true" $INSTANCE 0 9999 0 $SEED $CONF), $CONF"
+flock -x "$TEST_FILE" echo "$OUT" >> "$TEST_FILE"
