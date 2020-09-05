@@ -59,7 +59,7 @@ optimization = function(probabilities, optimizer='ga',
             upper<-c(1:length(sigmainit))*0+1
             result<-GenSA(sigmainit,cost_uniclass, probabilities=probabilities,
                 alpha=alpha, regret=regret, reg=reg, lambda=lambda, upper=upper,
-                lower=lower, control=c(maxit=100, verbose=TRUE))
+                lower=lower, control=c(maxit=100))
             sigma = result$par
         },
         'ga' = {
