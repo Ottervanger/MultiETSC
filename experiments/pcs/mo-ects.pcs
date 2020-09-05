@@ -1,0 +1,6 @@
+# algorithms
+algorithm {ECTS/bin/ects}[ECTS/bin/ects]
+
+# ects parameters
+min_support {0.0,0.01..1.0}[0.0]
+version {strict,loose}[strict]
