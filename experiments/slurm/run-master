@@ -3,10 +3,8 @@ set -e
 # run from "experiments" dir
 cd "${0%/*}/.."
 DATASETS=(ECG200)
-# ALGS=(all all ects ecdire relclass srcf)
-# METHODS=(mo so mo mo mo mo)
-ALGS=(all all)
-METHODS=(mo so)
+ALGS=(all all ects ecdire relclass srcf)
+METHODS=(mo so mo mo mo mo)
 CONFJOBS=()
 TESTJOBS=()
 REPS=2
