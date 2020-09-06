@@ -28,6 +28,7 @@ case "$1" in
 esac
 done
 
+# make sure all required variables are set
 for VAR in "DATASET" "METHOD" "ALGO" "UCR_ROOT"; do
     if [ -z "${!VAR}" ]; then 
         echo "Variable \"${VAR}\" is not set"
@@ -38,10 +39,11 @@ done
 # Produce train-validate split from training data
 INSTANCE_FILE=$(python util/validationsplitter.py --folds=$N_FOLDS --seed=$SEED "${UCR_ROOT}${DATASET}/${DATASET}_TRAIN.tsv")
 
-CMD="./run-configurator "${ARGS}" --seed ${SEED} --instance-file ${INSTANCE_FILE} --time 180"
+CMD="./run-configurator "${ARGS}" --seed ${SEED} --instance-file ${INSTANCE_FILE}"
 echo $CMD
 # Run configurator
 srun $CMD
+echo
 
 # Add validation runs as separate jobs to the queue
 CONF_FILE="output/configurator/${DATASET}/${METHOD}-${ALGO}/run_${SEED}/configs${SEED}.txt"
@@ -56,7 +58,10 @@ JOB=$( sbatch --parsable -a 0-$N_ARRAY -o /dev/null --nice=2 \
 
 
 # find test jobs that depend on the current job and add validate jobs as dependency
-DJOBS=( $(squeue -u 1036 -ho "%E %A" | grep "afterok:$SLURM_JOB_ID" | perl -pe 's/.* ([0-9]+)/\1/g') )
+DJOBS=( $(squeue -u 1036 -ho "%E %A" | grep "afterok:$SLURM_ARRAY_JOB_ID" | perl -pe 's/.* ([0-9]+)/\1/g') )
 for DJOB in ${DJOBS[*]}; do
-    scontrol update jobid=$DJOB Dependency="$(squeue -j $DJOB -ho "%E"),afterok:$JOB"
+    (
+        flock -x 200
+        scontrol update jobid=$DJOB Dependency="$(squeue -j $DJOB -ho "%E"),afterok:$JOB"
+    )200>"$TMP/.lock/c-$SLURM_ARRAY_TASK_ID"
 done
