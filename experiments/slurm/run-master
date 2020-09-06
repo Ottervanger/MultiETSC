@@ -2,12 +2,12 @@
 set -e
 # run from "experiments" dir
 cd "${0%/*}/.."
-DATASETS=(ECG200)
+DATASETS=(Coffee CBF ECG200 TwoPatterns Wafer)
 ALGS=(all all ects ecdire relclass srcf)
 METHODS=(mo so mo mo mo mo)
 CONFJOBS=()
 TESTJOBS=()
-REPS=2
+REPS=25
 START=0
 export UCR_ROOT="/scratch/ottervanger/UCR/"
 export PARTITION="graceADA"
