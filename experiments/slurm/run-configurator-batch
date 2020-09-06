@@ -60,8 +60,8 @@ JOB=$( sbatch --parsable -a 0-$N_ARRAY -o /dev/null --nice=2 \
 # find test jobs that depend on the current job and add validate jobs as dependency
 DJOBS=( $(squeue -u 1036 -ho "%E %A" | grep "afterok:$SLURM_ARRAY_JOB_ID" | perl -pe 's/.* ([0-9]+)/\1/g') )
 for DJOB in ${DJOBS[*]}; do
-    (
+    (   # prevent race conditions by locking
         flock -x 200
         scontrol update jobid=$DJOB Dependency="$(squeue -j $DJOB -ho "%E"),afterok:$JOB"
-    )200>"$TMP/.lock/c-$SLURM_ARRAY_TASK_ID"
+    ) 200>"$TMP/.lock/c-$DJOB"
 done
