@@ -25,17 +25,6 @@ def colors(opaque=False):
             yield c if not opaque else c + '99'
 
 
-def roundIfFloat(s):
-    try:
-        return '{:.2g}'.format(float(s))
-    except ValueError:
-        return s
-
-
-def roundFloatsInString(s):
-    return " ".join(roundIfFloat(su) for su in s.split())
-
-
 class Pareto:
     def __init__(self, Y, metadata, label):
         inp = np.ones(len(Y), dtype="bool")
@@ -56,18 +45,16 @@ class Pareto:
         # points
         ax.plot(self.P[:, 0], self.P[:, 1],
                 'o', c=c, markersize=3)
-        # adding labels
-        labels = [re.sub('^-algorithm ([^/]*)[^\s]* (.*)$', '\\1 \\2', i.replace("'", '')) for i in self.metadata]
-        for x, y, label in zip(self.P[:, 0], self.P[:, 1], labels):
-            # label
-            txt = ax.annotate(
-                label, (x, y), textcoords="axes fraction", xytext=textoffset['xy'],
-                ha='left', va='center', fontsize=5, clip_on=False,
-                arrowprops=dict(
-                    arrowstyle='-|>', linestyle='--', color=c+'aa',
-                    connectionstyle="angle,angleA=180,angleB={}".format(angle),
-                    relpos=(0., .5), shrinkA=10, shrinkB=10))
-            textoffset['xy'][1] -= 0.03
+        # for x, y, label in zip(self.P[:, 0], self.P[:, 1], self.metadata):
+        #     # label
+        #     txt = ax.annotate(
+        #         label, (x, y), textcoords="axes fraction", xytext=textoffset['xy'],
+        #         ha='left', va='center', fontsize=5, clip_on=False,
+        #         arrowprops=dict(
+        #             arrowstyle='-|>', linestyle='--', color=c+'aa',
+        #             connectionstyle="angle,angleA=180,angleB={}".format(angle),
+        #             relpos=(0., .5), shrinkA=10, shrinkB=10))
+        #     textoffset['xy'][1] -= 0.03
 
     def hmean(self):
         return np.min(1-self.P.shape[1]/np.sum((1-self.P)**-1, 1))
@@ -99,9 +86,26 @@ class Pareto:
         return (df+dl+np.sum(np.abs(di-np.mean(di))))/(df+dl+np.sum(di))
 
 
+def roundIfFloat(s):
+    try:
+        return '{:.2g}'.format(float(s))
+    except ValueError:
+        return s
+
+
+def roundFloats(s):
+    return " ".join(roundIfFloat(su) for su in s.split())
+
+
+def cleanConfStr(s):
+    s = s.replace("'", '')
+    s = re.sub(r'(.*)(-algorithm [^\s]* )(.*)', r'\2 \1 \3', s)
+    return roundFloats(s)
+
+
 def getData(csvPath):
     # read data from csv
-    pat = re.compile('\[(.*), (.*)\], 0, (.*)')
+    pat = re.compile(r'\[(.*), (.*)\], 0, (.*)')
     with open(csvPath) as f:
         data = np.array([re.findall(pat, s)[0] for s in f.readlines()])
 
@@ -111,7 +115,7 @@ def getData(csvPath):
     df = df.groupby('configuration', as_index=False).mean()
     df = df.sort_values(by=['earliness'])
     Y = np.array(df[['earliness', 'accuracy']])
-    metadata = np.array([roundFloatsInString(re.sub('(.*)(-algorithm [^\s]* )(.*)', '\\2 \\1 \\3', d)) for d in df['configuration']])
+    metadata = np.array([cleanConfStr(d) for d in df['configuration']])
     return Y, metadata
 
 
@@ -131,8 +135,8 @@ def best(metric, val, l):
 
 def hlfmt(metric, val, l):
     formats = dict(int='{:3d}'+' '*5, float='{:8.4f}', float64='{:8.4f}', str='{:>8s}')
-    # if best(metric, val, l):
-    #     return '\\textbf{'+formats[val.__class__.__name__].format(val)+'}'
+    if best(metric, val, l):
+        return '\\textbf{'+formats[val.__class__.__name__].format(val)+'}'
     return formats[val.__class__.__name__].format(val)
 
 
@@ -147,17 +151,9 @@ def latexTable(d):
     return tex
 
 
-def namesFromFiles(files):
-    # get files and extract the varying part as labels
-    r = re.compile('.*/(.*)-(.*)-(.*)-(.*).csv')
-    conds = [list(sorted(set([r.match(f).group(i) for f in files]))) for i in range(1, 5)]
-    flabels = [('output/validation/'+'-'.join(i)+'.csv', '-'.join([v for j, v in enumerate(i) if len(conds[j]) > 1])) for i in itertools.product(*conds)]
-    title = '-'.join(c[0] for c in conds if len(c) == 1)
-    return flabels, title
-
-
-def processData(title, labels):
-    print('Processing {} ({} files)'.format(title, len(labels)))
+def processData(dataset):
+    labels = [os.path.basename(p) for p in sorted(glob.glob(f'output/pareto/{dataset}/*'), reverse=True)]
+    print(f'Processing {dataset} ({len(labels)} files)')
     fig, ax = plt.subplots(figsize=(8, 4.8))
     color = colors()
     ruler = 1.02
@@ -166,7 +162,7 @@ def processData(title, labels):
     angle = 80
     for label in labels:
         try:
-            Y, metadata = getData('output/validation/'+title+'-'+label+'.csv')
+            Y, metadata = getData(f'output/test/{dataset}/{label}/test.csv')
             pareto = Pareto(Y, metadata, label=label)
             pareto.plot(ax, c=next(color), textoffset=textoffset, angle=angle)
             textoffset['xy'][1] -= 0.01
@@ -184,11 +180,11 @@ def processData(title, labels):
             continue
 
     # add column with means
-    for k in metricTable:
-        if k != 'method':
-            metricTable[k] += [np.mean(metricTable[k])]
-        else:
-            metricTable[k] += ['mean']
+    # for k in metricTable:
+    #     if k != 'method':
+    #         metricTable[k] += [np.mean(metricTable[k])]
+    #     else:
+    #         metricTable[k] += ['mean']
 
     # print metrics to terminal
     printTable(metricTable)
@@ -199,32 +195,27 @@ def processData(title, labels):
     plt.yticks(ticks)
     ax.grid()
     ax.legend(loc=(ruler, 0))
-    plt.title("Earliness-Accuracy tradeoff\n{}".format(title))
+    plt.title(f'Earliness-Accuracy tradeoff\n{dataset}')
     plt.xlabel("Earliness")
     plt.ylabel("Error rate")
 
     fig.tight_layout()
     # save plot
-    plt.savefig('output/plot/{}.pdf'.format(title))
+    plt.savefig(f'output/plot/{dataset}.pdf')
     # save tex table
-    with open('output/tex/{}.tex'.format(title), 'w') as f:
+    with open(f'output/tex/{dataset}.tex', 'w') as f:
         f.write(latexTable(metricTable))
 
 
 def main():
     os.chdir(os.path.dirname(sys.argv[0]))
-    files = glob.glob('output/validation/*')
-    if not len(files):
-        sys.exit('No files found in output/validation/. Nothing to be done.')
-
-    # get files and extract the varying part as labels
-    r = re.compile('.*/(.*)-(.*)-(.*)-(.*).csv')
-    conds = [list(sorted(set([r.match(f).group(i) for f in files]))) for i in range(1, 4)]
-
-    for title in ['-'.join(i) for i in itertools.product(*conds)]:
-        fls = glob.glob('output/validation/{}*'.format(title))
-        labels = list(sorted(set([r.match(f).group(4) for f in fls])))
-        processData(title, labels)
+    datasetDirs = glob.glob('output/pareto/*')
+    if not len(datasetDirs):
+        sys.exit('No files found in output/pareto/. Nothing to be done.')
+    os.makedirs('output/plot/', exist_ok=True)
+    os.makedirs('output/tex/', exist_ok=True)
+    for dataset in [os.path.basename(p) for p in datasetDirs]:
+        processData(dataset)
 
 
 if __name__ == '__main__':

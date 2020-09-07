@@ -2,23 +2,23 @@ RESULTDIR:=./output/results/
 TABLEDIR:=./output/tex/
 PLOTDIR:=./output/plot/
 REPORT:=./report/report.pdf
-SLIDES:=./report/slides.pdf
+# SLIDES:=./report/slides.pdf
 
 # find the tables and plots that can be made using the results
-TABLES=$(wildcard $(patsubst %,$(TABLEDIR)%,$(shell ls -1 ./output/results/ | perl -pe "s/(.*?)-.*-(.*?)\..*/\1-\*/" | sort | uniq)))
-PLOTS=$(wildcard $(patsubst %,$(PLOTDIR)%,$(shell ls -1 ./output/results/ | perl -pe "s/(.*?)-.*-(.*?)\..*/\1-\*/" | sort | uniq)))
+TABLES=$(wildcard $(patsubst %,$(TABLEDIR)%.tex,$(shell ls -1 ./output/test/ )))
+PLOTS=$(wildcard $(patsubst %,$(PLOTDIR)%.pdf,$(shell ls -1 ./output/test/ )))
 
 all: $(REPORT) $(SLIDES)
 
 %.pdf: %.tex $(TABLES) $(PLOTS)
-	export TEXINPUTS=".:./report/theme:$$TEXINPUTS"
+	export TEXINPUTS="./report/theme:$$TEXINPUTS"
 	pdflatex -shell-escape -output-directory ./report $<
 
 .SECONDEXPANSION:
 
 $(TABLEDIR)%.tex: plot.py $$(wildcard $(RESULTDIR)$$(subst -,*,$$(notdir $$(basename $$@)))*)
-	./plot.py $(subst -,*,$(notdir $(basename $@)))*
+	./plot.py
 
 $(PLOTDIR)%.pdf: plot.py $$(wildcard $(RESULTDIR)$$(subst -,*,$$(notdir $$(basename $$@)))*)
-	./plot.py $(subst -,*,$(notdir $(basename $@)))*
+	./plot.py
 
