@@ -6,31 +6,42 @@
 \usepackage[font=small,labelfont=bf]{caption}
 \title{EarlyECTS Results}
 
+% bold fase for tables (should make bf equally spaced as normal text)
+% succes depends on font and font size
+\newcommand{\bft}[1]{{\fontseries{b}\selectfont #1}}
+
 % load all plot files into the \plotList variable
 \begingroup\makeatletter\endlinechar=\m@ne\everyeof{\noexpand}
-\edef\x{\endgroup\def\noexpand\texList{\@@input|"ls -m output/tex/*.tex" }}\x
+\edef\x{\endgroup\def\noexpand\plotList{\@@input|"ls -m output/plot/*.pdf" }}\x
 
 % turn tex path into plot file path
 \makeatletter
 \def\cle@n@#1>#2{#2}
 \newcommand{\setCompid}[1]{%
-\ifnum\pdfmatch subcount 5 {(.+tex/)(.*?).tex}{#1}=1%
+\ifnum\pdfmatch subcount 5 {(.+plot/)(.*?).pdf}{#1}=1%
 \gdef\compid{\expandafter\cle@n@\pdflastmatch2}%
 \else\fi
 }
 \makeatother
 
 \begin{document}
-\foreach \plot in \texList {%
+\begin{table}[!hb]%
+    \makebox[\textwidth][c]{%
+    \tabcolsep=2px
+    \input{output/tex/dataset.tex}}%
+    \caption{Hyper volume (HV) and Delta ($\Delta$) metrics for compared methods on different dataset in the UCR Archive.}%
+\end{table}
+\pagebreak
+\foreach \plot in \plotList {%
     \setCompid{\plot}
     \begin{figure}[!ht]%
         \makebox[\textwidth][c]{\includegraphics[width=1.6\textwidth]{output/plot/\compid.pdf}}%
-        \caption{Earliness Accuracy tradeoff for run ``\compid''.}%
+        \caption{Earliness Accuracy tradeoff on dataset ``\compid''.}%
     \end{figure}%
     \begin{table}[!hb]%
         \centering
-        \input{\plot}%
-        \caption{Comparison of Pareto front metrics for run ``\compid''.}%
+        \input{output/tex/\compid.tex}%
+        \caption{Comparison of Pareto front metrics on dataset ``\compid''.}%
     \end{table}
     \pagebreak
 }

@@ -41,7 +41,7 @@ class Pareto:
         # stepped line
         ax.step(np.hstack((0, self.P[:, 0], 1)),
                 np.hstack((1, self.P[:, 1], 0)),
-                where='post', label=self.label, linewidth=1)
+                where='post', label=self.label, c=c, linewidth=1)
         # points
         ax.plot(self.P[:, 0], self.P[:, 1],
                 'o', c=c, markersize=3)
@@ -119,12 +119,6 @@ def getData(csvPath):
     return Y, metadata
 
 
-def printTable(d):
-    formats = dict(int='{:3d}'+' '*5, float='{:8.4f}', float64='{:8.4f}', str='{:>8s}')
-    for k, v in d.items():
-        print(('{:>12s}'+''.join(formats[vi.__class__.__name__] for vi in v)).format(k, *v))
-
-
 def best(metric, val, l):
     if metric == 'method':
         return False
@@ -133,17 +127,36 @@ def best(metric, val, l):
     return val == max(l)
 
 
-def hlfmt(metric, val, l):
-    formats = dict(int='{:3d}'+' '*5, float='{:8.4f}', float64='{:8.4f}', str='{:>8s}')
-    if best(metric, val, l):
-        return '\\textbf{'+formats[val.__class__.__name__].format(val)+'}'
-    return formats[val.__class__.__name__].format(val)
+def formatCell(x, spec=None):
+    formats = dict(int=     '{:8d}'+' '*4,
+                   float=   '{:12.3f}',
+                   float64= '{:12.3f}',
+                   str=     ' {:>11s}')
+    if spec and spec in ['b', 'bf', 'bold']:
+        s = formats[x.__class__.__name__].format(x).strip()
+        return formats['str'].format(f'\\bft{{{s}}}')
+    return formats[x.__class__.__name__].format(x)
 
 
-def latexTable(d):
-    tex = '\\begin{tabular}{l'+' r'*(len(d['method']))+'}\n'
+def printTable(d):
     for k, v in d.items():
-        tex += ' &'.join([hlfmt(k, i, v) for i in [k]+v]) + '\\\\'
+        print('{:>10s}'.format(k)+''.join(formatCell(vi) for vi in v))
+
+
+def hlfmt(val, metric=None, l=None):
+    if metric and l and best(metric, val, l):
+        return formatCell(val, 'bf')
+    return formatCell(val)
+
+
+def twoColumn(s):
+    return r'\multicolumn{2}{c}{' + f'{s}' + r'}'
+
+
+def latexMetricTable(d):
+    tex = '\\begin{tabular}{l'+'r'*(len(d['method']))+'}\n'
+    for k, v in d.items():
+        tex += ' &'.join([hlfmt(i, k, v) for i in reversed(v+[k])]) + r'\\'
         if k == 'method':
             tex += '\\hline'
         tex += '\n'
@@ -151,16 +164,34 @@ def latexTable(d):
     return tex
 
 
-def processData(dataset):
-    labels = [os.path.basename(p) for p in sorted(glob.glob(f'output/pareto/{dataset}/*'), reverse=True)]
-    print(f'Processing {dataset} ({len(labels)} files)')
+def latexDatasetTable(datasetTabel, labels):
+    tex = r'\begin{tabular}{@{\extracolsep{4pt}}l'+'rr'*(len(labels))+'@{}}\n'
+    tex += '&'+' & '.join([twoColumn(l) for l in labels]) + '\\\\\n'
+    tex += ''.join([f'\\cline{{{2*i+2}-{2*i+3}}}' for i in range(len(labels))]) + '\n'
+    tex += '&'+' & '.join(['HV', r'$\Delta$'] * len(labels)) + '\\\\\\hline\n'
+    for row in datasetTabel:
+        vals = sum(row[1:], ())
+        hvs = [hlfmt(hv, 'hv', vals[::2]) for hv in vals[::2]]
+        dlts = [hlfmt(dlt, 'delta', vals[1::2]) for dlt in vals[1::2]]
+        cells = [hlfmt(row[0])]+[j for i in zip(hvs, dlts) for j in i]
+        tex += ' &'.join(cells) + '\\\\\n'
+    tex += '\\end{tabular}\n'
+    return tex
+
+
+def processData(dataset, labels):
+    files = [os.path.basename(p) for p in sorted(glob.glob(f'output/pareto/{dataset}/*'), reverse=True)]
+    print(f'{dataset}')
+    if (set(files) != set(labels)):
+        print('some files are missing')
     fig, ax = plt.subplots(figsize=(8, 4.8))
     color = colors()
     ruler = 1.02
     metricTable = {}
     textoffset = dict(xy=[ruler, .98])
     angle = 80
-    for label in labels:
+    datasetTableRow = []
+    for label in reversed(labels):
         try:
             Y, metadata = getData(f'output/test/{dataset}/{label}/test.csv')
             pareto = Pareto(Y, metadata, label=label)
@@ -173,10 +204,12 @@ def processData(dataset):
                 delta=pareto.delta(),
                 M3=pareto.M3(),
                 hmean=pareto.hmean(),
-                hypervolume=pareto.hypervolume()
+                HV=pareto.hypervolume()
             )
+            datasetTableRow = [(metrics['HV'], metrics['delta'])] + datasetTableRow
             metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
         except FileNotFoundError:
+            datasetTableRow += [('?', '?')]
             continue
 
     # add column with means
@@ -188,6 +221,7 @@ def processData(dataset):
 
     # print metrics to terminal
     printTable(metricTable)
+    print()
     ax.set_xlim([0, 1])
     ax.set_ylim([0, 1])
     ticks = np.arange(0, 1.1, .1)
@@ -204,7 +238,8 @@ def processData(dataset):
     plt.savefig(f'output/plot/{dataset}.pdf')
     # save tex table
     with open(f'output/tex/{dataset}.tex', 'w') as f:
-        f.write(latexTable(metricTable))
+        f.write(latexMetricTable(metricTable))
+    return [dataset] + datasetTableRow
 
 
 def main():
@@ -214,8 +249,17 @@ def main():
         sys.exit('No files found in output/pareto/. Nothing to be done.')
     os.makedirs('output/plot/', exist_ok=True)
     os.makedirs('output/tex/', exist_ok=True)
-    for dataset in [os.path.basename(p) for p in datasetDirs]:
-        processData(dataset)
+    labels = ['mo-ects',
+              'mo-ecdire',
+              'mo-srcf',
+              'mo-relclass',
+              'so-all',
+              'mo-all']
+    datasetTable = []
+    for dataset in sorted([os.path.basename(p) for p in datasetDirs]):
+        datasetTable += [processData(dataset, labels)]
+    with open(f'output/tex/dataset.tex', 'w') as f:
+        f.write(latexDatasetTable(datasetTable, labels))
 
 
 if __name__ == '__main__':
