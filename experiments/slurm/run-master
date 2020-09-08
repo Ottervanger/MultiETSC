@@ -8,10 +8,11 @@ METHODS=(mo so mo mo mo mo)
 CONFJOBS=()
 TESTJOBS=()
 REPS=25
-START=0
 export UCR_ROOT="/scratch/ottervanger/UCR/"
 export PARTITION="graceADA"
 export EXCLUDE="ethnode[01-05,23]"
+export GLOBAL_SEED=0
+START=$GLOBAL_SEED
 
 for DATASET in ${DATASETS[*]}; do
     for i in ${!METHODS[*]}; do
