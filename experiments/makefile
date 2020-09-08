@@ -1,4 +1,4 @@
-RESULTDIR:=./output/results/
+TESTDIR:=./output/test/
 TABLEDIR:=./output/tex/
 PLOTDIR:=./output/plot/
 REPORT:=./report/report.pdf
@@ -16,9 +16,11 @@ all: $(REPORT) $(SLIDES)
 
 .SECONDEXPANSION:
 
-$(TABLEDIR)%.tex: plot.py $$(wildcard $(RESULTDIR)$$(subst -,*,$$(notdir $$(basename $$@)))*)
+$(TABLEDIR)%.tex: plot.py $$(wildcard $(TESTDIR)$$(notdir $$(basename $$@))/*/test.csv)
+	echo $^
 	./plot.py
 
-$(PLOTDIR)%.pdf: plot.py $$(wildcard $(RESULTDIR)$$(subst -,*,$$(notdir $$(basename $$@)))*)
+$(PLOTDIR)%.pdf: plot.py $$(wildcard $(TESTDIR)$$(notdir $$(basename $$@))/*/test.csv)
+	echo $^
 	./plot.py
 
