@@ -40,7 +40,7 @@ def mergeFronts(fronts):
 
 def processData(condition, resample=None):
     dirname = 'output/validation/' + condition
-    files = glob.glob(dirname+'/*')
+    files = np.sort(glob.glob(dirname+'/*'))
     if not len(files):
         sys.exit('No files found in '+dirname)
     fronts = [rmDominated(*getData(f)) for f in files]
@@ -48,10 +48,11 @@ def processData(condition, resample=None):
     if resample:
         confs = np.array([], dtype=str)
         for _ in range(resample['nSamples']):
-            pSample = fronts[np.random.choice(len(fronts), resample['size'], replace=False)]
+            idx = np.random.choice(len(fronts), resample['size'], replace=False)
+            pSample = [fronts[i] for i in idx]
             Y, conf = mergeFronts(pSample)
             pFronts += [list(set(conf))]
-            confs.concatenate([confs, conf])
+            confs = np.concatenate([confs, conf])
     else:
         Y, confs = mergeFronts(fronts)
         pFronts += [list(set(confs))]
@@ -66,8 +67,8 @@ def processData(condition, resample=None):
 
 def main():
     # instance dependent random seed
-    np.random.seed(hash(sys.argv[1]) % 2**32)
-    processData(sys.argv[1])
+    np.random.seed(int(sys.argv[2]) % 2**32)
+    processData(sys.argv[1], {'nSamples': 1000, 'size': 10})
 
 
 if __name__ == '__main__':
