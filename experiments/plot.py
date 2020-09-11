@@ -7,6 +7,9 @@ import sys
 import re
 import glob
 import itertools
+import json
+import seaborn as sns
+from scipy.stats import wilcoxon
 
 
 def colors(opaque=False):
@@ -26,18 +29,22 @@ def colors(opaque=False):
 
 
 class Pareto:
-    def __init__(self, Y, metadata, label):
+    def __init__(self, Y, metadata=None, label=None):
         inp = np.ones(len(Y), dtype="bool")
         for i in range(len(Y)):
             if inp[i]:
                 inp = inp & np.any(Y < Y[i], 1)
                 inp[i] = True
         self.P = Y[inp]
-        self.metadata = metadata[inp]
-        self.size = len(self.P)
-        self.label = label
+        order = np.argsort(self.P[:, 0])
+        self.P = self.P[order]
+        self._size = len(self.P)
+        if metadata is not None:
+            self.metadata = np.array([cleanConfStr(d) for d in metadata[inp]])[order]
+        if label is not None:
+            self.label = label
 
-    def plot(self, ax, c, textoffset, angle):
+    def plot(self, ax, c, annotate=None):
         # stepped line
         ax.step(np.hstack((0, self.P[:, 0], 1)),
                 np.hstack((1, self.P[:, 1], 0)),
@@ -45,21 +52,24 @@ class Pareto:
         # points
         ax.plot(self.P[:, 0], self.P[:, 1],
                 'o', c=c, markersize=3)
-        # for x, y, label in zip(self.P[:, 0], self.P[:, 1], self.metadata):
-        #     # label
-        #     txt = ax.annotate(
-        #         label, (x, y), textcoords="axes fraction", xytext=textoffset['xy'],
-        #         ha='left', va='center', fontsize=5, clip_on=False,
-        #         arrowprops=dict(
-        #             arrowstyle='-|>', linestyle='--', color=c+'aa',
-        #             connectionstyle="angle,angleA=180,angleB={}".format(angle),
-        #             relpos=(0., .5), shrinkA=10, shrinkB=10))
-        #     textoffset['xy'][1] -= 0.03
+        if annotate:
+            for x, y, label in zip(self.P[:, 0], self.P[:, 1], self.metadata):
+                # label
+                txt = ax.annotate(
+                    label, (x, y), textcoords="axes fraction", xytext=annotate['xyoffset'],
+                    ha='left', va='center', fontsize=5, clip_on=False,
+                    arrowprops=dict(
+                        arrowstyle='-|>', linestyle='--', color=c+'aa',
+                        connectionstyle="angle,angleA=180,angleB={}".format(annotate['angle']),
+                        relpos=(0., .5), shrinkA=10, shrinkB=10))
+                annotate['xyoffset'][1] -= 0.03
+            annotate['xyoffset'][1] += annotate['ystep']
+            annotate['angle'] += annotate['anglestep']
 
     def hmean(self):
-        return np.min(1-self.P.shape[1]/np.sum((1-self.P)**-1, 1))
+        return np.min(1-2/np.sum((1-self.P[np.all(self.P != 1., 1)])**-1, 1))
 
-    def hypervolume(self):
+    def HV(self):
         '''
         compute dominated hypervolume given pareto set Y
         pre: Y consists of two dimensional non-dominated
@@ -76,14 +86,17 @@ class Pareto:
         return np.linalg.norm(self.P[0]-self.P[-1])
 
     def delta(self):
-        if (self.size < 3):
+        if (self._size < 2):
             return np.inf
-        di = np.zeros(self.size-1)
+        di = np.zeros(self._size-1)
         for i in range(len(di)):
             di[i] = np.linalg.norm(self.P[i]-self.P[i+1])
         df = np.linalg.norm(self.P[0]-np.array([0, 1]))
         dl = np.linalg.norm(self.P[-1]-np.array([1, 0]))
         return (df+dl+np.sum(np.abs(di-np.mean(di))))/(df+dl+np.sum(di))
+
+    def size(self):
+        return self._size
 
 
 def roundIfFloat(s):
@@ -115,7 +128,7 @@ def getData(csvPath):
     df = df.groupby('configuration', as_index=False).mean()
     df = df.sort_values(by=['earliness'])
     Y = np.array(df[['earliness', 'accuracy']])
-    metadata = np.array([cleanConfStr(d) for d in df['configuration']])
+    metadata = np.array(df['configuration'])
     return Y, metadata
 
 
@@ -164,12 +177,12 @@ def latexMetricTable(d):
     return tex
 
 
-def latexDatasetTable(datasetTabel, labels):
+def latexDatasetTable(datasetTable, labels):
     tex = r'\begin{tabular}{@{\extracolsep{4pt}}l'+'rr'*(len(labels))+'@{}}\n'
     tex += '&'+' & '.join([twoColumn(l) for l in labels]) + '\\\\\n'
     tex += ''.join([f'\\cline{{{2*i+2}-{2*i+3}}}' for i in range(len(labels))]) + '\n'
     tex += '&'+' & '.join(['HV', r'$\Delta$'] * len(labels)) + '\\\\\\hline\n'
-    for row in datasetTabel:
+    for row in datasetTable:
         vals = sum(row[1:], ())
         hvs = [hlfmt(hv, 'hv', vals[::2]) for hv in vals[::2]]
         dlts = [hlfmt(dlt, 'delta', vals[1::2]) for dlt in vals[1::2]]
@@ -179,45 +192,35 @@ def latexDatasetTable(datasetTabel, labels):
     return tex
 
 
-def processData(dataset, labels):
-    files = [os.path.basename(p) for p in sorted(glob.glob(f'output/pareto/{dataset}/*'), reverse=True)]
+def processData(dataset, methods):
+    files = [os.path.basename(p) for p in glob.glob(f'output/pareto/{dataset}/*')]
     print(f'{dataset}')
-    if (set(files) != set(labels)):
+    if (set(files) != set(methods)):
         print('some files are missing')
     fig, ax = plt.subplots(figsize=(8, 4.8))
     color = colors()
-    ruler = 1.02
     metricTable = {}
-    textoffset = dict(xy=[ruler, .98])
-    angle = 80
+    ruler = 1.02
+    annotate = dict(xyoffset=[ruler, .98], angle=80, ystep=-0.01, anglestep=-5)
     datasetTableRow = []
-    for label in reversed(labels):
+    for method in reversed(methods):
         try:
-            Y, metadata = getData(f'output/test/{dataset}/{label}/test.csv')
-            pareto = Pareto(Y, metadata, label=label)
-            pareto.plot(ax, c=next(color), textoffset=textoffset, angle=angle)
-            textoffset['xy'][1] -= 0.01
-            angle -= 5
-            metrics = dict(
-                method=label,
-                size=pareto.size,
-                delta=pareto.delta(),
-                M3=pareto.M3(),
-                hmean=pareto.hmean(),
-                HV=pareto.hypervolume()
-            )
-            datasetTableRow = [(metrics['HV'], metrics['delta'])] + datasetTableRow
-            metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
+            Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
         except FileNotFoundError:
             datasetTableRow += [('?', '?')]
             continue
-
-    # add column with means
-    # for k in metricTable:
-    #     if k != 'method':
-    #         metricTable[k] += [np.mean(metricTable[k])]
-    #     else:
-    #         metricTable[k] += ['mean']
+        pareto = Pareto(Y, metadata, label=method)
+        pareto.plot(ax, c=next(color))
+        metrics = dict(
+            method=method,
+            size=pareto.size(),
+            delta=pareto.delta(),
+            M3=pareto.M3(),
+            hmean=pareto.hmean(),
+            HV=pareto.HV()
+        )
+        datasetTableRow = [(metrics['HV'], metrics['delta'])] + datasetTableRow
+        metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
 
     # print metrics to terminal
     printTable(metricTable)
@@ -235,11 +238,70 @@ def processData(dataset, labels):
 
     fig.tight_layout()
     # save plot
-    plt.savefig(f'output/plot/{dataset}.pdf')
+    plt.savefig(f'output/plot/{dataset}/pareto.pdf')
     # save tex table
-    with open(f'output/tex/{dataset}.tex', 'w') as f:
+    with open(f'output/tex/{dataset}/table.tex', 'w') as f:
         f.write(latexMetricTable(metricTable))
     return [dataset] + datasetTableRow
+
+
+def bootstrap(datasets, methods, metrics):
+    df = pd.DataFrame()
+    for dataset in datasets:
+        for method in methods:
+            Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
+            with open(f'output/pareto/{dataset}/{method}/fronts.json', 'r') as f:
+                effSets = json.load(f)
+            # match config strings from json with test performance from test.csv
+            fronts = [[Y[np.where(metadata == c)[0][0]] for c in s] for s in effSets]
+            # Extracting test Pareto fronts
+            paretos = [Pareto(np.array(f)) for f in fronts]
+            # compute metrics
+            dl = pd.DataFrame([[getattr(p, m)()for m in metrics] for p in paretos],
+                              columns=metrics)
+            dl['method'] = method
+            dl['dataset'] = dataset
+            df = df.append(dl)
+    df = df.replace([np.inf, -np.inf], np.nan)
+
+    # plot distributions
+    for dataset in datasets:
+        ddf = pd.melt(df.loc[df['dataset'] == dataset], value_vars=metrics,
+                      id_vars=['method'], var_name='metric')
+        g = sns.FacetGrid(ddf, row="metric", row_order=metrics,
+                          height=1.5, aspect=5.)
+        g.map(sns.boxplot, "value", "method",
+              linewidth=.5, fliersize=3, flierprops=dict(alpha=.5),
+              whis=2., width=.6, palette="vlag", order=methods)
+        # sns.stripplot(x="HV", y="method", data=df, jitter=.3,
+        #               size=3, color=".3", linewidth=0, alpha=.1)
+        for ax in g.axes.flat:
+            ax.yaxis.tick_right()
+            ax.xaxis.grid(True)
+            ax.set(ylabel="")
+        # plt.xlim(right=1.001)
+        sns.despine(trim=True, left=True)
+        g.fig.tight_layout()
+        plt.savefig(f'output/plot/{dataset}/boxplot.pdf')
+        print(f'DONE: {dataset}')
+    return df
+
+
+def statTest(df):
+    # compute pairwise differences
+    d = df.pivot(columns=['method', 'dataset'])
+    d.columns.rename('metric', level=0, inplace=True)
+    d = d.reorder_levels(['method', 'dataset', 'metric'], 'columns')
+    diff = d['mo-all'].sub(d, axis='index').drop(columns=['mo-all'], level=2)
+    # compute medians and p values of Wilcoxon rank-sum test
+    # (test symmetric distribution of differences about 0)
+    res = pd.concat({'median': diff.median(),
+                     'p': diff.apply(lambda x: wilcoxon(x)[1])}, 1)
+    res = res.unstack('method').stack(0)
+    print(res)
+    with open(f'output/tex/stats.tex', 'w') as f:
+        f.write(res.to_latex(float_format='{:0.4f}'.format, multirow=True))
+    return res
 
 
 def main():
@@ -247,19 +309,24 @@ def main():
     datasetDirs = glob.glob('output/pareto/*')
     if not len(datasetDirs):
         sys.exit('No files found in output/pareto/. Nothing to be done.')
-    os.makedirs('output/plot/', exist_ok=True)
-    os.makedirs('output/tex/', exist_ok=True)
-    labels = ['mo-ects',
-              'mo-ecdire',
-              'mo-srcf',
-              'mo-relclass',
-              'so-all',
-              'mo-all']
+    datasets = [os.path.basename(p) for p in sorted(datasetDirs)]
+    for dataset in datasets:
+        os.makedirs(f'output/plot/{dataset}/', exist_ok=True)
+        os.makedirs(f'output/tex/{dataset}/', exist_ok=True)
+    methods = ['mo-ects',
+               'mo-ecdire',
+               'mo-srcf',
+               'mo-relclass',
+               'so-all',
+               'mo-all']
+    metrics = ['HV', 'delta']
     datasetTable = []
-    for dataset in sorted([os.path.basename(p) for p in datasetDirs]):
-        datasetTable += [processData(dataset, labels)]
+    df = bootstrap(datasets, methods, metrics)
+    statTest(df)
+    for dataset in datasets:
+        datasetTable += [processData(dataset, methods)]
     with open(f'output/tex/dataset.tex', 'w') as f:
-        f.write(latexDatasetTable(datasetTable, labels))
+        f.write(latexDatasetTable(datasetTable, methods))
 
 
 if __name__ == '__main__':

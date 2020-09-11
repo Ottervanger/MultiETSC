@@ -10,7 +10,7 @@ TESTJOBS=()
 REPS=25
 export UCR_ROOT="/scratch/ottervanger/UCR/"
 export PARTITION="graceADA"
-export EXCLUDE="ethnode[01-05,23]"
+export EXCLUDE="ethnode[23]"
 export GLOBAL_SEED=0
 START=$GLOBAL_SEED
 
@@ -38,5 +38,5 @@ for DATASET in ${DATASETS[*]}; do
         TESTJOBS+=($TESTJOB)
     done
 done
-echo "Submitted batch jobs for configuration   $(IFS=,; echo "${CONFJOBS[*]}")"
-echo "Submitted batch jobs for test evaluation $(IFS=,; echo "${TESTJOBS[*]}")"
+printf "Submitted batch %3d jobs for configuration\n" "${#CONFJOBS[@]}"
+printf "Submitted batch %3d jobs for test evaluation\n" "${#TESTJOBS[@]}"
