@@ -9,7 +9,7 @@ import glob
 import itertools
 import json
 import seaborn as sns
-from scipy.stats import wilcoxon
+from scipy.stats import wilcoxon, binom_test
 
 
 def colors(opaque=False):
@@ -287,16 +287,25 @@ def bootstrap(datasets, methods, metrics):
     return df
 
 
-def statTest(df):
+def wilcoxon_test(x):
+    return wilcoxon(x)[1]
+
+
+def sign_test(x):
+    # the sign test is the binominal test on the sign of the differences
+    return binom_test(sum(x > 0.), n=len(x != 0.))
+
+
+def statTest(df, testFn=sign_test):
     # compute pairwise differences
     d = df.pivot(columns=['method', 'dataset'])
     d.columns.rename('metric', level=0, inplace=True)
     d = d.reorder_levels(['method', 'dataset', 'metric'], 'columns')
-    diff = d['mo-all'].sub(d, axis='index').drop(columns=['mo-all'], level=2)
+    diff = d.sub(d['mo-all'], axis='index').drop(columns=['mo-all'], level=2)
     # compute medians and p values of Wilcoxon rank-sum test
     # (test symmetric distribution of differences about 0)
     res = pd.concat({'median': diff.median(),
-                     'p': diff.apply(lambda x: wilcoxon(x)[1])}, 1)
+                     'p': diff.apply(testFn)}, 1)
     res = res.unstack('method').stack(0)
     print(res)
     with open(f'output/tex/stats.tex', 'w') as f:
