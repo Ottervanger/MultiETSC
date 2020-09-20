@@ -14,6 +14,8 @@
 % bold fase for tables (should make bf equally spaced as normal text)
 % succes depends on font and font size
 \newcommand{\bft}[1]{{\fontseries{b}\selectfont #1}}
+\newcommand{\str}{\rlap{\textsuperscript{*}}}
+\newcommand{\sstr}{\rlap{\textsuperscript{**}}}
 
 % get dataset names
 \begingroup\makeatletter\endlinechar=\m@ne\everyeof{\noexpand}
@@ -22,15 +24,13 @@
 \begin{document}
 \begin{table}[!hb]%
     \makebox[\textwidth][c]{%
-    \tabcolsep=2px
     \input{output/tex/dataset.tex}}%
     \caption{Hyper volume (HV) and Delta ($\Delta$) metrics for compared methods on different dataset in the UCR Archive.}%
 \end{table}
 \begin{table}[!hb]%
     \makebox[\textwidth][c]{%
-    \tabcolsep=2px
     \input{output/tex/stats.tex}}%
-    \caption{Median pair wise differences with `mo-all' for Hyper volume (HV) and Delta ($\Delta$) metrics. $p$-values of the Wilcoxon rank-sum test are reported. Note that most are highly significant, indicating asymmetric difference distribution about zero.}%
+    \caption{Median pairwise differences with `mo-all' for Hyper Volume (HV) and Delta ($\Delta$) metrics. \str~ and \sstr~~ denote $p < 0.05$ and $p < 0.001$ respectively on the sign-test.}%
 \end{table}
 \pagebreak
 \foreach \dataset in \datasets {%
@@ -39,7 +39,7 @@
         \caption{Earliness Accuracy tradeoff on dataset ``\dataset''.}%
     \end{figure}%
     \begin{figure}[H]%
-        \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/plot/\dataset/boxplot.pdf}}%
+        \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/plot/\dataset/scatter.pdf}}%
         \caption{Distibutions of the Hyper Volume and Delta metrics for dataset ``\dataset''.}%
     \end{figure}%
     \begin{table}[H]%

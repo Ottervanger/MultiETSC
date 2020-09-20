@@ -177,37 +177,20 @@ def latexMetricTable(d):
     return tex
 
 
-def latexDatasetTable(datasetTable, labels):
-    tex = r'\begin{tabular}{@{\extracolsep{4pt}}l'+'rr'*(len(labels))+'@{}}\n'
-    tex += '&'+' & '.join([twoColumn(l) for l in labels]) + '\\\\\n'
-    tex += ''.join([f'\\cline{{{2*i+2}-{2*i+3}}}' for i in range(len(labels))]) + '\n'
-    tex += '&'+' & '.join(['HV', r'$\Delta$'] * len(labels)) + '\\\\\\hline\n'
-    for row in datasetTable:
-        vals = sum(row[1:], ())
-        hvs = [hlfmt(hv, 'hv', vals[::2]) for hv in vals[::2]]
-        dlts = [hlfmt(dlt, 'delta', vals[1::2]) for dlt in vals[1::2]]
-        cells = [hlfmt(row[0])]+[j for i in zip(hvs, dlts) for j in i]
-        tex += ' &'.join(cells) + '\\\\\n'
-    tex += '\\end{tabular}\n'
-    return tex
-
-
 def processData(dataset, methods):
     files = [os.path.basename(p) for p in glob.glob(f'output/pareto/{dataset}/*')]
     print(f'{dataset}')
     if (set(files) != set(methods)):
         print('some files are missing')
-    fig, ax = plt.subplots(figsize=(8, 4.8))
+    fig, ax = plt.subplots(figsize=(8, 4))
     color = colors()
     metricTable = {}
     ruler = 1.02
     annotate = dict(xyoffset=[ruler, .98], angle=80, ystep=-0.01, anglestep=-5)
-    datasetTableRow = []
     for method in reversed(methods):
         try:
             Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
         except FileNotFoundError:
-            datasetTableRow += [('?', '?')]
             continue
         pareto = Pareto(Y, metadata, label=method)
         pareto.plot(ax, c=next(color))
@@ -219,7 +202,6 @@ def processData(dataset, methods):
             hmean=pareto.hmean(),
             HV=pareto.HV()
         )
-        datasetTableRow = [(metrics['HV'], metrics['delta'])] + datasetTableRow
         metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
 
     # print metrics to terminal
@@ -242,7 +224,6 @@ def processData(dataset, methods):
     # save tex table
     with open(f'output/tex/{dataset}/table.tex', 'w') as f:
         f.write(latexMetricTable(metricTable))
-    return [dataset] + datasetTableRow
 
 
 def bootstrap(datasets, methods, metrics):
@@ -266,25 +247,74 @@ def bootstrap(datasets, methods, metrics):
 
     # plot distributions
     for dataset in datasets:
-        ddf = pd.melt(df.loc[df['dataset'] == dataset], value_vars=metrics,
-                      id_vars=['method'], var_name='metric')
-        g = sns.FacetGrid(ddf, row="metric", row_order=metrics,
-                          height=1.5, aspect=5.)
-        g.map(sns.boxplot, "value", "method",
-              linewidth=.5, fliersize=3, flierprops=dict(alpha=.5),
-              whis=2., width=.6, palette="vlag", order=methods)
-        # sns.stripplot(x="HV", y="method", data=df, jitter=.3,
-        #               size=3, color=".3", linewidth=0, alpha=.1)
-        for ax in g.axes.flat:
-            ax.yaxis.tick_right()
-            ax.xaxis.grid(True)
-            ax.set(ylabel="")
-        # plt.xlim(right=1.001)
-        sns.despine(trim=True, left=True)
-        g.fig.tight_layout()
-        plt.savefig(f'output/plot/{dataset}/boxplot.pdf')
+        fig, ax = plt.subplots(figsize=(8, 4))
+        ax = sns.scatterplot(data=df.loc[df['dataset'] == dataset].iloc[::-1],
+                             x='delta', y='HV', style='method', hue='method',
+                             alpha=.5, s=3, linewidth=0, ax=ax)
+        ax.grid()
+        fig.tight_layout()
+        plt.savefig(f'output/plot/{dataset}/scatter.pdf')
         print(f'DONE: {dataset}')
     return df
+
+
+def fmt(vp):
+    v = vp[0]
+    p = vp[1]
+    s = f'{v:.3f}'
+    if ((vp.name[1] == 'HV' and v > 0.) or
+        (vp.name[1] == 'delta' and v < 0.)):
+        s = f'\\bft{{{s}}}'
+    if p < 0.001:
+        s += '\\sstr'
+    elif p < 0.05:
+        s += '\\str'
+    return s
+
+
+def to_latex(df):
+    rename = {'delta': r'$\Delta$'}
+    pre = r'\begin{tabular}{'+'l'*len(df.index.names)+'rr'*(len(df.columns))+'@{}}\n\\toprule\n'
+    head = [[]]*2
+    cells = [[] for _ in range(len(df))]
+    post = '\\bottomrule\n\\end{tabular}\n'
+
+    # header
+    head[0] = ['']*(df.index.nlevels-1) + [df.columns.name] + list(df.columns)
+    head[1] = list(df.index.names)
+
+    # row indices
+    for lvl in range(df.index.nlevels):
+        i = 0
+        while i < len(df.index):
+            nrow = 1
+            rname = df.index[i][lvl]
+            rlen = len(df.index.names) + len(df.columns) - lvl
+            cline = f'\\cline{{1-{rlen}}}\n'
+            if i == 0:
+                cline = ''
+            for r in df.index[i+1:]:
+                if rname == r[lvl]:
+                    nrow += 1
+                else:
+                    break
+            rname = rename.get(rname, rname)
+            if nrow == 1:
+                cells[i] += [rname]
+            else:
+                cells[i] += [f'{cline}\\multirow{{{nrow:d}}}{{*}}{{{rname}}}']
+                for j in range(i+1, i+nrow):
+                    cells[j] += ['']
+            i += nrow
+
+    # cells
+    for i, (idx, row) in enumerate(df.iterrows()):
+        cells[i] += [hlfmt(v, row.name[1], list(row)) for v in row]
+
+    hlines = ['&'.join([f'{c:^14}' for c in rc]) for rc in head]
+    clines = ['&'.join([f'{c:^14}' for c in rc]) for rc in cells]
+    body = '\\\\\n'.join(hlines) + '\\\\\n\\midrule\n' + '\\\\\n'.join(clines) + '\\\\\n'
+    return pre + body + post
 
 
 def wilcoxon_test(x):
@@ -296,20 +326,31 @@ def sign_test(x):
     return binom_test(sum(x > 0.), n=len(x != 0.))
 
 
-def statTest(df, testFn=sign_test):
+def statTest(df, methods, testFn=sign_test):
     # compute pairwise differences
     d = df.pivot(columns=['method', 'dataset'])
     d.columns.rename('metric', level=0, inplace=True)
     d = d.reorder_levels(['method', 'dataset', 'metric'], 'columns')
     diff = d.sub(d['mo-all'], axis='index').drop(columns=['mo-all'], level=2)
+    diffa = diff.stack('dataset')
     # compute medians and p values of Wilcoxon rank-sum test
     # (test symmetric distribution of differences about 0)
     res = pd.concat({'median': diff.median(),
                      'p': diff.apply(testFn)}, 1)
+    resa = pd.concat({'median': diffa.median(),
+                     'p': diffa.apply(testFn)}, 1)
+    res = res.append(pd.concat({'All': resa}, names=['dataset']))
     res = res.unstack('method').stack(0)
-    print(res)
+    dfPrint = res.stack('method').unstack(2).apply(fmt, 1).unstack('method')
+    dfPrint.rename(index={'delta': r'$\Delta$'}, inplace=True)
+    dfPrint = dfPrint[methods[:-1]]
     with open(f'output/tex/stats.tex', 'w') as f:
-        f.write(res.to_latex(float_format='{:0.4f}'.format, multirow=True))
+        f.write(dfPrint.to_latex(escape=False, multirow=True, column_format='ll'+'r'*len(dfPrint.columns)))
+    # just the median metrics
+    meds = d.median().unstack('method')[methods]
+    tex = to_latex(meds)
+    with open(f'output/tex/dataset.tex', 'w') as f:
+        f.write(tex)
     return res
 
 
@@ -329,13 +370,10 @@ def main():
                'so-all',
                'mo-all']
     metrics = ['HV', 'delta']
-    datasetTable = []
     df = bootstrap(datasets, methods, metrics)
-    statTest(df)
+    statTest(df, methods)
     for dataset in datasets:
-        datasetTable += [processData(dataset, methods)]
-    with open(f'output/tex/dataset.tex', 'w') as f:
-        f.write(latexDatasetTable(datasetTable, methods))
+        processData(dataset, methods)
 
 
 if __name__ == '__main__':
