@@ -12,7 +12,7 @@ import seaborn as sns
 from scipy.stats import wilcoxon, binom_test
 
 
-def colors(opaque=False):
+def colors(alpha=None):
     while True:
         for c in ['#1f77b4',  # blue
                   '#ff7f0e',  # orange
@@ -25,7 +25,7 @@ def colors(opaque=False):
                   '#bcbd22',  # olive
                   '#17becf'   # cyan
                   ]:
-            yield c if not opaque else c + '99'
+            yield c if not alpha else c + alpha
 
 
 class Pareto:
@@ -44,14 +44,15 @@ class Pareto:
         if label is not None:
             self.label = label
 
-    def plot(self, ax, c, annotate=None):
+    def plot(self, ax, c, annotate=None, points=True):
         # stepped line
         ax.step(np.hstack((0, self.P[:, 0], 1)),
                 np.hstack((1, self.P[:, 1], 0)),
                 where='post', label=self.label, c=c, linewidth=1)
         # points
-        ax.plot(self.P[:, 0], self.P[:, 1],
-                'o', c=c, markersize=3)
+        if points:
+            ax.plot(self.P[:, 0], self.P[:, 1],
+                    'o', c=c, markersize=3)
         if annotate:
             for x, y, label in zip(self.P[:, 0], self.P[:, 1], self.metadata):
                 # label
@@ -177,16 +178,20 @@ def latexMetricTable(d):
     return tex
 
 
-def processData(dataset, methods):
+def processData(dataset, methods, naive):
     files = [os.path.basename(p) for p in glob.glob(f'output/pareto/{dataset}/*')]
     print(f'{dataset}')
     if (set(files) != set(methods)):
         print('some files are missing')
     fig, ax = plt.subplots(figsize=(8, 4))
-    color = colors()
+    color = colors('aa')
     metricTable = {}
     ruler = 1.02
     annotate = dict(xyoffset=[ruler, .98], angle=80, ystep=-0.01, anglestep=-5)
+
+    # baseline front
+    naive.plot(ax, c='k', points=False)
+
     for method in reversed(methods):
         try:
             Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
@@ -203,6 +208,16 @@ def processData(dataset, methods):
             HV=pareto.HV()
         )
         metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
+
+    metrics = dict(
+        method=naive.label,
+        size=naive.size(),
+        delta=naive.delta(),
+        M3=naive.M3(),
+        hmean=naive.hmean(),
+        HV=naive.HV()
+    )
+    metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
 
     # print metrics to terminal
     printTable(metricTable)
@@ -244,18 +259,31 @@ def bootstrap(datasets, methods, metrics):
             dl['dataset'] = dataset
             df = df.append(dl)
     df = df.replace([np.inf, -np.inf], np.nan)
+    return df
 
-    # plot distributions
+
+def addBaselines(df, blines, metrics):
+    naive = pd.DataFrame({k: {m: getattr(v, m)() for m in metrics} for k, v in blines.items()}).T.stack()
+    bl = pd.concat([naive.to_frame().T]*1000, ignore_index=True).stack(0).reorder_levels([1,0]).sort_index()
+    bl['dataset'] = bl.index.get_level_values(0)
+    bl['method'] = 'naive'
+    return df.append(bl.droplevel(0))
+
+
+def plotDistributions(df, datasets, blines):
     for dataset in datasets:
         fig, ax = plt.subplots(figsize=(8, 4))
         ax = sns.scatterplot(data=df.loc[df['dataset'] == dataset].iloc[::-1],
                              x='delta', y='HV', style='method', hue='method',
                              alpha=.5, s=3, linewidth=0, ax=ax)
+        ax.scatter([blines[dataset].delta()], [blines[dataset].HV()],
+                   c='k', marker='*', label=blines[dataset].label)
+        ax.axhline(blines[dataset].HV(), c='#00000099', lw=1)
+        ax.legend()
         ax.grid()
         fig.tight_layout()
         plt.savefig(f'output/plot/{dataset}/scatter.pdf')
         print(f'DONE: {dataset}')
-    return df
 
 
 def fmt(vp):
@@ -326,7 +354,7 @@ def sign_test(x):
     return binom_test(sum(x > 0.), n=len(x != 0.))
 
 
-def statTest(df, methods, testFn=sign_test):
+def statTest(df, methods, blines, testFn=sign_test):
     # compute pairwise differences
     d = df.pivot(columns=['method', 'dataset'])
     d.columns.rename('metric', level=0, inplace=True)
@@ -339,19 +367,28 @@ def statTest(df, methods, testFn=sign_test):
                      'p': diff.apply(testFn)}, 1)
     resa = pd.concat({'median': diffa.median(),
                      'p': diffa.apply(testFn)}, 1)
+
     res = res.append(pd.concat({'All': resa}, names=['dataset']))
     res = res.unstack('method').stack(0)
+
+    # dfPrint stores formated strings
     dfPrint = res.stack('method').unstack(2).apply(fmt, 1).unstack('method')
     dfPrint.rename(index={'delta': r'$\Delta$'}, inplace=True)
     dfPrint = dfPrint[methods[:-1]]
     with open(f'output/tex/stats.tex', 'w') as f:
         f.write(dfPrint.to_latex(escape=False, multirow=True, column_format='ll'+'r'*len(dfPrint.columns)))
+
     # just the median metrics
     meds = d.median().unstack('method')[methods]
-    tex = to_latex(meds)
+    # naive = pd.DataFrame({k: {m: getattr(v, m)() for m in meds.index.levels[1]} for k, v in blines.items()}).T.stack()
+    # meds.insert(0, 'naive', naive)
     with open(f'output/tex/dataset.tex', 'w') as f:
-        f.write(tex)
+        f.write(to_latex(meds))
     return res
+
+
+def getBaselines(datasets):
+    return {dataset: Pareto(np.genfromtxt(f'output/baseline/{dataset}.csv', delimiter=","), label='naive') for dataset in datasets}
 
 
 def main():
@@ -370,10 +407,13 @@ def main():
                'so-all',
                'mo-all']
     metrics = ['HV', 'delta']
+    blines = getBaselines(datasets)
     df = bootstrap(datasets, methods, metrics)
-    statTest(df, methods)
+    plotDistributions(df, datasets, blines)
+    df = addBaselines(df, blines, metrics)
+    statTest(df, ['naive']+methods, blines)
     for dataset in datasets:
-        processData(dataset, methods)
+        processData(dataset, methods, blines[dataset])
 
 
 if __name__ == '__main__':
