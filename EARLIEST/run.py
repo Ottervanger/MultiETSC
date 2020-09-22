@@ -1,7 +1,7 @@
+#!/usr/bin/env python
 import numpy as np
 import torch
 from model import EARLIEST
-from dataset import SyntheticTimeSeries
 from torch.utils.data.sampler import SubsetRandomSampler
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
@@ -18,31 +18,34 @@ def exponentialDecay(N):
     return y/10.
 
 
-def loadData(BATCH_SIZE=1):
-    tsL = 10
-    data = SyntheticTimeSeries(T=tsL)
-    tsNc = data.N_CLASSES  # Number of classes for classification
-    train_sampler = SubsetRandomSampler(data.train_ix)
-    test_sampler = SubsetRandomSampler(data.test_ix)
-    train_loader = torch.utils.data.DataLoader(dataset=data,
-                                               batch_size=BATCH_SIZE,
-                                               sampler=train_sampler,
-                                               drop_last=True)
-    test_loader = torch.utils.data.DataLoader(dataset=data,
-                                              batch_size=BATCH_SIZE,
-                                              sampler=test_sampler,
-                                              drop_last=True)
+def makeLoader(filename, cMap=None):
+    dat = np.genfromtxt(filename, delimiter='\t')
+    if not cMap:
+        cMap = {v: i for i, v in enumerate(np.unique(dat[:, 0]))}
+    dat[:, 0] = np.fromiter((cMap[v] for v in dat[:, 0]), dat.dtype)
+    lst = [(torch.tensor(np.expand_dims(x[1:], 1).astype(np.float32), dtype=torch.float),
+            torch.tensor(x[0].astype(np.int32), dtype=torch.long)) for x in dat]
+    loader = torch.utils.data.DataLoader(dataset=lst)
+    return loader, cMap
+
+
+def loadData(trainFile, testFile):
+    train_loader, cMap = makeLoader(trainFile)
+    test_loader, _ = makeLoader(testFile, cMap)
+
+    tsNc = len(cMap)
+    tsL = len(train_loader.dataset[0][0])
     return train_loader, test_loader, tsNc, tsL
 
 
-def trainModel(train_loader, tsL, tsNf, tsNc, hiddenDim,
-               cellType, nLayers, LAMBDA, lr, epochs):
+def trainModel(data, tsL, tsNf, tsNc, hiddenDim, cellType, nLayers, LAMBDA,
+               lr, lrf=1., epochs=10, df=1.):
     exponentials = exponentialDecay(epochs)
     # --- initialize the model and the optimizer ---
     model = EARLIEST(N_FEATURES=tsNf, N_CLASSES=tsNc, HIDDEN_DIM=hiddenDim,
-                     CELL_TYPE=cellType, N_LAYERS=nLayers, DF=1., LAMBDA=LAMBDA)
+                     CELL_TYPE=cellType, N_LAYERS=nLayers, DF=df, LAMBDA=LAMBDA)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.99)
+    scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=lrf)
 
     # --- training ---
     training_loss = []
@@ -54,7 +57,7 @@ def trainModel(train_loader, tsL, tsNf, tsNc, hiddenDim,
         model._r_counts = np.zeros(tsL).reshape(1, -1)
         model._epsilon = exponentials[epoch]
         loss_sum = 0
-        for i, (X, y) in enumerate(train_loader):
+        for i, (X, y) in enumerate(data):
             X = torch.transpose(X, 0, 1)
             # --- Forward pass ---
             predictions = model(X)
@@ -65,27 +68,27 @@ def trainModel(train_loader, tsL, tsNf, tsNc, hiddenDim,
             loss.backward()
             loss_sum += loss.item()
             optimizer.step()
-            # scheduler.step()
+            scheduler.step()
 
             # --- Collect prediction locations ---
             for j in range(len(y)):
                 training_locations.append(model.locations[j])
                 training_predictions.append(predictions[j])
             if (i+1) % 10 == 0:
-                print(f'Epoch [{epoch+1:3d}/{epochs:3d}], Step [{i+1:4d}/{len(train_loader):4d}], Loss: {loss.item():10.4f}', end='\r')
-        training_loss.append(np.round(loss_sum/len(train_loader), 3))
+                print(f'Epoch [{epoch+1:3d}/{epochs:3d}], Step [{i+1:4d}/{len(data):4d}], Loss: {loss.item():10.4f}', end='\r')
+        training_loss.append(np.round(loss_sum/len(data), 3))
     training_locations = torch.stack(training_locations).numpy()
     print()
     return model
 
 
-def test(model, test_loader, tsL):
+def test(model, data, tsL):
     testing_loss = []
     testing_predictions = []
     testing_labels = []
     testing_locations = []
     loss_sum = 0
-    for i, (X, y) in enumerate(test_loader):
+    for i, (X, y) in enumerate(data):
         X = torch.transpose(X, 0, 1)
         predictions = model(X)
         for j in range(len(y)):
@@ -95,7 +98,7 @@ def test(model, test_loader, tsL):
         loss = model.applyLoss(predictions, y)
         loss.backward()
         loss_sum += loss.item()
-        testing_loss.append(np.round(loss_sum/len(test_loader), 3))
+        testing_loss.append(np.round(loss_sum/len(data), 3))
     _, testing_predictions = torch.max(torch.stack(testing_predictions).detach(), 1)
     testing_predictions = np.array(testing_predictions)
 
@@ -105,25 +108,29 @@ def test(model, test_loader, tsL):
 
 
 def main():
-    torch.set_num_threads(1)
+    torch.set_num_threads(2)
+    torch.manual_seed(0)
     start = time.time()
 
     # --- hyperparameters ---
-    tsNf = 1
     hiddenDim = 10
     cellType = 'LSTM'  # in ['RNN', 'LSTM', 'GRU', 'RNN_TANH', 'RNN_RELU']
     nLayers = 1
-    LAMBDA = 1e-02
+    LAMBDA = 1e-10
+    df = 1.            # discount factor for optimizing the Controller
 
     lr = 1e-3
-    epochs = 20
+    lrf = 1.
+    epochs = 100
 
     # load data
-    train_loader, test_loader, tsNc, tsL = loadData()
-    model = trainModel(train_loader, tsL, tsNf, tsNc,
-                       hiddenDim, cellType, nLayers, LAMBDA,
-                       lr, epochs)
-    earliness, errorRate = test(model, test_loader, tsL)
+    train_loader, test_loader, tsNc, tsL = loadData(
+        '/scratch/ottervanger/UCR/CBF/CBF_TRAIN.tsv',
+        '/scratch/ottervanger/UCR/CBF/CBF_TEST.tsv')
+    model = trainModel(data=train_loader, tsL=tsL, tsNf=1, tsNc=tsNc,
+                       hiddenDim=hiddenDim, cellType=cellType, nLayers=nLayers,
+                       LAMBDA=LAMBDA, lr=lr, lrf=lrf, epochs=epochs, df=df)
+    earliness, errorRate = test(model=model, data=test_loader, tsL=tsL)
     print(f'earliness:  {earliness:10.4f}')
     print(f'error rate: {errorRate:10.4f}')
     print(f'elapsed:    {time.time()-start:10.4f}')
