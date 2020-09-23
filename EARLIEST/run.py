@@ -6,6 +6,7 @@ from torch.utils.data.sampler import SubsetRandomSampler
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 import time
+import sys
 
 
 # --- methods ---
@@ -74,11 +75,8 @@ def trainModel(data, tsL, tsNf, tsNc, hiddenDim, cellType, nLayers, LAMBDA,
             for j in range(len(y)):
                 training_locations.append(model.locations[j])
                 training_predictions.append(predictions[j])
-            if (i+1) % 10 == 0:
-                print(f'Epoch [{epoch+1:3d}/{epochs:3d}], Step [{i+1:4d}/{len(data):4d}], Loss: {loss.item():10.4f}', end='\r')
         training_loss.append(np.round(loss_sum/len(data), 3))
     training_locations = torch.stack(training_locations).numpy()
-    print()
     return model
 
 
@@ -107,33 +105,55 @@ def test(model, data, tsL):
     return earliness, errorRate
 
 
+def getArgs():
+    arg = {}
+    argIter = iter(sys.argv)
+    for argi in argIter:
+        if argi == '-data':
+            arg['trainFile'] = next(argIter)
+            arg['testFile'] = next(argIter)
+        elif argi[0] == '-':
+            arg[argi.strip('-')] = next(argIter)
+    return arg
+
+
 def main():
     torch.set_num_threads(2)
-    torch.manual_seed(0)
     start = time.time()
 
     # --- hyperparameters ---
-    hiddenDim = 10
-    cellType = 'LSTM'  # in ['RNN', 'LSTM', 'GRU', 'RNN_TANH', 'RNN_RELU']
-    nLayers = 1
-    LAMBDA = 1e-10
-    df = 1.            # discount factor for optimizing the Controller
+    arg = dict(
+        seed=0,
+        hiddenDim=10,
+        cellType='LSTM',  # in ['RNN', 'LSTM', 'GRU', 'RNN_TANH', 'RNN_RELU']
+        nLayers=1,
+        LAMBDA=1e-10,
+        df=1.,            # discount factor for optimizing the Controller
 
-    lr = 1e-3
-    lrf = 1.
-    epochs = 100
+        lr=1e-3,
+        lrf=1.,
+        epochs=20
+    )
+
+    try:
+        arg.update(getArgs())
+    except StopIteration:
+        sys.exit('Missing commandline arguments')
+
+    if not (arg.get('trainFile', '') and arg.get('testFile', '')):
+        print(arg)
+        sys.exit('No data provided')
+
+    torch.manual_seed(arg['seed'])
 
     # load data
-    train_loader, test_loader, tsNc, tsL = loadData(
-        '/scratch/ottervanger/UCR/CBF/CBF_TRAIN.tsv',
-        '/scratch/ottervanger/UCR/CBF/CBF_TEST.tsv')
+    train_loader, test_loader, tsNc, tsL = loadData(arg['trainFile'], arg['testFile'])
     model = trainModel(data=train_loader, tsL=tsL, tsNf=1, tsNc=tsNc,
-                       hiddenDim=hiddenDim, cellType=cellType, nLayers=nLayers,
-                       LAMBDA=LAMBDA, lr=lr, lrf=lrf, epochs=epochs, df=df)
+                       hiddenDim=arg['hiddenDim'], cellType=arg['cellType'],
+                       nLayers=arg['nLayers'], LAMBDA=arg['LAMBDA'], lr=arg['lr'],
+                       lrf=arg['lrf'], epochs=arg['epochs'], df=arg['df'])
     earliness, errorRate = test(model=model, data=test_loader, tsL=tsL)
-    print(f'earliness:  {earliness:10.4f}')
-    print(f'error rate: {errorRate:10.4f}')
-    print(f'elapsed:    {time.time()-start:10.4f}')
+    print(f'Result: SUCCESS, {time.time()-start:g}, [{earliness:g}, {errorRate:g}], 0')
 
 
 if __name__ == '__main__':
