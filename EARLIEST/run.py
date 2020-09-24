@@ -105,15 +105,14 @@ def test(model, data, tsL):
     return earliness, errorRate
 
 
-def getArgs():
-    arg = {}
+def getArgs(arg):
     argIter = iter(sys.argv)
     for argi in argIter:
         if argi == '-data':
             arg['trainFile'] = next(argIter)
             arg['testFile'] = next(argIter)
         elif argi[0] == '-':
-            arg[argi.strip('-')] = next(argIter)
+            arg[argi.strip('-')] = type(arg[argi.strip('-')])(next(argIter))
     return arg
 
 
@@ -136,7 +135,7 @@ def main():
     )
 
     try:
-        arg.update(getArgs())
+        arg = getArgs(arg)
     except StopIteration:
         sys.exit('Missing commandline arguments')
 
