@@ -2,8 +2,6 @@
 import numpy as np
 import torch
 from model import EARLIEST
-from torch.utils.data.sampler import SubsetRandomSampler
-import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score
 import time
 import sys
