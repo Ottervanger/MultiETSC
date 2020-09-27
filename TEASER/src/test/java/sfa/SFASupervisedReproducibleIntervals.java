@@ -35,7 +35,7 @@ public class SFASupervisedReproducibleIntervals {
 
     // Load the train/test splits
     ClassLoader classLoader = SFAWordsTest.class.getClassLoader();
-    TimeSeries[] train = TimeSeriesLoader.loadDataset(classLoader.getResource("datasets/univariate/BEEF/BEEF_TRAIN").getFile());
+    TimeSeries[] train = TimeSeriesLoader.loadDataset(classLoader.getResource("datasets/univariate/Beef/Beef_TRAIN").getFile());
 
     // test 120 window sizes
     for (int w = 4; w < 120; w++) {
