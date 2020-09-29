@@ -19,9 +19,21 @@ public class TEASERClassifier extends Classifier {
   /**
    * The parameters for the one-class SVM
    */
-  public static int SVM_KERNEL = svm_parameter.RBF; /*, svm_parameter.LINEAR */
-  public static double[] SVM_GAMMAS = new double[]{100, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1.5, 1};
-  public static double SVM_NU = 0.05;
+  public static int svmKernelType = svm_parameter.RBF;
+  public static double[] SVM_GAMMAS = new double[]{100, 100, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1.5, 1, .5, .2 ,.1};
+  public static double svmNu = 0.05;
+
+  private static enum KernelType {
+    LINEAR (svm_parameter.LINEAR),
+    POLY (svm_parameter.POLY),
+    RBF (svm_parameter.RBF),
+    SIGMOID (svm_parameter.SIGMOID);
+    public final int kernelType;
+ 
+    private KernelType(int kernelType) {
+      this.kernelType = kernelType;
+    }
+  }
 
   /**
    * The total number of time stamps S: a time stamp is a fraction of the full time series length n.
@@ -32,11 +44,12 @@ public class TEASERClassifier extends Classifier {
 
   public static boolean PRINT_EARLINESS = false;
 
-  public static int MIN_WINDOW_LENGTH = 2;
-  public static int MAX_WINDOW_LENGTH = 250;
+  public static int minLen = 2;
+  public static int maxLen = 250;
 
   // the trained TEASER model
   EarlyClassificationModel model;
+  private int threshold = 2;
 
   WEASELClassifier slaveClassifier;
 
@@ -45,7 +58,29 @@ public class TEASERClassifier extends Classifier {
     WEASELClassifier.lowerBounding = true;
     WEASELClassifier.solverType = SolverType.L2R_LR;
     WEASELClassifier.MAX_WINDOW_LENGTH = 250;
+  }
 
+  public void setParameter(String name, String value) {
+    switch(name) {
+      case "nClassifiers":
+        S = Double.parseDouble(value);
+        break;
+      case "threshold":
+        threshold = Integer.parseInt(value);
+        break;
+      case "minLen":
+        minLen = Integer.parseInt(value);
+        break;
+      case "maxLen":
+        maxLen = Integer.parseInt(value);
+        break;
+      case "svmKernelType":
+        svmKernelType = KernelType.valueOf(value).kernelType;
+        break;
+      case "svmNu":
+        svmNu = Double.parseDouble(value);
+        break;
+    }
   }
 
   public static class EarlyClassificationModel extends Model {
@@ -139,15 +174,16 @@ public class TEASERClassifier extends Classifier {
   public EarlyClassificationModel fitTeaser(final TimeSeries[] samples) {
     try {
 
-      int min = Math.max(3, MIN_WINDOW_LENGTH);
-      int max = getMax(samples, MAX_WINDOW_LENGTH); // Integer.MAX_VALUE
-      double step = max / S; // steps of 5%
+      int min = Math.max(3, minLen);
+      int max = getMax(samples, maxLen); // Integer.MAX_VALUE
+      double step = (max - min) / S; // steps of 5%
 
       this.model = new EarlyClassificationModel();
+      this.model.threshold = this.threshold;
 
-      for (int s = 2; s <= S; s++) {
+      for (int s = 0; s <= S; s++) {
         // train TEASER
-        model.offsets[s] = (int) Math.round(step * s);
+        model.offsets[s] = (int) Math.round(step * s + min);
         TimeSeries[] data = extractUntilOffset(samples, model.offsets[s], true);
 
         if (model.offsets[s] >= min) {
@@ -161,38 +197,33 @@ public class TEASERClassifier extends Classifier {
         }
       }
 
-      // train the best ratio between earliness and accuracy
-      double bestF1 = -1;
-      int bestCount = 1;
-      for (int i = 2; i <= 5; i++) {
-        model.threshold = i;
-        OffsetPrediction off = predict(samples, false);
-        double correct = ((double) off.getCorrect()) / off.N;
-        double earliness = 1.0 - off.offset / off.N;
-
-        double harmonic_mean = 2 * correct * earliness / (correct + earliness);
-        System.out.println("Prediction:\t" + model.threshold + "\t" + off + "\t" + harmonic_mean);
-
-        if (bestF1 < harmonic_mean) {
-          bestF1 = harmonic_mean;
-          bestCount = i;
-
-          model.score.training = off.getCorrect();
-          model.score.trainSize = samples.length;
-          //model.score.testSize = samples.length;
-          //model.score.testing = off.getCorrect();
-
-        }
-      }
-
-      System.out.println("Best Repetition: " + bestCount);
-      model.threshold = bestCount;
-
+      OffsetPrediction off = predict(samples, false);
+      model.score.training = off.getCorrect();
+      model.score.trainSize = samples.length;
       return model;
     } catch (Exception e) {
       e.printStackTrace();
     }
     return null;
+  }
+
+  double gscale(double[][] x) {
+    double m = 0.;
+    int n = 0;
+    double v = 0.;
+    for (double[] xi : x) {
+      for (double xii : xi) {
+        m += xii;
+        n++;
+      }
+    }
+    m /= n;
+    for (double[] xi : x) {
+      for (double xii : xi) {
+        v += (xii - m) * (xii - m);
+      }
+    }
+    return x.length / v;
   }
 
   public svm_model fitSVM(
@@ -221,12 +252,13 @@ public class TEASERClassifier extends Classifier {
 
     svm_parameter best_parameter = null;
     double bestCorrect = -1;
+    SVM_GAMMAS[0] = gscale(probs);
     for (double gamma : SVM_GAMMAS) {
       svm_parameter parameter = initSVMParameters(gamma);
       if (svm.svm_check_parameter(problem_one_class, parameter) != null) {
         System.out.println(svm.svm_check_parameter(problem_one_class, parameter));
       }
-      ;
+
       Double[] predictions = new Double[problem_one_class.l];
       trainSVMOneClass(problem_one_class, parameter, 10, predictions, new Random(1));
       double correct2 = evalLabels(problem_one_class.y, predictions).correct.get() / (double) problem_one_class.l;
@@ -366,9 +398,9 @@ public class TEASERClassifier extends Classifier {
   public svm_parameter initSVMParameters(double gamma) {
     svm_parameter parameter2 = new svm_parameter();
     parameter2.eps = 1e-4;
-    parameter2.nu = SVM_NU;
+    parameter2.nu = svmNu;
     parameter2.gamma = gamma;
-    parameter2.kernel_type = SVM_KERNEL;
+    parameter2.kernel_type = svmKernelType;
     parameter2.cache_size = 40;
     parameter2.svm_type = svm_parameter.ONE_CLASS;
     return parameter2;
