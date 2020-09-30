@@ -1,14 +1,14 @@
 // Copyright (c) 2016 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package sfa.classification;
+package Classifiers.sfa.classification;
 
 import com.carrotsearch.hppc.cursors.IntIntCursor;
 
 import de.bwaldvogel.liblinear.*;
-import sfa.timeseries.MultiVariateTimeSeries;
-import sfa.timeseries.TimeSeries;
-import sfa.transformation.MUSE;
-import sfa.transformation.SFA;
+import Classifiers.sfa.timeseries.MultiVariateTimeSeries;
+import Classifiers.sfa.timeseries.TimeSeries;
+import Classifiers.sfa.transformation.MUSE;
+import Classifiers.sfa.transformation.SFA;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,13 +1,14 @@
 // Copyright (c) 2016 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package sfa.classification;
+package Classifiers.sfa.classification;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import sfa.timeseries.TimeSeries;
+import Classifiers.sfa.timeseries.TimeSeries;
+import Utilities.ParallelFor;
 
 /**
  * The Shotgun Ensemble Classifier as published in:
