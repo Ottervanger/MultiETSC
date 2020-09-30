@@ -13,8 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ParallelFor {
 
-  private static int CPUs = Math.min(Runtime.getRuntime().availableProcessors(), 40);
-  private static ExecutorService executor = Executors.newFixedThreadPool(CPUs);
+  public static int nThreads = Math.min(Runtime.getRuntime().availableProcessors(), 4);
+  private static ExecutorService executor = Executors.newFixedThreadPool(nThreads);
 
   public interface Each {
     void run(int i, AtomicInteger processed);
@@ -24,7 +24,7 @@ public class ParallelFor {
     final CountDownLatch latch = new CountDownLatch(chunksize);
     final AtomicInteger processed = new AtomicInteger(0);
     LinkedList<Future<?>> futures = new LinkedList<>();
-
+    
     for (int i = 0; i < chunksize; i++) {
       final int ii = i;
       futures.add(executor.submit(new Runnable() {

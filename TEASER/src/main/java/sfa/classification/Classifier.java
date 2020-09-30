@@ -44,23 +44,14 @@ public abstract class Classifier {
   public static boolean DEBUG = false;
   public static boolean ENSEMBLE_WEIGHTS = true;
 
-  public static int threads = 1;
+  public static int threads = ParallelFor.nThreads;
 
   protected int[][] testIndices;
   protected int[][] trainIndices;
   public static int folds = 10;
 
   // Blocks for parallel execution
-  public final static int BLOCKS = 8;
-
-  static {
-    Runtime runtime = Runtime.getRuntime();
-    if (runtime.availableProcessors() <= 4) {
-      threads = runtime.availableProcessors() - 1;
-    } else {
-      threads = runtime.availableProcessors();
-    }
-  }
+  public final static int BLOCKS = 1;
 
   public Classifier() {
     this.exec = Executors.newFixedThreadPool(threads);
@@ -462,6 +453,8 @@ public abstract class Classifier {
     }
 
     final int fold = nr_fold;
+    svm_model submodel[];
+    submodel = new svm_model[fold];
     ParallelFor.withIndex(threads, new ParallelFor.Each() {
       @Override
       public void run(int id, AtomicInteger processed) {
@@ -489,17 +482,23 @@ public abstract class Classifier {
               subprob.y[k] = prob.y[perm[j]];
               ++k;
             }
-            final svm_model submodel = mySVM.get().svm_train(subprob, param);
-            ParallelFor.withIndex(BLOCKS, new ParallelFor.Each() {
-              @Override
-              public void run(int id, AtomicInteger processed) {
-                for (int j = begin; j < end; j++) {
-                  if (j % BLOCKS == id) {
-                    target[perm[j]] = mySVM.get().svm_predict(submodel, prob.x[perm[j]]);
-                  }
-                }
-              }
-            });
+            submodel[i] = mySVM.get().svm_train(subprob, param);
+          }
+        }
+      }
+    });
+    ParallelFor.withIndex(threads, new ParallelFor.Each() {
+      @Override
+      public void run(int id, AtomicInteger processed) {
+        final ThreadLocal<svm> mySVM = new ThreadLocal<svm>();
+        mySVM.set(new svm());
+        for (int i = 0; i < fold; i++) {
+          final int begin = fold_start[i];
+          final int end = fold_start[i + 1];
+          for (int j = begin; j < end; j++) {
+            if (j % threads == id) {
+              target[perm[j]] = mySVM.get().svm_predict(submodel[i], prob.x[perm[j]]);
+            }
           }
         }
       }
