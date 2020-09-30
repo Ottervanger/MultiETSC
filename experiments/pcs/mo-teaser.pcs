@@ -1,0 +1,12 @@
+algorithm {TEASER/run}[TEASER/run]
+
+# global parameters
+nClassifiers {10, 15, 20, 30, 50, 100} [20]
+threshold {1,2..10} [2]
+minLen {3,5,10,20,50,100} [3]
+maxLen {50,75,100,150,200,300,450} [450]
+
+# master parameters (SVM)
+svmKernelType { LINEAR, POLY, RBF, SIGMOID } [RBF]
+# training parameters
+nu {0.5,0.2,0.1,0.05,0.02,0.01,0.005,0.002,0.001} [0.05]
