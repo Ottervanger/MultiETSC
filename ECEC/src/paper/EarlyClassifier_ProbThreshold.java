@@ -207,8 +207,8 @@ public class EarlyClassifier_ProbThreshold {
 		
 		for(int i = 0; i < this.probs_data.stepNum; i++) 
 		{
-			ArrayList<double[]> correct_probs = new ArrayList<>();  //仅分类正确的样本
-			DoubleArrayList correct_labels = new DoubleArrayList(); //仅分类正确的类别
+			ArrayList<double[]> correct_probs = new ArrayList<>();
+			DoubleArrayList correct_labels = new DoubleArrayList();
 			double[][] probs = new double[this.probs_data.trainNum][this.probs_data.labelNum];
 			double[] labels = new double[this.probs_data.trainNum];
 			for(int j = 0; j < this.probs_data.trainNum; j++) 
@@ -249,7 +249,7 @@ public class EarlyClassifier_ProbThreshold {
 		double [] labels;
 		int[] full_length;
 		int[][] step_length;
-		//为true时验证测试数据，为false时验证训练数据
+
 		if (test)
 		{
 			testdata = probs_data.testProbs;

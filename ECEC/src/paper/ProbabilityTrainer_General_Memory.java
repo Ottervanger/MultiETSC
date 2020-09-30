@@ -24,8 +24,8 @@ public class ProbabilityTrainer_General_Memory {
 	
 	int min_length_threshold;
 	int max_step_number;  //
-	int step_length;   //步长
-	int cv_number;     //几折交叉验证
+	int step_length;
+	int cv_number;
 	TimeSeriesSet[] train_cv;
 	TimeSeriesSet[] test_cv;
 	
@@ -237,7 +237,7 @@ public class ProbabilityTrainer_General_Memory {
 		    CSVWriter csvWriter = new CSVWriter(writer); 
 		    
 		    int probs_index = 4;
-		    int len = group.get(0).probs.length + probs_index;  //前四列为 样本index，类别，样本长度，当前长度
+		    int len = group.get(0).probs.length + probs_index;
 			int instanceNumber = group.size();
 			for(int i = 0; i < instanceNumber; i++) {
 				String[] strs = new String[len];
