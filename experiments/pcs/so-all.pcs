@@ -1,5 +1,5 @@
 # algorithms
-algorithm {ECTS/bin/ects, RelClass/run, ECDIRE/run, SR-CF/run}[ECTS/bin/ects]
+algorithm {ECTS/bin/ects, RelClass/run, ECDIRE/run, SR-CF/run, EARLIEST/run.py, TEASER/run}[ECTS/bin/ects]
 
 # ects parameters
 min_support [0.0, 1.0] [0.0]
@@ -47,11 +47,11 @@ dTau {-3.,-2.,-1.5,-1.,-.5,-.2,-.1,0.,.1,.2,.5,1.,1.5,2.,3.}[0.]
 dTau | distance in {tquest}
 
 # EARLIEST
-hiddenDim integer [1,20] [10]
+hiddenDim [1,20] [10]i
 hiddenDim | algorithm in {EARLIEST/run.py}
 cellType {LSTM,GRU,RNN,RNN_TANH,RNN_RELU} [LSTM]
 cellType | algorithm in {EARLIEST/run.py}
-nLayers integer [1,5] [1]
+nLayers [1,5] [1]i
 nLayers | algorithm in {EARLIEST/run.py}
 LAMBDA [0.0,1.0] [0.5]
 LAMBDA | algorithm in {EARLIEST/run.py}
@@ -61,5 +61,19 @@ lr {1e-4,1e-3,1e-2,5e-2}[1e-3]
 lr | algorithm in {EARLIEST/run.py}
 lrf {1.,.999,.995,.99,.975,.95,.9}[1.]
 lrf | algorithm in {EARLIEST/run.py}
-epochs integer [1,1000] [20]
+epochs [1,1000] [20]i
 epochs | algorithm in {EARLIEST/run.py}
+
+# TEASER
+nClassifiers {10, 15, 20, 30, 50, 100} [20]
+nClassifiers | algorithm in {TEASER/run}
+threshold [1,10] [2]i
+threshold | algorithm in {TEASER/run}
+minLen {3,5,10,20,50,100} [3]
+minLen | algorithm in {TEASER/run}
+maxLen {50,75,100,150,200,300,450} [450]
+maxLen | algorithm in {TEASER/run}
+svmKernelType { LINEAR, POLY, RBF, SIGMOID } [RBF]
+svmKernelType | algorithm in {TEASER/run}
+nu {0.5,0.2,0.1,0.05,0.02,0.01,0.005,0.002,0.001} [0.05]
+nu | algorithm in {TEASER/run}
