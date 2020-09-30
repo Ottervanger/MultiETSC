@@ -24,9 +24,7 @@ public class ParallelFor {
     final CountDownLatch latch = new CountDownLatch(chunksize);
     final AtomicInteger processed = new AtomicInteger(0);
     LinkedList<Future<?>> futures = new LinkedList<>();
-    // System.out.printf("running whithIndex; chunksize: %d\n", chunksize);
-    // Thread.dumpStack();
-
+    
     for (int i = 0; i < chunksize; i++) {
       final int ii = i;
       futures.add(executor.submit(new Runnable() {
