@@ -3,45 +3,49 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{pgffor}
+\usepackage{float}
 \usepackage[font=small,labelfont=bf]{caption}
+% For pandas df tables
+\usepackage{booktabs}
+\usepackage{multirow}
+
 \title{EarlyECTS Results}
 
 % bold fase for tables (should make bf equally spaced as normal text)
 % succes depends on font and font size
 \newcommand{\bft}[1]{{\fontseries{b}\selectfont #1}}
+\newcommand{\str}{\rlap{\textsuperscript{*}}}
+\newcommand{\sstr}{\rlap{\textsuperscript{**}}}
 
-% load all plot files into the \plotList variable
+% get dataset names
 \begingroup\makeatletter\endlinechar=\m@ne\everyeof{\noexpand}
-\edef\x{\endgroup\def\noexpand\plotList{\@@input|"ls -m output/plot/*.pdf" }}\x
-
-% turn tex path into plot file path
-\makeatletter
-\def\cle@n@#1>#2{#2}
-\newcommand{\setCompid}[1]{%
-\ifnum\pdfmatch subcount 5 {(.+plot/)(.*?).pdf}{#1}=1%
-\gdef\compid{\expandafter\cle@n@\pdflastmatch2}%
-\else\fi
-}
-\makeatother
+\edef\x{\endgroup\def\noexpand\datasets{\@@input|"ls -m output/plot/" }}\x
 
 \begin{document}
 \begin{table}[!hb]%
     \makebox[\textwidth][c]{%
-    \tabcolsep=2px
     \input{output/tex/dataset.tex}}%
     \caption{Hyper volume (HV) and Delta ($\Delta$) metrics for compared methods on different dataset in the UCR Archive.}%
 \end{table}
+\begin{table}[!hb]%
+    \makebox[\textwidth][c]{%
+    \input{output/tex/stats.tex}}%
+    \caption{Median pairwise differences with `mo-all' for Hyper Volume (HV) and Delta ($\Delta$) metrics. \str~ and \sstr~~ denote $p < 0.05$ and $p < 0.001$ respectively on the sign-test.}%
+\end{table}
 \pagebreak
-\foreach \plot in \plotList {%
-    \setCompid{\plot}
-    \begin{figure}[!ht]%
-        \makebox[\textwidth][c]{\includegraphics[width=1.6\textwidth]{output/plot/\compid.pdf}}%
-        \caption{Earliness Accuracy tradeoff on dataset ``\compid''.}%
+\foreach \dataset in \datasets {%
+    \begin{figure}[H]%
+        \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/plot/\dataset/pareto.pdf}}%
+        \caption{Earliness Accuracy tradeoff on dataset ``\dataset''.}%
     \end{figure}%
-    \begin{table}[!hb]%
+    \begin{figure}[H]%
+        \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/plot/\dataset/scatter.pdf}}%
+        \caption{Distibutions of the Hyper Volume and Delta metrics for dataset ``\dataset''.}%
+    \end{figure}%
+    \begin{table}[H]%
         \centering
-        \input{output/tex/\compid.tex}%
-        \caption{Comparison of Pareto front metrics on dataset ``\compid''.}%
+        \input{output/tex/\dataset/table.tex}%
+        \caption{Comparison of Pareto front metrics on dataset ``\dataset''.}%
     \end{table}
     \pagebreak
 }

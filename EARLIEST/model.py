@@ -50,7 +50,8 @@ class EARLIEST(nn.Module):
         # --- Sub-networks ---
         self.BaseRNN = BaseRNN(N_FEATURES,
                                HIDDEN_DIM,
-                               CELL_TYPE)
+                               CELL_TYPE,
+                               N_LAYERS)
         self.Controller = Controller(HIDDEN_DIM+1, 1) # Add +1 for timestep input
         self.BaselineNetwork = BaselineNetwork(HIDDEN_DIM, 1)
         self.Discriminator = Discriminator(HIDDEN_DIM, N_CLASSES)
