@@ -75,7 +75,6 @@ public class TimeSeriesSet {
 		return new TimeSeriesSet(data);
 	}
 	
-	//所有实例的类别
 	public double[] getAllLabels() {
 		double[] labels = new double[dataset.length];
 		for(int i = 0; i < dataset.length; i++) {

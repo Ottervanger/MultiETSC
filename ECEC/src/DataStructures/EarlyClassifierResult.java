@@ -6,6 +6,6 @@ public class EarlyClassifierResult {
 	public double f1_score;
 	public double precision;
 	public double recall;
-	public double earliness;  //平均分类长度
+	public double earliness;
 	public double fcost;
 }

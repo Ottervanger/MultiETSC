@@ -6,7 +6,6 @@ import java.util.Collections;
 public class CrossValidation {
 	
 	public static ArrayList<ArrayList<Integer>> generateCV(double[] labels, int fold){
-		//确定有多少类别
 		ArrayList<Double> uniqueLabels = new ArrayList<>();
 		for(int i = 0; i < labels.length; i++){
 			if(false == uniqueLabels.contains(labels[i])){
@@ -16,7 +15,6 @@ public class CrossValidation {
 		//Collections.sort(uniqueLabels);
 		uniqueLabels.trimToSize();
 		
-		//将labels按类别排序
 		int[] index = new int[labels.length];
 		int pos = 0;
 		for(int i = 0; i < uniqueLabels.size(); i++){
@@ -28,7 +26,6 @@ public class CrossValidation {
 			}
 		}
 		
-		//按fold步长分组
 		ArrayList<ArrayList<Integer>> cv = new ArrayList<ArrayList<Integer>>(fold);
 		for(int i = 0; i < fold; i++){
 			cv.add(new ArrayList<Integer>());

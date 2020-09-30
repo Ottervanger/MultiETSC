@@ -532,7 +532,7 @@ public class TEASERClassifier extends Classifier {
 		    int[] sorted_index = sortByLabel(result.realLabels);
 		    
 		    int probs_index = 3;
-		    int len = result.probabilities[0].length + probs_index;  //前三列为类别，样本长度，当前长度
+		    int len = result.probabilities[0].length + probs_index;
 			int instanceNumber = full_data.length;
 			for(int i = 0; i < instanceNumber; i++) {
 				String[] strs = new String[len];
