@@ -27,8 +27,8 @@ public class DataLoader {
 	    			continue;
 	    		}
 
-	    		//separator may be " " or "," in dataset
-	    		String separator = line.contains(",") ? "," : " ";
+	    		//separator may be "\t" or "," in dataset
+	    		String separator = line.contains(",") ? "," : "\t";
 	    		String[] columns = line.split(separator);
 	    		int columnLength = columns.length;
 	    		//some instance may be filled in with "NaN"

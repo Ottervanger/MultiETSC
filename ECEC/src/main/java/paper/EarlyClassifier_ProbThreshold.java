@@ -169,8 +169,7 @@ public class EarlyClassifier_ProbThreshold {
 				}
 			}
 			
-			double ratio = m_ratio;
-			double cost = ratio * (instanceNum - success) + (1 - ratio) * earliness;
+			double cost = m_ratio * (instanceNum - success) + (1 - m_ratio) * earliness;
 			middle_cost[i] = cost;
 			middle_correct[i] = success;
 			middle_earliness[i] = earliness;
@@ -280,8 +279,7 @@ public class EarlyClassifier_ProbThreshold {
 		result.earliness = earliness /instanceNum;
 		result.f1_score = StatisticalUtilities.f1Score(result.accuracy, 1-result.earliness);
 		
-		double ratio = 0.8;
-		result.fcost = 1 / (ratio * (instanceNum - accuracyNum) + (1-ratio)*earliness);
+		result.fcost = 1 / (m_ratio * (instanceNum - accuracyNum) + (1-m_ratio)*earliness);
 
 		return result;
 	}

@@ -1,4 +1,4 @@
-package sfa.classification;
+package Classifiers.sfa.classification;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,7 +24,7 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
-import sfa.timeseries.TimeSeries;
+import Classifiers.sfa.timeseries.TimeSeries;
 
 /**
  * TEASER: A framework for early and accurate times series classification

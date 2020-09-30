@@ -55,9 +55,9 @@ public class DataSetInformation {
 	};
 	
 	//last char "\\"
-	public String sourceDir = ".\\dataset\\";
+	public String sourceDir = "/scratch/ottervanger/UCR/";
 	
-	public String probabilityDir = ".\\result\\probability\\";
+	public String probabilityDir = "./out/probability/";
 	
-	public String resultDir = ".\\result\\last_result\\";
+	public String resultDir = "./out/result/";
 }
