@@ -7,9 +7,12 @@ import sys
 import re
 import glob
 import itertools
+import json
+import seaborn as sns
+from scipy.stats import wilcoxon, binom_test
 
 
-def colors(opaque=False):
+def colors(alpha=None):
     while True:
         for c in ['#1f77b4',  # blue
                   '#ff7f0e',  # orange
@@ -22,44 +25,52 @@ def colors(opaque=False):
                   '#bcbd22',  # olive
                   '#17becf'   # cyan
                   ]:
-            yield c if not opaque else c + '99'
+            yield c if not alpha else c + alpha
 
 
 class Pareto:
-    def __init__(self, Y, metadata, label):
+    def __init__(self, Y, metadata=None, label=None):
         inp = np.ones(len(Y), dtype="bool")
         for i in range(len(Y)):
             if inp[i]:
                 inp = inp & np.any(Y < Y[i], 1)
                 inp[i] = True
         self.P = Y[inp]
-        self.metadata = metadata[inp]
-        self.size = len(self.P)
-        self.label = label
+        order = np.argsort(self.P[:, 0])
+        self.P = self.P[order]
+        self._size = len(self.P)
+        if metadata is not None:
+            self.metadata = np.array([cleanConfStr(d) for d in metadata[inp]])[order]
+        if label is not None:
+            self.label = label
 
-    def plot(self, ax, c, textoffset, angle):
+    def plot(self, ax, c, annotate=None, points=True):
         # stepped line
         ax.step(np.hstack((0, self.P[:, 0], 1)),
                 np.hstack((1, self.P[:, 1], 0)),
                 where='post', label=self.label, c=c, linewidth=1)
         # points
-        ax.plot(self.P[:, 0], self.P[:, 1],
-                'o', c=c, markersize=3)
-        # for x, y, label in zip(self.P[:, 0], self.P[:, 1], self.metadata):
-        #     # label
-        #     txt = ax.annotate(
-        #         label, (x, y), textcoords="axes fraction", xytext=textoffset['xy'],
-        #         ha='left', va='center', fontsize=5, clip_on=False,
-        #         arrowprops=dict(
-        #             arrowstyle='-|>', linestyle='--', color=c+'aa',
-        #             connectionstyle="angle,angleA=180,angleB={}".format(angle),
-        #             relpos=(0., .5), shrinkA=10, shrinkB=10))
-        #     textoffset['xy'][1] -= 0.03
+        if points:
+            ax.plot(self.P[:, 0], self.P[:, 1],
+                    'o', c=c, markersize=3)
+        if annotate:
+            for x, y, label in zip(self.P[:, 0], self.P[:, 1], self.metadata):
+                # label
+                txt = ax.annotate(
+                    label, (x, y), textcoords="axes fraction", xytext=annotate['xyoffset'],
+                    ha='left', va='center', fontsize=5, clip_on=False,
+                    arrowprops=dict(
+                        arrowstyle='-|>', linestyle='--', color=c+'aa',
+                        connectionstyle="angle,angleA=180,angleB={}".format(annotate['angle']),
+                        relpos=(0., .5), shrinkA=10, shrinkB=10))
+                annotate['xyoffset'][1] -= 0.03
+            annotate['xyoffset'][1] += annotate['ystep']
+            annotate['angle'] += annotate['anglestep']
 
     def hmean(self):
-        return np.min(1-self.P.shape[1]/np.sum((1-self.P)**-1, 1))
+        return np.min(1-2/np.sum((1-self.P[np.all(self.P != 1., 1)])**-1, 1))
 
-    def hypervolume(self):
+    def HV(self):
         '''
         compute dominated hypervolume given pareto set Y
         pre: Y consists of two dimensional non-dominated
@@ -76,14 +87,17 @@ class Pareto:
         return np.linalg.norm(self.P[0]-self.P[-1])
 
     def delta(self):
-        if (self.size < 3):
+        if (self._size < 2):
             return np.inf
-        di = np.zeros(self.size-1)
+        di = np.zeros(self._size-1)
         for i in range(len(di)):
             di[i] = np.linalg.norm(self.P[i]-self.P[i+1])
         df = np.linalg.norm(self.P[0]-np.array([0, 1]))
         dl = np.linalg.norm(self.P[-1]-np.array([1, 0]))
         return (df+dl+np.sum(np.abs(di-np.mean(di))))/(df+dl+np.sum(di))
+
+    def size(self):
+        return self._size
 
 
 def roundIfFloat(s):
@@ -115,7 +129,7 @@ def getData(csvPath):
     df = df.groupby('configuration', as_index=False).mean()
     df = df.sort_values(by=['earliness'])
     Y = np.array(df[['earliness', 'accuracy']])
-    metadata = np.array([cleanConfStr(d) for d in df['configuration']])
+    metadata = np.array(df['configuration'])
     return Y, metadata
 
 
@@ -164,60 +178,46 @@ def latexMetricTable(d):
     return tex
 
 
-def latexDatasetTable(datasetTabel, labels):
-    tex = r'\begin{tabular}{@{\extracolsep{4pt}}l'+'rr'*(len(labels))+'@{}}\n'
-    tex += '&'+' & '.join([twoColumn(l) for l in labels]) + '\\\\\n'
-    tex += ''.join([f'\\cline{{{2*i+2}-{2*i+3}}}' for i in range(len(labels))]) + '\n'
-    tex += '&'+' & '.join(['HV', r'$\Delta$'] * len(labels)) + '\\\\\\hline\n'
-    for row in datasetTabel:
-        vals = sum(row[1:], ())
-        hvs = [hlfmt(hv, 'hv', vals[::2]) for hv in vals[::2]]
-        dlts = [hlfmt(dlt, 'delta', vals[1::2]) for dlt in vals[1::2]]
-        cells = [hlfmt(row[0])]+[j for i in zip(hvs, dlts) for j in i]
-        tex += ' &'.join(cells) + '\\\\\n'
-    tex += '\\end{tabular}\n'
-    return tex
-
-
-def processData(dataset, labels):
-    files = [os.path.basename(p) for p in sorted(glob.glob(f'output/pareto/{dataset}/*'), reverse=True)]
+def processData(dataset, methods, naive):
+    files = [os.path.basename(p) for p in glob.glob(f'output/pareto/{dataset}/*')]
     print(f'{dataset}')
-    if (set(files) != set(labels)):
+    if (set(files) != set(methods)):
         print('some files are missing')
-    fig, ax = plt.subplots(figsize=(8, 4.8))
-    color = colors()
-    ruler = 1.02
+    fig, ax = plt.subplots(figsize=(8, 4))
+    color = colors('aa')
     metricTable = {}
-    textoffset = dict(xy=[ruler, .98])
-    angle = 80
-    datasetTableRow = []
-    for label in reversed(labels):
-        try:
-            Y, metadata = getData(f'output/test/{dataset}/{label}/test.csv')
-            pareto = Pareto(Y, metadata, label=label)
-            pareto.plot(ax, c=next(color), textoffset=textoffset, angle=angle)
-            textoffset['xy'][1] -= 0.01
-            angle -= 5
-            metrics = dict(
-                method=label,
-                size=pareto.size,
-                delta=pareto.delta(),
-                M3=pareto.M3(),
-                hmean=pareto.hmean(),
-                HV=pareto.hypervolume()
-            )
-            datasetTableRow = [(metrics['HV'], metrics['delta'])] + datasetTableRow
-            metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
-        except FileNotFoundError:
-            datasetTableRow += [('?', '?')]
-            continue
+    ruler = 1.02
+    annotate = dict(xyoffset=[ruler, .98], angle=80, ystep=-0.01, anglestep=-5)
 
-    # add column with means
-    # for k in metricTable:
-    #     if k != 'method':
-    #         metricTable[k] += [np.mean(metricTable[k])]
-    #     else:
-    #         metricTable[k] += ['mean']
+    # baseline front
+    naive.plot(ax, c='k', points=False)
+
+    for method in reversed(methods):
+        try:
+            Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
+        except FileNotFoundError:
+            continue
+        pareto = Pareto(Y, metadata, label=method)
+        pareto.plot(ax, c=next(color))
+        metrics = dict(
+            method=method,
+            size=pareto.size(),
+            delta=pareto.delta(),
+            M3=pareto.M3(),
+            hmean=pareto.hmean(),
+            HV=pareto.HV()
+        )
+        metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
+
+    metrics = dict(
+        method=naive.label,
+        size=naive.size(),
+        delta=naive.delta(),
+        M3=naive.M3(),
+        hmean=naive.hmean(),
+        HV=naive.HV()
+    )
+    metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
 
     # print metrics to terminal
     printTable(metricTable)
@@ -235,11 +235,160 @@ def processData(dataset, labels):
 
     fig.tight_layout()
     # save plot
-    plt.savefig(f'output/plot/{dataset}.pdf')
+    plt.savefig(f'output/plot/{dataset}/pareto.pdf')
     # save tex table
-    with open(f'output/tex/{dataset}.tex', 'w') as f:
+    with open(f'output/tex/{dataset}/table.tex', 'w') as f:
         f.write(latexMetricTable(metricTable))
-    return [dataset] + datasetTableRow
+
+
+def bootstrap(datasets, methods, metrics):
+    df = pd.DataFrame()
+    for dataset in datasets:
+        for method in methods:
+            Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
+            with open(f'output/pareto/{dataset}/{method}/fronts.json', 'r') as f:
+                effSets = json.load(f)
+            # match config strings from json with test performance from test.csv
+            fronts = [[Y[np.where(metadata == c)[0][0]] for c in s] for s in effSets]
+            # Extracting test Pareto fronts
+            paretos = [Pareto(np.array(f)) for f in fronts]
+            # compute metrics
+            dl = pd.DataFrame([[getattr(p, m)()for m in metrics] for p in paretos],
+                              columns=metrics)
+            dl['method'] = method
+            dl['dataset'] = dataset
+            df = df.append(dl)
+    df = df.replace([np.inf, -np.inf], np.nan)
+    return df
+
+
+def addBaselines(df, blines, metrics):
+    naive = pd.DataFrame({k: {m: getattr(v, m)() for m in metrics} for k, v in blines.items()}).T.stack()
+    bl = pd.concat([naive.to_frame().T]*1000, ignore_index=True).stack(0).reorder_levels([1,0]).sort_index()
+    bl['dataset'] = bl.index.get_level_values(0)
+    bl['method'] = 'naive'
+    return df.append(bl.droplevel(0))
+
+
+def plotDistributions(df, datasets, blines):
+    for dataset in datasets:
+        fig, ax = plt.subplots(figsize=(8, 4))
+        ax = sns.scatterplot(data=df.loc[df['dataset'] == dataset].iloc[::-1],
+                             x='delta', y='HV', style='method', hue='method',
+                             alpha=.5, s=3, linewidth=0, ax=ax)
+        ax.scatter([blines[dataset].delta()], [blines[dataset].HV()],
+                   c='k', marker='*', label=blines[dataset].label)
+        ax.axhline(blines[dataset].HV(), c='#00000099', lw=1)
+        ax.legend()
+        ax.grid()
+        fig.tight_layout()
+        plt.savefig(f'output/plot/{dataset}/scatter.pdf')
+        print(f'DONE: {dataset}')
+
+
+def fmt(vp):
+    v = vp[0]
+    p = vp[1]
+    s = f'{v:.3f}'
+    if ((vp.name[1] == 'HV' and v > 0.) or
+        (vp.name[1] == 'delta' and v < 0.)):
+        s = f'\\bft{{{s}}}'
+    if p < 0.001:
+        s += '\\sstr'
+    elif p < 0.05:
+        s += '\\str'
+    return s
+
+
+def to_latex(df):
+    rename = {'delta': r'$\Delta$'}
+    pre = r'\begin{tabular}{'+'l'*len(df.index.names)+'rr'*(len(df.columns))+'@{}}\n\\toprule\n'
+    head = [[]]*2
+    cells = [[] for _ in range(len(df))]
+    post = '\\bottomrule\n\\end{tabular}\n'
+
+    # header
+    head[0] = ['']*(df.index.nlevels-1) + [df.columns.name] + list(df.columns)
+    head[1] = list(df.index.names)
+
+    # row indices
+    for lvl in range(df.index.nlevels):
+        i = 0
+        while i < len(df.index):
+            nrow = 1
+            rname = df.index[i][lvl]
+            rlen = len(df.index.names) + len(df.columns) - lvl
+            cline = f'\\cline{{1-{rlen}}}\n'
+            if i == 0:
+                cline = ''
+            for r in df.index[i+1:]:
+                if rname == r[lvl]:
+                    nrow += 1
+                else:
+                    break
+            rname = rename.get(rname, rname)
+            if nrow == 1:
+                cells[i] += [rname]
+            else:
+                cells[i] += [f'{cline}\\multirow{{{nrow:d}}}{{*}}{{{rname}}}']
+                for j in range(i+1, i+nrow):
+                    cells[j] += ['']
+            i += nrow
+
+    # cells
+    for i, (idx, row) in enumerate(df.iterrows()):
+        cells[i] += [hlfmt(v, row.name[1], list(row)) for v in row]
+
+    hlines = ['&'.join([f'{c:^14}' for c in rc]) for rc in head]
+    clines = ['&'.join([f'{c:^14}' for c in rc]) for rc in cells]
+    body = '\\\\\n'.join(hlines) + '\\\\\n\\midrule\n' + '\\\\\n'.join(clines) + '\\\\\n'
+    return pre + body + post
+
+
+def wilcoxon_test(x):
+    return wilcoxon(x)[1]
+
+
+def sign_test(x):
+    # the sign test is the binominal test on the sign of the differences
+    return binom_test(sum(x > 0.), n=len(x != 0.))
+
+
+def statTest(df, methods, blines, testFn=sign_test):
+    # compute pairwise differences
+    d = df.pivot(columns=['method', 'dataset'])
+    d.columns.rename('metric', level=0, inplace=True)
+    d = d.reorder_levels(['method', 'dataset', 'metric'], 'columns')
+    diff = d.sub(d['mo-all'], axis='index').drop(columns=['mo-all'], level=2)
+    diffa = diff.stack('dataset')
+    # compute medians and p values of Wilcoxon rank-sum test
+    # (test symmetric distribution of differences about 0)
+    res = pd.concat({'median': diff.median(),
+                     'p': diff.apply(testFn)}, 1)
+    resa = pd.concat({'median': diffa.median(),
+                     'p': diffa.apply(testFn)}, 1)
+
+    res = res.append(pd.concat({'All': resa}, names=['dataset']))
+    res = res.unstack('method').stack(0)
+
+    # dfPrint stores formated strings
+    dfPrint = res.stack('method').unstack(2).apply(fmt, 1).unstack('method')
+    dfPrint.rename(index={'delta': r'$\Delta$'}, inplace=True)
+    dfPrint = dfPrint[methods[:-1]]
+    with open(f'output/tex/stats.tex', 'w') as f:
+        f.write(dfPrint.to_latex(escape=False, multirow=True, column_format='ll'+'r'*len(dfPrint.columns)))
+
+    # just the median metrics
+    meds = d.median().unstack('method')[methods]
+    # naive = pd.DataFrame({k: {m: getattr(v, m)() for m in meds.index.levels[1]} for k, v in blines.items()}).T.stack()
+    # meds.insert(0, 'naive', naive)
+    with open(f'output/tex/dataset.tex', 'w') as f:
+        f.write(to_latex(meds))
+    return res
+
+
+def getBaselines(datasets):
+    return {dataset: Pareto(np.genfromtxt(f'output/baseline/{dataset}.csv', delimiter=","), label='naive') for dataset in datasets}
 
 
 def main():
@@ -247,19 +396,24 @@ def main():
     datasetDirs = glob.glob('output/pareto/*')
     if not len(datasetDirs):
         sys.exit('No files found in output/pareto/. Nothing to be done.')
-    os.makedirs('output/plot/', exist_ok=True)
-    os.makedirs('output/tex/', exist_ok=True)
-    labels = ['mo-ects',
-              'mo-ecdire',
-              'mo-srcf',
-              'mo-relclass',
-              'so-all',
-              'mo-all']
-    datasetTable = []
-    for dataset in sorted([os.path.basename(p) for p in datasetDirs]):
-        datasetTable += [processData(dataset, labels)]
-    with open(f'output/tex/dataset.tex', 'w') as f:
-        f.write(latexDatasetTable(datasetTable, labels))
+    datasets = [os.path.basename(p) for p in sorted(datasetDirs)]
+    for dataset in datasets:
+        os.makedirs(f'output/plot/{dataset}/', exist_ok=True)
+        os.makedirs(f'output/tex/{dataset}/', exist_ok=True)
+    methods = ['mo-ects',
+               'mo-ecdire',
+               'mo-srcf',
+               'mo-relclass',
+               'so-all',
+               'mo-all']
+    metrics = ['HV', 'delta']
+    blines = getBaselines(datasets)
+    df = bootstrap(datasets, methods, metrics)
+    plotDistributions(df, datasets, blines)
+    df = addBaselines(df, blines, metrics)
+    statTest(df, ['naive']+methods, blines)
+    for dataset in datasets:
+        processData(dataset, methods, blines[dataset])
 
 
 if __name__ == '__main__':
