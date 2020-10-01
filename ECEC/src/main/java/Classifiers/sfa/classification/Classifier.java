@@ -6,20 +6,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import libsvm.*;
+
+import Classifiers.sfa.timeseries.MultiVariateTimeSeries;
+import Classifiers.sfa.timeseries.TimeSeries;
+import Classifiers.sfa.transformation.MFT;
+import Utilities.ParallelFor;
 
 import com.carrotsearch.hppc.FloatContainer;
 import com.carrotsearch.hppc.IntArrayDeque;
@@ -30,20 +31,11 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 
-import Classifiers.sfa.timeseries.MultiVariateTimeSeries;
-import Classifiers.sfa.timeseries.TimeSeries;
-import Classifiers.sfa.transformation.MFT;
-import Utilities.ParallelFor;
 import de.bwaldvogel.liblinear.Feature;
 import de.bwaldvogel.liblinear.Linear;
 import de.bwaldvogel.liblinear.Parameter;
 import de.bwaldvogel.liblinear.Problem;
 import de.bwaldvogel.liblinear.SolverType;
-import libsvm.svm;
-import libsvm.svm_model;
-import libsvm.svm_node;
-import libsvm.svm_parameter;
-import libsvm.svm_problem;
 
 public abstract class Classifier {
   transient ExecutorService exec;
@@ -53,23 +45,14 @@ public abstract class Classifier {
   public static boolean DEBUG = false;
   public static boolean ENSEMBLE_WEIGHTS = true;
 
-  public static int threads = 1;
+  public static int threads = ParallelFor.nThreads;
 
   protected int[][] testIndices;
   protected int[][] trainIndices;
   public static int folds = 10;
 
   // Blocks for parallel execution
-  public final static int BLOCKS = 8;
-
-  static {
-    Runtime runtime = Runtime.getRuntime();
-    if (runtime.availableProcessors() <= 4) {
-      threads = runtime.availableProcessors() - 1;
-    } else {
-      threads = runtime.availableProcessors();
-    }
-  }
+  public final static int BLOCKS = 1;
 
   public Classifier() {
     this.exec = Executors.newFixedThreadPool(threads);
@@ -471,6 +454,8 @@ public abstract class Classifier {
     }
 
     final int fold = nr_fold;
+    svm_model submodel[];
+    submodel = new svm_model[fold];
     ParallelFor.withIndex(threads, new ParallelFor.Each() {
       @Override
       public void run(int id, AtomicInteger processed) {
@@ -498,17 +483,23 @@ public abstract class Classifier {
               subprob.y[k] = prob.y[perm[j]];
               ++k;
             }
-            final svm_model submodel = mySVM.get().svm_train(subprob, param);
-            ParallelFor.withIndex(BLOCKS, new ParallelFor.Each() {
-              @Override
-              public void run(int id, AtomicInteger processed) {
-                for (int j = begin; j < end; j++) {
-                  if (j % BLOCKS == id) {
-                    target[perm[j]] = mySVM.get().svm_predict(submodel, prob.x[perm[j]]);
-                  }
-                }
-              }
-            });
+            submodel[i] = mySVM.get().svm_train(subprob, param);
+          }
+        }
+      }
+    });
+    ParallelFor.withIndex(threads, new ParallelFor.Each() {
+      @Override
+      public void run(int id, AtomicInteger processed) {
+        final ThreadLocal<svm> mySVM = new ThreadLocal<svm>();
+        mySVM.set(new svm());
+        for (int i = 0; i < fold; i++) {
+          final int begin = fold_start[i];
+          final int end = fold_start[i + 1];
+          for (int j = begin; j < end; j++) {
+            if (j % threads == id) {
+              target[perm[j]] = mySVM.get().svm_predict(submodel[i], prob.x[perm[j]]);
+            }
           }
         }
       }
@@ -771,6 +762,30 @@ public abstract class Classifier {
     Kryo kryo = initKryo();
     T classifier = (T) kryo.readClassAndObject(kryoInput);
     return classifier;
+  }
+
+
+  private long getGcCount() {
+    long sum = 0;
+    for (GarbageCollectorMXBean b : ManagementFactory.getGarbageCollectorMXBeans()) {
+      long count = b.getCollectionCount();
+      if (count != -1) {
+        sum += count;
+      }
+    }
+    return sum;
+  }
+
+  public long getUsedMemory() {
+    long before = getGcCount();
+    System.gc();
+    while (getGcCount() == before);
+    return getCurrentlyAllocatedMemory();
+  }
+
+  private long getCurrentlyAllocatedMemory() {
+    final Runtime runtime = Runtime.getRuntime();
+    return (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024);
   }
 
 }
