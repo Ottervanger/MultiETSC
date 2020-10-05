@@ -22,6 +22,7 @@ public class TEASERClassifier extends Classifier {
   public static int svmKernelType = svm_parameter.RBF;
   public static double[] SVM_GAMMAS = new double[]{100, 100, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1.5, 1, .5, .2 ,.1};
   public static double svmNu = 0.05;
+  public static long seed = 0;
 
   private static enum KernelType {
     LINEAR (svm_parameter.LINEAR),
@@ -80,6 +81,9 @@ public class TEASERClassifier extends Classifier {
       case "svmNu":
         svmNu = Double.parseDouble(value);
         break;
+      case "seed":
+        seed = Long.parseLong(value);
+        break;
     }
   }
 
@@ -130,9 +134,22 @@ public class TEASERClassifier extends Classifier {
 
   }
 
+  private void shuffle(TimeSeries[] ts) {
+    Random r = new Random(seed);
+    for (int i = 0; i < ts.length-1; i++) {
+      int si = r.nextInt(ts.length);
+      if (si <= i)
+        continue;
+      TimeSeries tmp = ts[i];
+      ts[i] = ts[si];
+      ts[si] = tmp;
+    }
+  }
+
   @Override
   public Score eval(
       final TimeSeries[] trainSamples, final TimeSeries[] testSamples) {
+    shuffle(trainSamples);
     long startTime = System.currentTimeMillis();
 
     Score score = fit(trainSamples);

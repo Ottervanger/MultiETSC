@@ -84,6 +84,8 @@ task runnerJar(type: Jar) {
     with jar
 }
 
+tasks.build.dependsOn(['runnerJar'])
+
 
 // Define the main class for the application
 mainClassName = 'src/sfa/test/UCRClassificationTest'
