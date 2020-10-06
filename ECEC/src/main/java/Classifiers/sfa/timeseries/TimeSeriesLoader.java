@@ -41,8 +41,8 @@ public class TimeSeriesLoader {
           continue;
         }
 
-        // switch between old " " and new separator "," in the UCR archive
-        String separator = (line.contains(",") ? "," : " ");
+        // switch between tsv and csv standards
+        String separator = (line.contains(",") ? "," : "\t");
         String[] columns = line.split(separator);
 
         double[] data = new double[columns.length];
@@ -81,7 +81,7 @@ public class TimeSeriesLoader {
       e.printStackTrace();
     }
 
-    System.out.println("Done reading from " + dataset + " samples " + samples.size() + " queryLength " + samples.get(0).getLength());
+    System.out.println("Done reading from " + dataset.getName() + " samples " + samples.size() + " queryLength " + samples.get(0).getLength());
     return samples.toArray(new TimeSeries[]{});
   }
 

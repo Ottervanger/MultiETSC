@@ -1,30 +1,12 @@
 package Classifiers.sfa.classification;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
-
-import com.carrotsearch.hppc.DoubleArrayList;
-import com.carrotsearch.hppc.DoubleDoubleHashMap;
-import com.carrotsearch.hppc.DoubleDoubleMap;
-import com.carrotsearch.hppc.DoubleIntHashMap;
-import com.carrotsearch.hppc.DoubleIntMap;
+import com.carrotsearch.hppc.*;
 import com.carrotsearch.hppc.cursors.DoubleDoubleCursor;
-import com.opencsv.CSVWriter;
-
 import de.bwaldvogel.liblinear.SolverType;
-import libsvm.svm;
-import libsvm.svm_model;
-import libsvm.svm_node;
-import libsvm.svm_parameter;
-import libsvm.svm_problem;
+import libsvm.*;
 import Classifiers.sfa.timeseries.TimeSeries;
+
+import java.util.*;
 
 /**
  * TEASER: A framework for early and accurate times series classification
@@ -37,9 +19,21 @@ public class TEASERClassifier extends Classifier {
   /**
    * The parameters for the one-class SVM
    */
-  public static int SVM_KERNEL = svm_parameter.RBF; /*, svm_parameter.LINEAR */
-  public static double[] SVM_GAMMAS = new double[]{100, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1.5, 1};
-  public static double SVM_NU = 0.05;
+  public static int svmKernelType = svm_parameter.RBF;
+  public static double[] SVM_GAMMAS = new double[]{100, 100, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1.5, 1, .5, .2 ,.1};
+  public static double svmNu = 0.05;
+
+  private static enum KernelType {
+    LINEAR (svm_parameter.LINEAR),
+    POLY (svm_parameter.POLY),
+    RBF (svm_parameter.RBF),
+    SIGMOID (svm_parameter.SIGMOID);
+    public final int kernelType;
+ 
+    private KernelType(int kernelType) {
+      this.kernelType = kernelType;
+    }
+  }
 
   /**
    * The total number of time stamps S: a time stamp is a fraction of the full time series length n.
@@ -50,14 +44,12 @@ public class TEASERClassifier extends Classifier {
 
   public static boolean PRINT_EARLINESS = false;
 
-  public static int MIN_WINDOW_LENGTH = 2;
-  public static int MAX_WINDOW_LENGTH = 250;
-  
-  private static int m_dataIndex;
-  private static String m_path;
+  public static int minLen = 2;
+  public static int maxLen = 250;
 
   // the trained TEASER model
   EarlyClassificationModel model;
+  private int threshold = 2;
 
   WEASELClassifier slaveClassifier;
 
@@ -65,22 +57,32 @@ public class TEASERClassifier extends Classifier {
     slaveClassifier = new WEASELClassifier();
     WEASELClassifier.lowerBounding = true;
     WEASELClassifier.solverType = SolverType.L2R_LR;
+    WEASELClassifier.MAX_WINDOW_LENGTH = 250;
   }
 
-  public void setIndex(int index)
-  {
-	  m_dataIndex = index;
+  public void setParameter(String name, String value) {
+    switch(name) {
+      case "nClassifiers":
+        S = Double.parseDouble(value);
+        break;
+      case "threshold":
+        threshold = Integer.parseInt(value);
+        break;
+      case "minLen":
+        minLen = Integer.parseInt(value);
+        break;
+      case "maxLen":
+        maxLen = Integer.parseInt(value);
+        break;
+      case "svmKernelType":
+        svmKernelType = KernelType.valueOf(value).kernelType;
+        break;
+      case "svmNu":
+        svmNu = Double.parseDouble(value);
+        break;
+    }
   }
-  
-  public void setName(String path)
-  {
-	  m_path = path;
-      File file = new File(path);  
-      if(!file.exists()){  
-          file.mkdirs();  
-      }
-  }
-  
+
   public static class EarlyClassificationModel extends Model {
     public EarlyClassificationModel() {
       super("TEASER", 0, 1, 0, 1, false, -1);
@@ -172,63 +174,62 @@ public class TEASERClassifier extends Classifier {
   public EarlyClassificationModel fitTeaser(final TimeSeries[] samples) {
     try {
 
-      int min = Math.max(3, MIN_WINDOW_LENGTH);
-      int max = getMax(samples, MAX_WINDOW_LENGTH); // Integer.MAX_VALUE
-      double step = max / S; // steps of 5%
+      int min = Math.max(3, minLen);
+      int max = getMax(samples, maxLen); // Integer.MAX_VALUE
+      double step = (max - min) / S; // steps of 5%
 
       this.model = new EarlyClassificationModel();
+      this.model.threshold = this.threshold;
 
-      for (int s = 1; s <= S; s++) {
+      double probSum = 0;
+
+      for (int s = 0; s <= S; s++) {
         // train TEASER
-        model.offsets[s] = (int) Math.round(step * s);
+        model.offsets[s] = (int) Math.round(step * s + min);
         TimeSeries[] data = extractUntilOffset(samples, model.offsets[s], true);
 
         if (model.offsets[s] >= min) {
           // train the time series classifier
           Score score = this.slaveClassifier.fit(data);
           Predictions result = this.slaveClassifier.predictProbabilities(data);
-          //writeProbs(result, s * 5, data);
-          String file = m_path + File.separator + "train-probs-" + Integer.toString(s) + ".csv";
-          writeCSV(result, samples, data, file);
+          for (double[] pr : result.probabilities)
+            for (double p : pr)
+              probSum += p * p;
 
           // train one class svm on ts classifier
           model.slaveModels[s] = this.slaveClassifier.getModel();
           model.masterModels[s] = fitSVM(samples, result.labels, result.probabilities, result.realLabels);
         }
       }
+      System.err.printf("probs train: %10.3f\n", probSum);
 
-      // train the best ratio between earliness and accuracy
-      double bestF1 = -1;
-      int bestCount = 1;
-      for (int i = 2; i <= 5; i++) {
-        model.threshold = i;
-        OffsetPrediction off = predict(samples, false);
-        double correct = ((double) off.getCorrect()) / off.N;
-        double earliness = 1.0 - off.offset / off.N;
-
-        double harmonic_mean = 2 * correct * earliness / (correct + earliness);
-        System.out.println("Prediction:\t" + model.threshold + "\t" + off + "\t" + harmonic_mean);
-
-        if (bestF1 < harmonic_mean) {
-          bestF1 = harmonic_mean;
-          bestCount = i;
-
-          model.score.training = off.getCorrect();
-          model.score.trainSize = samples.length;
-          //model.score.testSize = samples.length;
-          //model.score.testing = off.getCorrect();
-
-        }
-      }
-
-      System.out.println("Best Repetition: " + bestCount);
-      model.threshold = bestCount;
-
+      OffsetPrediction off = predict(samples, false);
+      model.score.training = off.getCorrect();
+      model.score.trainSize = samples.length;
       return model;
     } catch (Exception e) {
       e.printStackTrace();
     }
     return null;
+  }
+
+  double gscale(double[][] x) {
+    double m = 0.;
+    int n = 0;
+    double v = 0.;
+    for (double[] xi : x) {
+      for (double xii : xi) {
+        m += xii;
+        n++;
+      }
+    }
+    m /= n;
+    for (double[] xi : x) {
+      for (double xii : xi) {
+        v += (xii - m) * (xii - m);
+      }
+    }
+    return x.length / v;
   }
 
   public svm_model fitSVM(
@@ -257,12 +258,13 @@ public class TEASERClassifier extends Classifier {
 
     svm_parameter best_parameter = null;
     double bestCorrect = -1;
+    SVM_GAMMAS[0] = gscale(probs);
     for (double gamma : SVM_GAMMAS) {
       svm_parameter parameter = initSVMParameters(gamma);
       if (svm.svm_check_parameter(problem_one_class, parameter) != null) {
         System.out.println(svm.svm_check_parameter(problem_one_class, parameter));
       }
-      ;
+
       Double[] predictions = new Double[problem_one_class.l];
       trainSVMOneClass(problem_one_class, parameter, 10, predictions, new Random(1));
       double correct2 = evalLabels(problem_one_class.y, predictions).correct.get() / (double) problem_one_class.l;
@@ -333,11 +335,6 @@ public class TEASERClassifier extends Classifier {
 
         this.slaveClassifier.setModel(model.slaveModels[s]); // TODO ugly
         Predictions result = this.slaveClassifier.predictProbabilities(data);
-        if (true == testing)
-        {
-        	String file = m_path + File.separator + "test-probs-" + Integer.toString(s) + ".csv";
-            writeCSV(result, testSamples, data, file);
-        }
 
         for (int ind = 0; ind < data.length; ind++) {
           if (predictedLabels[ind] == null) {
@@ -407,9 +404,9 @@ public class TEASERClassifier extends Classifier {
   public svm_parameter initSVMParameters(double gamma) {
     svm_parameter parameter2 = new svm_parameter();
     parameter2.eps = 1e-4;
-    parameter2.nu = SVM_NU;
+    parameter2.nu = svmNu;
     parameter2.gamma = gamma;
-    parameter2.kernel_type = SVM_KERNEL;
+    parameter2.kernel_type = svmKernelType;
     parameter2.cache_size = 40;
     parameter2.svm_type = svm_parameter.ONE_CLASS;
     return parameter2;
@@ -483,91 +480,6 @@ public class TEASERClassifier extends Classifier {
       }
     });
     return features;
-  }
-  
-  private void writeProbs(Predictions result, int step, TimeSeries[] data)
-  {
-	  int classNum = result.realLabels.length;
-	  String filename = "./probs/train/probs-" + String.valueOf(m_dataIndex) + "-" + String.valueOf(step) + "-1-1.txt";
-	  try
-	  {
-		  File fp = new File(filename);
-	      fp.delete(); 
-	      
-	      BufferedWriter out = new BufferedWriter(new FileWriter(fp));
-	      String head = "";
-	      for(int i= 1; i <= classNum; i++)
-	      {
-	    	  head = head + "\"V" + String.valueOf(i) + "\" ";
-	      }
-	      head += "class\r\n";
-	      out.write(head);
-	      
-	      for( int i = 0; i < result.probabilities.length; i++ )
-	      {            
-	          String line = "\"" + String.valueOf(i+1) + "\" ";
-	          for(int j = 0; j < classNum; j++)
-	          {
-	        	  line = line + String.valueOf(result.probabilities[i][j]) + " ";
-	          }
-	          line = line + "\"" + String.valueOf(data[i].getLabel()) + "\"";
-	          out.write(line + "\r\n");
-	      }
-	      
-	      out.flush();
-	      out.close();
-	  }
-	  catch(Exception exc)
-      {
-          System.err.println(exc.getMessage());
-      }
-  }
-  
-  private void writeCSV(Predictions result, TimeSeries[] full_data, TimeSeries[] trunc_data, String file)
-  {
-	  try {
-			Writer writer = new FileWriter(file);  
-		    CSVWriter csvWriter = new CSVWriter(writer); 
-		    
-		    int[] sorted_index = sortByLabel(result.realLabels);
-		    
-		    int probs_index = 3;
-		    int len = result.probabilities[0].length + probs_index;
-			int instanceNumber = full_data.length;
-			for(int i = 0; i < instanceNumber; i++) {
-				String[] strs = new String[len];
-				strs[0] = Double.toString(full_data[i].getLabel());
-				strs[1] = Integer.toString(full_data[i].getLength());
-				strs[2] = Integer.toString(trunc_data[i].getLength());
-				for(int j = probs_index; j < len; j++) {
-					strs[j] = Double.toString(result.probabilities[i][sorted_index[j-probs_index]]);
-				}
-				csvWriter.writeNext(strs);
-			}
-			
-			csvWriter.close(); 
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-  }
-  
-  private int[] sortByLabel(int[] values)
-  {
-	  int[] index = new int[values.length];
-	  int[] tmp = values.clone();
-	  Arrays.sort(tmp);
-	  for(int i = 0; i < tmp.length; i++)
-	  {
-		  for(int j = 0; j < values.length; j++)
-		  {
-			  if(tmp[i] == values[j])
-			  {
-				  index[i] = j;
-				  break;
-			  }
-		  }
-	  }
-	  return index;
   }
 
 }

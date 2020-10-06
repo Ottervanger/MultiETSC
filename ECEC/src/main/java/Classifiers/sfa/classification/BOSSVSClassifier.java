@@ -2,21 +2,17 @@
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
 package Classifiers.sfa.classification;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import Classifiers.sfa.timeseries.TimeSeries;
+import Classifiers.sfa.transformation.BOSS.BagOfPattern;
+import Classifiers.sfa.transformation.BOSSVS;
 
 import com.carrotsearch.hppc.IntFloatHashMap;
 import com.carrotsearch.hppc.ObjectObjectHashMap;
 import com.carrotsearch.hppc.cursors.IntIntCursor;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
-
-import Classifiers.sfa.timeseries.TimeSeries;
-import Classifiers.sfa.transformation.BOSS.BagOfPattern;
-import Classifiers.sfa.transformation.BOSSVS;
-import Utilities.ParallelFor;
 
 /**
  * The Bag-of-SFA-Symbols in Vector Space classifier as published in

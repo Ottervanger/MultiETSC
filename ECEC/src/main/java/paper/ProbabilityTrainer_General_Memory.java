@@ -8,12 +8,16 @@ import java.util.Arrays;
 
 import com.opencsv.CSVWriter;
 
-import Classifiers.Classifier;
-import Classifiers.WEASEL;
-import DataStructures.ProbabilityGroup;
+import Classifiers.sfa.classification.Classifier.Predictions;
+import Classifiers.sfa.classification.WEASELClassifier;
+
+import de.bwaldvogel.liblinear.SolverType;
+
+import DataStructures.ProbabilityInformation;
 import DataStructures.ProbabilityInformationVary;
 import DataStructures.ProbabilityInstance;
 import DataStructures.ProbabilityResult;
+
 import DataStructures.TimeSeriesInstance;
 import DataStructures.TimeSeriesSet;
 
@@ -23,54 +27,42 @@ public class ProbabilityTrainer_General_Memory {
     TimeSeriesSet train_data;
     TimeSeriesSet test_data;
     
-    int nClassifiers;
-    int nFolds;
+    public static int nClassifiers = 20;
+    public static int nFolds = 5;
+    public static long seed = 0;
+
     TimeSeriesSet[] train_cv;
     TimeSeriesSet[] test_cv;
-    
-    TimeSeriesSet[][] slaver_traindata;
-    TimeSeriesSet[][] slaver_testdata;
-    TimeSeriesSet[] master_traindata;
-    TimeSeriesSet[] master_testdata;
-    Classifier[] master_classifiers;
+
+    int[] tSteps;
     
     ProbabilityInformationVary probs_infor;
-    
-    private int m_classifierID;
     
     int EqualLength = 0;
     int PercentageLength = 1;
     
-    private void init(TimeSeriesSet train_data, TimeSeriesSet test_data){
-        m_classifierID = 1;
+    private void init(TimeSeriesSet train_data, TimeSeriesSet test_data) {
+        // global WEASEL settings
+        WEASELClassifier.lowerBounding = true;
+        WEASELClassifier.solverType = SolverType.L2R_LR;
+
          
         this.train_data = train_data;
         this.test_data = test_data;
-        nFolds = 5;
-        
-        nClassifiers = 20;
         
         train_cv = new TimeSeriesSet[nFolds];
         test_cv = new TimeSeriesSet[nFolds];
-        
-        slaver_traindata = new TimeSeriesSet[nFolds][nClassifiers];
-        slaver_testdata = new TimeSeriesSet[nFolds][nClassifiers];
-        master_traindata = new TimeSeriesSet[nClassifiers];
-        master_testdata = new TimeSeriesSet[nClassifiers];
 
-        
         probs_infor = new ProbabilityInformationVary(nClassifiers);
-        
-        master_classifiers = new WEASEL[nClassifiers];
-        for(int i = 0; i < nClassifiers; i++) {
-            master_classifiers[i] = new WEASEL(m_classifierID++);
-        }
     }
     
-    public void process(TimeSeriesSet train_data, TimeSeriesSet test_data, String result_dir){
+    public void process(TimeSeriesSet train_data, TimeSeriesSet test_data, String result_dir) {
+        train_data.shuffle(seed);
         init(train_data, test_data);
         double[] train_labels = train_data.getAllLabels();
+        
         ArrayList<ArrayList<Integer>> cv = CrossValidation.generateCV(train_labels, nFolds);
+
         divideMultiDataset(cv, train_data);
 
         int minLen = 3;
@@ -82,29 +74,25 @@ public class ProbabilityTrainer_General_Memory {
     }
     
     private void generateStepData(int minLen) {
+        tSteps = new int[nClassifiers];
         int step = train_data.getMaxLength() / nClassifiers;
         for(int i = 0; i < nClassifiers; i++) {
             int length = Math.max(minLen, (i+1)*step);
             if (i == nClassifiers - 1)
                 length = Integer.MAX_VALUE;
-            master_traindata[i] = train_data.truncateTo(length);
-            master_testdata[i] = test_data.truncateTo(length);
-            for(int j = 0; j < nFolds; j++) {
-                slaver_traindata[j][i] = train_cv[j].truncateTo(length);
-                slaver_testdata[j][i] = test_cv[j].truncateTo(length);
-            }
+            tSteps[i] = length;
         }
     }
     
     private void trainSlaverClassifiers() {
         for(int i = 0; i < nFolds; i++) {
             for(int t = 0; t < nClassifiers; t++) {
-                Classifier slaver_classifier = new WEASEL(m_classifierID++);
-                slaver_classifier.buildClassifier(slaver_traindata[i][t]);
-                ProbabilityResult[] probs = slaver_classifier.probabilityForInstance(slaver_testdata[i][t]);
+                WEASELClassifier classifier = new WEASELClassifier();
+                classifier.fit(train_cv[i].truncateTo(tSteps[t]).toWEASEL());
+                Predictions probs = classifier.predictProbabilities(test_cv[i].truncateTo(tSteps[t]).toWEASEL());
                 
-                for(int k = 0; k < probs.length; k++) {
-                    ProbabilityInstance instance = newProbabilityInstance(probs[k], slaver_testdata[i][t].get(k), t);
+                for(int k = 0; k < probs.probabilities.length; k++) {
+                    ProbabilityInstance instance = newProbabilityInstance(probs, k, test_cv[i].truncateTo(tSteps[t]).get(k), t);
                     probs_infor.getTrainGroup(t).add(instance);
                 }
                 
@@ -116,11 +104,12 @@ public class ProbabilityTrainer_General_Memory {
     
     private void trainMasterClassifers() {
         for(int t = 0; t < nClassifiers; t++) {
-            master_classifiers[t].buildClassifier(master_traindata[t]);
+            WEASELClassifier classifier = new WEASELClassifier();
+            classifier.fit(train_data.truncateTo(tSteps[t]).toWEASEL());
             
-            ProbabilityResult[] probs = master_classifiers[t].probabilityForInstance(master_testdata[t]);
-            for(int k = 0; k < probs.length; k++) {
-                ProbabilityInstance instance = newProbabilityInstance(probs[k], master_testdata[t].get(k), t);
+            Predictions probs = classifier.predictProbabilities(test_data.truncateTo(tSteps[t]).toWEASEL());
+            for(int k = 0; k < probs.probabilities.length; k++) {
+                ProbabilityInstance instance = newProbabilityInstance(probs, k, test_data.truncateTo(tSteps[t]).get(k), t);
                 probs_infor.getTestGroup(t).add(instance);
             }
             System.out.printf("master %02d\r", t+1);
@@ -164,6 +153,23 @@ public class ProbabilityTrainer_General_Memory {
         }
         return instance;
     }
+
+    private ProbabilityInstance newProbabilityInstance(Predictions result, int idx, TimeSeriesInstance ts, int groupID) 
+    {
+        ProbabilityInstance instance = new ProbabilityInstance();
+        instance.groupIndex = groupID;
+        instance.label = ts.getLabel();
+        instance.index = ts.getIndex();
+        instance.currentLength = ts.length();
+        instance.fullLength = ts.getFullLength();
+        instance.probs = new double[train_data.labelset.length];
+        for(int i = 0; i < result.realLabels.length; i++) {
+            double tmp_label = result.realLabels[i];
+            int tmp_index = Arrays.binarySearch(train_data.labelset, tmp_label);
+            instance.probs[tmp_index] = result.probabilities[idx][i];
+        }
+        return instance;
+    }
     
     private void writeToFile_Slaver(String dir) {
         //train file
@@ -180,7 +186,7 @@ public class ProbabilityTrainer_General_Memory {
         }
     }
     
-    private void writeCSV(ProbabilityGroup group, String file){
+    private void writeCSV(ArrayList<ProbabilityInstance> group, String file){
         try {
             Writer writer = new FileWriter(file);  
             CSVWriter csvWriter = new CSVWriter(writer); 
@@ -204,5 +210,59 @@ public class ProbabilityTrainer_General_Memory {
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    public ProbabilityInformation asProbabilityInformation() {
+        ProbabilityInformation infor = new ProbabilityInformation();
+        int probs_index = 4;
+        double probSum = 0.0;
+        for(int i = 0; i < nClassifiers; i++) {
+            ArrayList<ProbabilityInstance> group = probs_infor.getTrainGroup(i);
+
+            if (i == 0) {
+                infor.trainLabels = new double[group.size()];
+                infor.trainLength = new int[group.size()];
+                infor.trainStepLength = new int[group.size()][nClassifiers];
+                infor.trainProbs = new double[group.size()][nClassifiers][group.get(0).probs.length];
+            }
+
+            int j = 0;
+            for(ProbabilityInstance ins : group) {
+                infor.trainLabels[j] = ins.label;
+                infor.trainLength[j] = ins.fullLength;
+                infor.trainStepLength[j][i] = ins.currentLength;
+                infor.trainProbs[j][i] = ins.probs.clone();
+                for(double p : ins.probs)
+                    probSum += p * p;
+                j++;
+            }
+        }
+        System.out.printf("probs train: %10.3f\n", probSum);
+        probSum = 0;
+
+        for(int i = 0; i < nClassifiers; i++) {
+            ArrayList<ProbabilityInstance> group = probs_infor.getTestGroup(i);
+
+            if (i == 0) {
+                infor.testLabels = new double[group.size()];
+                infor.testLength = new int[group.size()];
+                infor.testStepLength = new int[group.size()][nClassifiers];
+                infor.testProbs = new double[group.size()][nClassifiers][group.get(0).probs.length];
+            }
+
+            int j = 0;
+            for(ProbabilityInstance ins : group) {
+                infor.testLabels[j] = ins.label;
+                infor.testLength[j] = ins.fullLength;
+                infor.testStepLength[j][i] = ins.currentLength;
+                infor.testProbs[j][i] = ins.probs.clone();
+                for(double p : ins.probs)
+                    probSum += p * p;
+                j++;
+            }
+        }
+        System.out.printf("probs test:  %10.3f\n\n", probSum);
+        infor.postprocess();
+        return infor;
     }
 }

@@ -1,20 +1,19 @@
-// Copyright (c) 2016 - Patrick Sch盲fer (patrick.schaefer@hu-berlin.de)
+// Copyright (c) 2016 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
 package Classifiers.sfa.transformation;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.carrotsearch.hppc.IntIntHashMap;
-
 import Classifiers.sfa.classification.Classifier.Words;
+import Classifiers.sfa.classification.ParallelFor;
 import Classifiers.sfa.timeseries.TimeSeries;
 import Classifiers.sfa.transformation.SFA.HistogramType;
-import Utilities.ParallelFor;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The Bag-of-SFA-Symbols boss as published in
- * Sch盲fer, P.: The boss is concerned with time series classification
- * in the presence of noise. DMKD 29(6) (2015) 1505鈥�1530
+ * Schäfer, P.: The boss is concerned with time series classification
+ * in the presence of noise. DMKD 29(6) (2015) 1505–1530
  *
  * @author bzcschae
  */

@@ -7,12 +7,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.carrotsearch.hppc.cursors.IntIntCursor;
-
 import Classifiers.sfa.timeseries.TimeSeries;
 import Classifiers.sfa.transformation.BOSS;
 import Classifiers.sfa.transformation.BOSS.BagOfPattern;
-import Utilities.ParallelFor;
+
+import com.carrotsearch.hppc.cursors.IntIntCursor;
 
 /**
  * The Bag-of-SFA-Symbols Ensemble Classifier as published in

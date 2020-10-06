@@ -34,12 +34,7 @@ public class TimeSeriesInstance {
 		return this.data.length;	
 	}
 	
-	public TimeSeriesInstance clone(){
-//		TimeSeriesInstance ts = new TimeSeriesInstance();
-//		ts.label = this.label;
-//		ts.data = new double[length()];
-//		ts.data = this.data.clone();
-//		return ts;
+	public TimeSeriesInstance clone() {
 		return new TimeSeriesInstance(this.data, this.label, this.m_index, this.m_fullLength);
 	}
 	
@@ -119,56 +114,6 @@ public class TimeSeriesInstance {
 	{
 		return new TimeSeries(Arrays.copyOfRange(data, 0, data.length), label);
 	}
-	
-	public TimeSeriesInstance paa(int len) 
-	{
-        if (len >= data.length) 
-            return this.clone();
-        
-        double[] intervals = new double[len];
-
-        //counters to keep track of progress towards completion of a frame
-        //potential for data.length % intervals != 0, therefore non-integer
-        //interval length, so weight the boundary data points to effect both 
-        //intervals it touches
-        int currentFrame = 0;
-        double realFrameLength = (double)data.length / len;
-        double frameSum = 0.0, currentFrameSize = 0.0, remaining = 0.0;
-        
-        //PAA conversion
-        for (int i = 0; i < data.length; ++i) 
-        {
-            remaining = realFrameLength - currentFrameSize;
-            if (remaining > 1.0) 
-            {
-                //just use whole data point 
-                frameSum += data[i];
-                currentFrameSize += 1;
-            } else 
-            {
-                //use some portion of data point as needed
-                frameSum += remaining * data[i]; 
-                currentFrameSize += remaining;
-            }   
-            
-            if (currentFrameSize == realFrameLength) 
-            { //if frame complete
-                intervals[currentFrame++] = frameSum / realFrameLength; //store mean
-
-                //before going onto next datapoint, 'use up' any of the current one on the new interval
-                //that might not have been used for interval just completed
-                frameSum = (1-remaining) * data[i];
-                currentFrameSize = (1-remaining);
-            }
-        }
-        
-        // i.e. if the last interval didn't write because of double imprecision
-        if (currentFrame == len-1) { //if frame complete
-            intervals[currentFrame++] = frameSum / realFrameLength;
-        }
-        
-        return new TimeSeriesInstance(intervals, label, m_index, m_fullLength);
-    }
 	
 	public boolean isNormed() 
 	{
