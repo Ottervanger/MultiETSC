@@ -2,16 +2,12 @@
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
 package Classifiers.sfa.transformation;
 
-import java.util.Set;
-
 import com.carrotsearch.hppc.IntFloatHashMap;
 import com.carrotsearch.hppc.IntShortHashMap;
 import com.carrotsearch.hppc.ObjectObjectHashMap;
-import com.carrotsearch.hppc.cursors.FloatCursor;
-import com.carrotsearch.hppc.cursors.IntFloatCursor;
-import com.carrotsearch.hppc.cursors.IntIntCursor;
-import com.carrotsearch.hppc.cursors.ObjectCursor;
-import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import com.carrotsearch.hppc.cursors.*;
+
+import java.util.Set;
 
 /**
  * The Bag-of-SFA-Symbols in Vector Space boss as published in

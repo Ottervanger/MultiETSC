@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import Classifiers.sfa.timeseries.TimeSeries;
-import Utilities.ParallelFor;
 
 /**
  * The Shotgun Classifier as published in:

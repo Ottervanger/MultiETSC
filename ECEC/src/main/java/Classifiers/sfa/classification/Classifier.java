@@ -20,7 +20,6 @@ import libsvm.*;
 import Classifiers.sfa.timeseries.MultiVariateTimeSeries;
 import Classifiers.sfa.timeseries.TimeSeries;
 import Classifiers.sfa.transformation.MFT;
-import Utilities.ParallelFor;
 
 import com.carrotsearch.hppc.FloatContainer;
 import com.carrotsearch.hppc.IntArrayDeque;

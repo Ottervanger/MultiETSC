@@ -1,6 +1,6 @@
 // Copyright (c) 2016 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package Utilities;
+package Classifiers.sfa.classification;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ParallelFor {
 
-  public static int nThreads = Math.min(Runtime.getRuntime().availableProcessors(), 16);
+  public static int nThreads = Math.min(Runtime.getRuntime().availableProcessors(), 4);
   private static ExecutorService executor = Executors.newFixedThreadPool(nThreads);
 
   public interface Each {

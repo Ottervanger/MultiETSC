@@ -9,23 +9,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import com.carrotsearch.hppc.IntArrayList;
-import com.carrotsearch.hppc.cursors.IntCursor;
 
 import Classifiers.sfa.timeseries.TimeSeries;
 import Classifiers.sfa.transformation.SFA;
 import Classifiers.sfa.transformation.SFA.HistogramType;
+
+import com.carrotsearch.hppc.IntArrayList;
+import com.carrotsearch.hppc.cursors.IntCursor;
 
 /**
  * Implementation of the SFATrie for time series subsequence-search
@@ -136,7 +129,7 @@ public class SFATrie implements Serializable {
     }
 
     compress(true);
-    printStats();
+    //printStats();
   }
 
   /**
@@ -165,7 +158,7 @@ public class SFATrie implements Serializable {
     }
 
     compress(true);
-    printStats();
+    //printStats();
   }
 
   /**
@@ -187,7 +180,7 @@ public class SFATrie implements Serializable {
     }
 
     compress(false);
-    printStats();
+    //printStats();
   }
 
   /**

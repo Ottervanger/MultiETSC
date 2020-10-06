@@ -10,7 +10,7 @@ public class Main_Classifier {
         long startTime = System.currentTimeMillis();
 
         String dir = "./out/probability/";
-        String dataset = "ECG200";
+        String dataset = "CBF";
 
         String data_dir = dir + dataset;
         DataLoader loader = new DataLoader();
