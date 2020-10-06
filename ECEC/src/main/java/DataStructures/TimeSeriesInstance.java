@@ -90,18 +90,6 @@ public class TimeSeriesInstance {
 		return new TimeSeriesInstance(instance, label, m_index, this.m_fullLength);
 	}
 	
-	public TimeSeriesInstance truncateBigTo(int length)
-	{
-		double[] instance = new double[length];
-		System.arraycopy(data, 0, instance, 0, data.length);
-		
-		for(int i = data.length; i < length; i++)
-		{
-			instance[i] = 0;
-		}
-		return new TimeSeriesInstance(instance, label, m_index, this.m_fullLength);
-	}
-	
 	public FeatureNode[] toLinearNode(){
 		FeatureNode[] node = new FeatureNode[data.length];
 		for(int i = 0; i < data.length; i++){

@@ -43,17 +43,7 @@ dependencies {
 }
 
 // Define the main class for the application
-mainClassName = 'paper.Main_Classifier'
-
-task classJar(type: Jar) {
-    manifest { attributes 'Main-Class': 'paper.Main_Classifier' }
-    baseName = 'Classifier'
-    from { 
-        configurations.testRuntime.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    from sourceSets.test.output
-    with jar
-}
+mainClassName = 'paper.Main_TrainProbability'
 
 task probJar(type: Jar) {
     manifest { attributes 'Main-Class': 'paper.Main_TrainProbability' }
@@ -65,4 +55,4 @@ task probJar(type: Jar) {
     with jar
 }
 
-tasks.build.dependsOn(['classJar', 'probJar'])
+tasks.build.dependsOn(['probJar'])
