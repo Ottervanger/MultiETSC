@@ -134,15 +134,16 @@ public class TEASERClassifier extends Classifier {
 
   }
 
+  // Fisher–Yates shuffle
   private void shuffle(TimeSeries[] ts) {
     Random r = new Random(seed);
-    for (int i = 0; i < ts.length-1; i++) {
-      int si = r.nextInt(ts.length);
-      if (si <= i)
-        continue;
-      TimeSeries tmp = ts[i];
-      ts[i] = ts[si];
-      ts[si] = tmp;
+    for (int i = 0; i < ts.length - 1; i++) {
+      int si = i + r.nextInt(ts.length - i);
+      if (si > i) {
+        TimeSeries tmp = ts[i];
+        ts[i] = ts[si];
+        ts[si] = tmp;
+      }
     }
   }
 
