@@ -68,14 +68,6 @@ public class TimeSeriesSet {
         return new TimeSeriesSet(data);
     }
     
-    public TimeSeriesSet truncateBigTo(int length){
-        TimeSeriesInstance[] data = new TimeSeriesInstance[dataset.length];
-        for(int i = 0; i < dataset.length; i++){
-            data[i] = dataset[i].truncateBigTo(length);
-        }
-        return new TimeSeriesSet(data);
-    }
-    
     public double[] getAllLabels() {
         double[] labels = new double[dataset.length];
         for(int i = 0; i < dataset.length; i++) {
@@ -181,19 +173,19 @@ public class TimeSeriesSet {
         
     }
     
-    public TimeSeries[] toWEASEL()
-    {
+    public TimeSeries[] toWEASEL() {
         TimeSeries.APPLY_Z_NORM = false;
         ArrayList<TimeSeries> samples = new ArrayList<>();
-        
         for(int i = 0; i < dataset.length; i++)
-        {
-            TimeSeries ts = dataset[i].toWEASEL();
-            // ts.norm();
-            samples.add(ts);
-        }
-        
-        
+            samples.add(dataset[i].toWEASEL());
+        return samples.toArray(new TimeSeries[]{});
+    }
+
+    public TimeSeries[] toWEASEL(int len) {
+        TimeSeries.APPLY_Z_NORM = false;
+        ArrayList<TimeSeries> samples = new ArrayList<>();
+        for(int i = 0; i < dataset.length; i++)
+            samples.add(dataset[i].truncateTo(len).toWEASEL());
         return samples.toArray(new TimeSeries[]{});
     }
     

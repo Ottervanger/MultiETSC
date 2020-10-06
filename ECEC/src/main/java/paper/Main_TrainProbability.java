@@ -29,10 +29,8 @@ public class Main_TrainProbability {
         TimeSeriesSet test_data = DataLoader.loadSourceData(test_file);
         
         ProbabilityTrainer_General_Memory classifer = new ProbabilityTrainer_General_Memory();
-        classifer.process(train_data, test_data, result_dir2);
-
         EarlyClassifier_ProbThreshold classifier2 = new EarlyClassifier_ProbThreshold();
-        EarlyClassifierResult result = classifier2.predict(classifer.asProbabilityInformation());
+        EarlyClassifierResult result = classifier2.predict(classifer.process(train_data, test_data, result_dir2));
 
         double elapsedTime = (System.currentTimeMillis() - startTime) / 1000.;
         System.out.printf(
