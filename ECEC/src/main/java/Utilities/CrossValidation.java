@@ -11,7 +11,6 @@ public class CrossValidation {
 			if(false == uniqueLabels.contains(label))
 				uniqueLabels.add(label);
 
-		//Collections.sort(uniqueLabels);
 		uniqueLabels.trimToSize();
 		
 		int[] index = new int[labels.length];
