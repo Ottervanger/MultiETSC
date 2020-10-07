@@ -17,7 +17,6 @@ import de.bwaldvogel.liblinear.SolverType;
 import DataStructures.ProbabilityInformation;
 import DataStructures.ProbabilityInformationVary;
 import DataStructures.ProbabilityInstance;
-import DataStructures.ProbabilityResult;
 
 import Utilities.CrossValidation;
 
