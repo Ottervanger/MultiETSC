@@ -3,8 +3,8 @@ package paper;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import com.opencsv.CSVWriter;
 
@@ -19,9 +19,6 @@ import DataStructures.ProbabilityInformationVary;
 import DataStructures.ProbabilityInstance;
 import DataStructures.ProbabilityResult;
 
-import DataStructures.TimeSeriesInstance;
-import DataStructures.TimeSeriesSet;
-
 import Utilities.CrossValidation;
 
 public class ProbabilityTrainer_General_Memory {
@@ -29,6 +26,8 @@ public class ProbabilityTrainer_General_Memory {
     public static int nClassifiers = 20;
     public static int nFolds = 5;
     public static long seed = 0;
+
+    private HashMap<Double, Integer> labelIdx;
     
     public ProbabilityTrainer_General_Memory() {
         // global WEASEL settings
@@ -36,19 +35,22 @@ public class ProbabilityTrainer_General_Memory {
         WEASELClassifier.solverType = SolverType.L2R_LR;
     }
     
-    public ProbabilityInformation process(TimeSeriesSet train_data, TimeSeriesSet test_data, String result_dir) {
-        train_data.shuffle(seed);
-        double[] train_labels = getLabels(train_data.toWEASEL());
+    public ProbabilityInformation process(TimeSeries[] dataTrain, TimeSeries[] dataTest) {
+        shuffle(dataTrain, seed);
+        double[] train_labels = getLabels(dataTrain);
         
         ArrayList<ArrayList<Integer>> cv = CrossValidation.generateCV(train_labels, nFolds);
 
+        subset(dataTrain, cv.get(0));
+
         int minLen = 3;
-        int maxLen = train_data.getMaxLength();
-        int[] tSteps = generateStepData(minLen, maxLen);
+        int maxLen = 250;
+        int[] tSteps = generateStepData(minLen, getMax(dataTrain, maxLen));
+        setLabelIdx(getLabelSet(dataTrain));
 
         ProbabilityInformationVary pInfoVar = new ProbabilityInformationVary(nClassifiers);
-        trainSlaverClassifiers(train_data, cv, tSteps, pInfoVar);
-        trainMasterClassifers(train_data, test_data, tSteps, pInfoVar);
+        trainSlaverClassifiers(dataTrain, cv, tSteps, pInfoVar);
+        trainMasterClassifers(dataTrain, dataTest, tSteps, pInfoVar);
         return asProbabilityInformation(pInfoVar);
     }
 
@@ -58,6 +60,29 @@ public class ProbabilityTrainer_General_Memory {
         for (TimeSeries d : data)
             labels[i++] = d.getLabel();
         return labels;
+    }
+
+    private double[] getLabelSet(TimeSeries[] data) {
+        ArrayList<Double> labels = new ArrayList<>();
+        for (TimeSeries d : data)
+            if(labels.indexOf(d.getLabel()) < 0)
+                labels.add(d.getLabel());
+        Collections.sort(labels);
+        return labels.stream().mapToDouble(Double::doubleValue).toArray();
+    }
+
+    private int getMax(TimeSeries[] samples, int maxWindowSize) {
+        int max = 0;
+        for (TimeSeries ts : samples)
+            max = Math.max(ts.getLength(), max);
+        return Math.min(maxWindowSize, max);
+    }
+
+    private TimeSeries[] truncate(TimeSeries[] samples, int len) {
+        ArrayList<TimeSeries> li = new ArrayList<TimeSeries>();
+        for (TimeSeries ts : samples)
+            li.add(ts.getSubsequence(0, len));
+        return li.toArray(new TimeSeries[]{});
     }
     
     private int[] generateStepData(int minLen, int maxLen) {
@@ -71,20 +96,43 @@ public class ProbabilityTrainer_General_Memory {
         }
         return tSteps;
     }
+
+    // Fisher–Yates shuffle
+    public void shuffle(TimeSeries[] samples, long seed) {
+        Random r = new Random(seed);
+        for (int i = 0; i < samples.length - 1; i++) {
+            int si = i + r.nextInt(samples.length - i);
+            if (si > i) {
+                TimeSeries tmp = samples[i];
+                samples[i] = samples[si];
+                samples[si] = tmp;
+            }
+        }
+    }
+
+    private void setLabelIdx(double[] labelset) {
+        labelIdx = new HashMap<Double, Integer>();
+        for (int i = 0; i < labelset.length; ++i)
+            labelIdx.put(labelset[i], i);
+    }
+
+    private TimeSeries[] subset(TimeSeries[] samples, ArrayList<Integer> index){
+        return index.stream().map(idx -> samples[idx]).toArray(TimeSeries[]::new);
+    }
     
-    private void trainSlaverClassifiers(TimeSeriesSet train_data, ArrayList<ArrayList<Integer>> cv, int[] tSteps, ProbabilityInformationVary pInfoVar) {
-        TimeSeriesSet[][] cv_data = divideMultiDataset(train_data, cv);
-        TimeSeriesSet[] train_cv = cv_data[0];
-        TimeSeriesSet[] test_cv = cv_data[1];
+    private void trainSlaverClassifiers(TimeSeries[] dataTrain, ArrayList<ArrayList<Integer>> cv, int[] tSteps, ProbabilityInformationVary pInfoVar) {
+        TimeSeries[][][] cv_data = makeCVSplit(dataTrain, cv);
+        TimeSeries[][] train_cv = cv_data[0];
+        TimeSeries[][] test_cv = cv_data[1];
 
         for(int i = 0; i < nFolds; i++) {
             for(int t = 0; t < nClassifiers; t++) {
                 WEASELClassifier classifier = new WEASELClassifier();
-                classifier.fit(train_cv[i].toWEASEL(tSteps[t]));
-                Predictions probs = classifier.predictProbabilities(test_cv[i].toWEASEL(tSteps[t]));
+                classifier.fit(truncate(train_cv[i], tSteps[t]));
+                Predictions probs = classifier.predictProbabilities(truncate(test_cv[i], tSteps[t]));
                 
                 for(int k = 0; k < probs.probabilities.length; k++) {
-                    ProbabilityInstance instance = newProbabilityInstance(probs, k, test_cv[i].get(k).truncateTo(tSteps[t]), t, train_data.labelset);
+                    ProbabilityInstance instance = newProbabilityInstance(probs, k, tSteps[t], test_cv[i][k].getLength(), test_cv[i][k].getLabel());
                     pInfoVar.getTrainGroup(t).add(instance);
                 }
                 
@@ -94,14 +142,14 @@ public class ProbabilityTrainer_General_Memory {
         System.out.printf("\n");
     }
     
-    private void trainMasterClassifers(TimeSeriesSet train_data, TimeSeriesSet test_data, int[] tSteps, ProbabilityInformationVary pInfoVar) {
+    private void trainMasterClassifers(TimeSeries[] dataTrain, TimeSeries[] dataTest, int[] tSteps, ProbabilityInformationVary pInfoVar) {
         for(int t = 0; t < nClassifiers; t++) {
             WEASELClassifier classifier = new WEASELClassifier();
-            classifier.fit(train_data.toWEASEL(tSteps[t]));
+            classifier.fit(truncate(dataTrain, tSteps[t]));
             
-            Predictions probs = classifier.predictProbabilities(test_data.toWEASEL(tSteps[t]));
+            Predictions probs = classifier.predictProbabilities(truncate(dataTest, tSteps[t]));
             for(int k = 0; k < probs.probabilities.length; k++) {
-                ProbabilityInstance instance = newProbabilityInstance(probs, k, test_data.get(k).truncateTo(tSteps[t]), t, train_data.labelset);
+                ProbabilityInstance instance = newProbabilityInstance(probs, k, tSteps[t], dataTest[k].getLength(), dataTest[k].getLabel());
                 pInfoVar.getTestGroup(t).add(instance);
             }
             System.out.printf("master %02d\r", t+1);
@@ -109,44 +157,37 @@ public class ProbabilityTrainer_General_Memory {
         System.out.printf("\n");
     }
 
-    private TimeSeriesSet[][] divideMultiDataset(TimeSeriesSet data, ArrayList<ArrayList<Integer>> cv) {
-        TimeSeriesSet[] train_cv = new TimeSeriesSet[nFolds];
-        TimeSeriesSet[] test_cv = new TimeSeriesSet[nFolds];
+    private TimeSeries[][][] makeCVSplit(TimeSeries[] data, ArrayList<ArrayList<Integer>> cv) {
+        TimeSeries[][] train_cv = new TimeSeries[cv.size()][];
+        TimeSeries[][] test_cv = new TimeSeries[cv.size()][];
 
         if (cv.size() == 1) {
-            train_cv[0] = data.subset(cv.get(0));
-            test_cv[0] = data.subset(cv.get(0));
-            return new TimeSeriesSet[][]{train_cv, test_cv};
+            train_cv[0] = subset(data, cv.get(0));
+            test_cv[0] = subset(data, cv.get(0));
+            return new TimeSeries[][][]{train_cv, test_cv};
         }
         
         for(int i = 0; i < cv.size(); i++){
             ArrayList<Integer> testIndex = cv.get(i);
             ArrayList<Integer> tranIndex = new ArrayList<Integer>();
-            for(int j = 0; j < cv.size(); j++){
-                if(i == j)
-                    continue;
-                tranIndex.addAll(cv.get(j));
-            }
-            train_cv[i] = data.subset(tranIndex);
-            test_cv[i] = data.subset(testIndex);
+            for(int j = 0; j < cv.size(); j++)
+                if(i != j)
+                    tranIndex.addAll(cv.get(j));
+            train_cv[i] = subset(data, tranIndex);
+            test_cv[i] = subset(data, testIndex);
         }
-        return new TimeSeriesSet[][]{train_cv, test_cv};
+        return new TimeSeries[][][]{train_cv, test_cv};
     }
 
-    private ProbabilityInstance newProbabilityInstance(Predictions result, int idx, TimeSeriesInstance ts, int groupID, double[] labelset) {
-        ProbabilityInstance instance = new ProbabilityInstance();
-        instance.groupIndex = groupID;
-        instance.label = ts.getLabel();
-        instance.index = ts.getIndex();
-        instance.currentLength = ts.length();
-        instance.fullLength = ts.getFullLength();
-        instance.probs = new double[labelset.length];
-        for(int i = 0; i < result.realLabels.length; i++) {
-            double tmp_label = result.realLabels[i];
-            int tmp_index = Arrays.binarySearch(labelset, tmp_label);
-            instance.probs[tmp_index] = result.probabilities[idx][i];
-        }
-        return instance;
+    private ProbabilityInstance newProbabilityInstance(Predictions result, int idx, int currentLength, int fullLength, double label) {
+        ProbabilityInstance ins = new ProbabilityInstance();
+        ins.currentLength = currentLength;
+        ins.fullLength = fullLength;
+        ins.label = label;
+        ins.probs = new double[result.realLabels.length];
+        for(int i = 0; i < result.realLabels.length; i++)
+            ins.probs[labelIdx.get(Double.valueOf(result.realLabels[i]))] = result.probabilities[idx][i];
+        return ins;
     }
     
     private ProbabilityInformation asProbabilityInformation(ProbabilityInformationVary pInfoVar) {
