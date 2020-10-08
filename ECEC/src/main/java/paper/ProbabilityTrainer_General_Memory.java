@@ -55,7 +55,8 @@ public class ProbabilityTrainer_General_Memory {
         int minLen = 3;
         int maxLen = 250;
         int[] tSteps = generateStepData(minLen, getMax(dataTrain, maxLen));
-        setLabelIdx(getLabelSet(dataTrain));
+        double[] labelset = getLabelSet(dataTrain);
+        setLabelIdx(labelset);
 
         ArrayList<ProbabilityInstance>[] trainProbs = new ArrayList[nClassifiers];
         ArrayList<ProbabilityInstance>[] testProbs = new ArrayList[nClassifiers];
@@ -65,7 +66,7 @@ public class ProbabilityTrainer_General_Memory {
         }
         trainSlaverClassifiers(dataTrain, cv, tSteps, trainProbs);
         trainMasterClassifers(dataTrain, dataTest, tSteps, testProbs);
-        return asProbabilityInformation(trainProbs, testProbs);
+        return asProbabilityInformation(trainProbs, testProbs, tSteps, labelset);
     }
 
     private double[] getLabels(TimeSeries[] data) {
@@ -105,7 +106,7 @@ public class ProbabilityTrainer_General_Memory {
         for(int i = 0; i < nClassifiers; i++) {
             int length = Math.max(minLen, (i+1)*step);
             if (i == nClassifiers - 1)
-                length = Integer.MAX_VALUE;
+                length = maxLen;
             tSteps[i] = length;
         }
         return tSteps;
@@ -217,58 +218,34 @@ public class ProbabilityTrainer_General_Memory {
         }
         return new TimeSeries[][][]{train_cv, test_cv};
     }
+
+    private void fillElement(ProbabilityInformation.Element el, ArrayList<ProbabilityInstance>[] groups) {
+        el.labels = new double[groups[0].size()];
+        el.length = new int[groups[0].size()];
+        el.probs = new double[groups[0].size()][nClassifiers][];
+        for (int i = 0; i < nClassifiers; i++) {
+            ArrayList<ProbabilityInstance> group = groups[i];
+            int j = 0;
+            for(ProbabilityInstance ins : group) {
+                el.labels[j] = ins.label;
+                el.length[j] = ins.fullLength;
+                el.probs[j][i] = ins.probs.clone();
+                j++;
+            }
+        }
+    }
     
-    private ProbabilityInformation asProbabilityInformation(ArrayList<ProbabilityInstance>[] trainProbs, ArrayList<ProbabilityInstance>[] testProbs) {
+    private ProbabilityInformation asProbabilityInformation(
+            ArrayList<ProbabilityInstance>[] trainProbs,
+            ArrayList<ProbabilityInstance>[] testProbs,
+            int[] tSteps,
+            double[] labelset) {
         ProbabilityInformation infor = new ProbabilityInformation();
         int probs_index = 4;
-        double probSum = 0.0;
-        for(int i = 0; i < nClassifiers; i++) {
-            ArrayList<ProbabilityInstance> group = trainProbs[i];
-
-            if (i == 0) {
-                infor.trainLabels = new double[group.size()];
-                infor.trainLength = new int[group.size()];
-                infor.trainStepLength = new int[group.size()][nClassifiers];
-                infor.trainProbs = new double[group.size()][nClassifiers][group.get(0).probs.length];
-            }
-
-            int j = 0;
-            for(ProbabilityInstance ins : group) {
-                infor.trainLabels[j] = ins.label;
-                infor.trainLength[j] = ins.fullLength;
-                infor.trainStepLength[j][i] = ins.currentLength;
-                infor.trainProbs[j][i] = ins.probs.clone();
-                for(double p : ins.probs)
-                    probSum += p * p;
-                j++;
-            }
-        }
-        System.out.printf("probs train: %10.3f\n", probSum);
-        probSum = 0;
-
-        for(int i = 0; i < nClassifiers; i++) {
-            ArrayList<ProbabilityInstance> group = testProbs[i];
-
-            if (i == 0) {
-                infor.testLabels = new double[group.size()];
-                infor.testLength = new int[group.size()];
-                infor.testStepLength = new int[group.size()][nClassifiers];
-                infor.testProbs = new double[group.size()][nClassifiers][group.get(0).probs.length];
-            }
-
-            int j = 0;
-            for(ProbabilityInstance ins : group) {
-                infor.testLabels[j] = ins.label;
-                infor.testLength[j] = ins.fullLength;
-                infor.testStepLength[j][i] = ins.currentLength;
-                infor.testProbs[j][i] = ins.probs.clone();
-                for(double p : ins.probs)
-                    probSum += p * p;
-                j++;
-            }
-        }
-        System.out.printf("probs test:  %10.3f\n\n", probSum);
-        infor.postprocess();
+        infor.tSteps = tSteps.clone();
+        fillElement(infor.train, trainProbs);
+        fillElement(infor.test, testProbs);
+        infor.labelset = labelset;
         return infor;
     }
 }

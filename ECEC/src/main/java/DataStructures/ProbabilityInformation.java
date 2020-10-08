@@ -1,30 +1,25 @@
 package DataStructures;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import java.io.*;
 
 public class ProbabilityInformation implements Serializable {
+
+	public class Element implements Serializable {
+		public int[] length;
+		public double[] labels;
+		public double[][][] probs;
+	}
+
+	public int[] tSteps;
+	public double[] labelset;
 	
-	public int[] trainLength;
-	public int[] testLength;
+	public Element train;
+	public Element test;
 	
-	public int[][] trainStepLength;
-	public int[][] testStepLength;
-	
-	public double[][][] trainProbs;
-	public double[][][] testProbs;
-	
-	public double[] trainLabels;
-	public double[] testLabels;
-	
-	public double[] labelTypes;
-	
-	public int trainNum;
-	public int testNum;
-	public int stepNum;
-	public int labelNum;
+	public ProbabilityInformation() {
+		train = new Element();
+		test = new Element();
+	}
 
 	public static ProbabilityInformation fromFile(String filename) throws IOException {
 		try {
@@ -56,30 +51,5 @@ public class ProbabilityInformation implements Serializable {
 		} catch (IOException e) {
 			System.out.println("Error initializing stream");
 		}
-	}
-	
-	public void postprocess() {
-		ArrayList<Double> labels = new ArrayList<>();
-		for(int i = 0; i < trainLabels.length; i++){
-			double label = trainLabels[i];
-			if(labels.indexOf(label) < 0){
-				labels.add(label);
-			}
-		}
-		Collections.sort(labels);
-
-		labelTypes = new double[labels.size()];
-		for(int i = 0; i < labels.size(); i++){
-			labelTypes[i] = labels.get(i).doubleValue();
-		}
-		
-		trainNum = trainLabels.length;
-		testNum = testLabels.length;
-		stepNum = trainProbs[0].length;
-		labelNum = labelTypes.length;
-	}
-	
-	public double[] labels() {
-		return labelTypes;
 	}
 }
