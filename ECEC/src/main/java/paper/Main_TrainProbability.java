@@ -7,7 +7,6 @@ import Classifiers.sfa.classification.ParallelFor;
 import Classifiers.sfa.timeseries.TimeSeries;
 import Classifiers.sfa.timeseries.TimeSeriesLoader;
 
-import DataStructures.EarlyClassifierResult;
 import DataStructures.ProbabilityInformation;
 
 public class Main_TrainProbability {
@@ -33,7 +32,7 @@ public class Main_TrainProbability {
         }
 
         EarlyClassifier_ProbThreshold classifier2 = new EarlyClassifier_ProbThreshold();
-        EarlyClassifierResult result = classifier2.predict(probInfo);
+        EarlyClassifier_ProbThreshold.Result result = classifier2.predict(probInfo);
 
         double elapsedTime = (System.currentTimeMillis() - startTime) / 1000.;
         System.out.printf(
