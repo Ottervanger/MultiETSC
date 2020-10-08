@@ -3,11 +3,9 @@ package DataStructures;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ProbabilityInformation{
+import java.io.*;
 
-	public ProbabilityInformation(){
-		
-	}
+public class ProbabilityInformation implements Serializable {
 	
 	public int[] trainLength;
 	public int[] testLength;
@@ -27,6 +25,38 @@ public class ProbabilityInformation{
 	public int testNum;
 	public int stepNum;
 	public int labelNum;
+
+	public static ProbabilityInformation fromFile(String filename) throws IOException {
+		try {
+			FileInputStream f = new FileInputStream(new File(filename));
+			ObjectInputStream o = new ObjectInputStream(f);
+			ProbabilityInformation pri = (ProbabilityInformation) o.readObject();
+			o.close();
+			f.close();
+			return pri;
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found");
+		} catch (IOException e) {
+			System.out.println("Error initializing stream");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		throw new IOException("Failed to load instance");
+	}
+
+	public void toFile(String filename) {
+		try {
+			FileOutputStream f = new FileOutputStream(new File(filename));
+			ObjectOutputStream o = new ObjectOutputStream(f);
+			o.writeObject(this);
+			o.close();
+			f.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found");
+		} catch (IOException e) {
+			System.out.println("Error initializing stream");
+		}
+	}
 	
 	public void postprocess() {
 		ArrayList<Double> labels = new ArrayList<>();
