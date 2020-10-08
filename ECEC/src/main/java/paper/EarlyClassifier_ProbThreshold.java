@@ -9,7 +9,6 @@ import java.util.Collections;
 import com.carrotsearch.hppc.DoubleArrayList;
 
 import DataStructures.ProbabilityInformation;
-import Utilities.StatisticalUtilities;
 
 public class EarlyClassifier_ProbThreshold {
 
@@ -44,7 +43,7 @@ public class EarlyClassifier_ProbThreshold {
             int[] nCorrect = new int[probs_data.labelNum];
             int[] nPredicted = new int[probs_data.labelNum];
             for(int j = 0; j < probs_data.trainNum; j++) {
-                int max_index = StatisticalUtilities.maxIndex(probs_data.trainProbs[j][i]);
+                int max_index = argmax(probs_data.trainProbs[j][i]);
                 if (probs_data.labelTypes[max_index] == probs_data.trainLabels[j]) {
                     nCorrect[max_index]++;
                 }
@@ -58,11 +57,22 @@ public class EarlyClassifier_ProbThreshold {
 
     private <T extends Comparable<? super T>> ArrayList<T> unique(T[][] a) {
         Set<T> s = new HashSet<>();
-        for (T[] l : a)
+        for (T[] l : a) {
             s.addAll(Arrays.asList(l));
+        }
         ArrayList<T> r = new ArrayList<>(s);
         Collections.sort(r);
         return r;
+    }
+
+    private int argmax(double[] data) {
+        int imax = 0;
+        for(int i = 0; i < data.length; i++) {
+            if(data[i] > data[imax]) {
+                imax = i;
+            }
+        }
+        return imax;
     }
     
     private double trainThreshold(double[][] confid) {
@@ -76,7 +86,7 @@ public class EarlyClassifier_ProbThreshold {
         
         for (int i = 0; i < probs_data.trainNum; i++) {
             for(int j = 0; j < probs_data.trainProbs[i].length; j++) {
-                int max = StatisticalUtilities.maxIndex(probs_data.trainProbs[i][j]);
+                int max = argmax(probs_data.trainProbs[i][j]);
                 predicted_labels[i][j] = max;
                 double mod = 1;
                 for(int k = 0; k <= j; k++) {
@@ -118,7 +128,7 @@ public class EarlyClassifier_ProbThreshold {
             }
             
             double cost = m_ratio * (probs_data.trainNum - success) + (1 - m_ratio) * earliness;
-            if(cost < min) {
+            if (cost < min) {
                 min = cost;
                 best_confidence = threshold;
             }
@@ -152,17 +162,17 @@ public class EarlyClassifier_ProbThreshold {
         RuleResult result = new RuleResult();
         int[] labels = new int[probs.length];
         
-        for(int j = 0; j < probs.length; j++) {
-            int max = StatisticalUtilities.maxIndex(probs[j]);
+        for (int j = 0; j < probs.length; j++) {
+            int max = argmax(probs[j]);
             labels[j] = max;
             double mod = 1;
-            for(int k = 0; k <= j; k++) {
+            for (int k = 0; k <= j; k++) {
                 if (labels[k] == max) {
                     mod = mod * confid[k][max];
                 }
             }
             
-            if(1 - mod >= threshold || j == probs.length - 1) {
+            if (1 - mod >= threshold || j == probs.length - 1) {
                 result.step = (j + 1);
                 result.label = max;
                 break;
