@@ -2,7 +2,6 @@ package paper;
 
 import java.io.File;
 
-
 import Classifiers.sfa.classification.ParallelFor;
 import Classifiers.sfa.timeseries.TimeSeries;
 import Classifiers.sfa.timeseries.TimeSeriesLoader;

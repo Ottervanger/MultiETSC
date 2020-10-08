@@ -6,8 +6,6 @@ import java.io.Writer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.opencsv.CSVWriter;
-
 import Classifiers.sfa.classification.Classifier.Predictions;
 import Classifiers.sfa.classification.WEASELClassifier;
 import Classifiers.sfa.timeseries.TimeSeries;
@@ -15,10 +13,7 @@ import Classifiers.sfa.timeseries.TimeSeries;
 import de.bwaldvogel.liblinear.SolverType;
 
 import DataStructures.ProbabilityInformation;
-import DataStructures.ProbabilityInformationVary;
 import DataStructures.ProbabilityInstance;
-
-import Utilities.CrossValidation;
 
 public class ProbabilityTrainer_General_Memory {
     
@@ -38,7 +33,7 @@ public class ProbabilityTrainer_General_Memory {
         shuffle(dataTrain, seed);
         double[] train_labels = getLabels(dataTrain);
         
-        ArrayList<ArrayList<Integer>> cv = CrossValidation.generateCV(train_labels, nFolds);
+        ArrayList<ArrayList<Integer>> cv = generateCV(train_labels, nFolds);
 
         subset(dataTrain, cv.get(0));
 
@@ -47,10 +42,15 @@ public class ProbabilityTrainer_General_Memory {
         int[] tSteps = generateStepData(minLen, getMax(dataTrain, maxLen));
         setLabelIdx(getLabelSet(dataTrain));
 
-        ProbabilityInformationVary pInfoVar = new ProbabilityInformationVary(nClassifiers);
-        trainSlaverClassifiers(dataTrain, cv, tSteps, pInfoVar);
-        trainMasterClassifers(dataTrain, dataTest, tSteps, pInfoVar);
-        return asProbabilityInformation(pInfoVar);
+        ArrayList<ProbabilityInstance>[] trainProbs = new ArrayList[nClassifiers];
+        ArrayList<ProbabilityInstance>[] testProbs = new ArrayList[nClassifiers];
+        for (int i = 0; i < nClassifiers; ++i) {
+            trainProbs[i] = new ArrayList<ProbabilityInstance>();
+            testProbs[i] = new ArrayList<ProbabilityInstance>();
+        }
+        trainSlaverClassifiers(dataTrain, cv, tSteps, trainProbs);
+        trainMasterClassifers(dataTrain, dataTest, tSteps, testProbs);
+        return asProbabilityInformation(trainProbs, testProbs);
     }
 
     private double[] getLabels(TimeSeries[] data) {
@@ -119,7 +119,7 @@ public class ProbabilityTrainer_General_Memory {
         return index.stream().map(idx -> samples[idx]).toArray(TimeSeries[]::new);
     }
     
-    private void trainSlaverClassifiers(TimeSeries[] dataTrain, ArrayList<ArrayList<Integer>> cv, int[] tSteps, ProbabilityInformationVary pInfoVar) {
+    private void trainSlaverClassifiers(TimeSeries[] dataTrain, ArrayList<ArrayList<Integer>> cv, int[] tSteps, ArrayList<ProbabilityInstance>[] trainProbs) {
         TimeSeries[][][] cv_data = makeCVSplit(dataTrain, cv);
         TimeSeries[][] train_cv = cv_data[0];
         TimeSeries[][] test_cv = cv_data[1];
@@ -132,7 +132,7 @@ public class ProbabilityTrainer_General_Memory {
                 
                 for(int k = 0; k < probs.probabilities.length; k++) {
                     ProbabilityInstance instance = newProbabilityInstance(probs, k, tSteps[t], test_cv[i][k].getLength(), test_cv[i][k].getLabel());
-                    pInfoVar.getTrainGroup(t).add(instance);
+                    trainProbs[t].add(instance);
                 }
                 
                 System.out.printf("slaver %02d_%02d\r", i+1, t+1);
@@ -141,7 +141,7 @@ public class ProbabilityTrainer_General_Memory {
         System.out.printf("\n");
     }
     
-    private void trainMasterClassifers(TimeSeries[] dataTrain, TimeSeries[] dataTest, int[] tSteps, ProbabilityInformationVary pInfoVar) {
+    private void trainMasterClassifers(TimeSeries[] dataTrain, TimeSeries[] dataTest, int[] tSteps, ArrayList<ProbabilityInstance>[] testProbs) {
         for(int t = 0; t < nClassifiers; t++) {
             WEASELClassifier classifier = new WEASELClassifier();
             classifier.fit(truncate(dataTrain, tSteps[t]));
@@ -149,11 +149,36 @@ public class ProbabilityTrainer_General_Memory {
             Predictions probs = classifier.predictProbabilities(truncate(dataTest, tSteps[t]));
             for(int k = 0; k < probs.probabilities.length; k++) {
                 ProbabilityInstance instance = newProbabilityInstance(probs, k, tSteps[t], dataTest[k].getLength(), dataTest[k].getLabel());
-                pInfoVar.getTestGroup(t).add(instance);
+                testProbs[t].add(instance);
             }
             System.out.printf("master %02d\r", t+1);
         }
         System.out.printf("\n");
+    }
+
+    private ArrayList<ArrayList<Integer>> generateCV(double[] labels, int fold){
+        ArrayList<Double> uniqueLabels = new ArrayList<>();
+        for(double label : labels)
+            if(!uniqueLabels.contains(label))
+                uniqueLabels.add(label);
+
+        uniqueLabels.trimToSize();
+        
+        int[] index = new int[labels.length];
+        int pos = 0;
+        for(double currentLabel : uniqueLabels)
+            for(int j = 0; j < labels.length; j++)
+                if(labels[j] == currentLabel)
+                    index[pos++] = j;
+        
+        ArrayList<ArrayList<Integer>> cv = new ArrayList<ArrayList<Integer>>(fold);
+        for(int i = 0; i < fold; i++)
+            cv.add(new ArrayList<Integer>());
+        
+        for(int i = 0; i < index.length; i++)
+            cv.get(i % fold).add(index[i]);
+        
+        return cv;
     }
 
     private TimeSeries[][][] makeCVSplit(TimeSeries[] data, ArrayList<ArrayList<Integer>> cv) {
@@ -189,12 +214,12 @@ public class ProbabilityTrainer_General_Memory {
         return ins;
     }
     
-    private ProbabilityInformation asProbabilityInformation(ProbabilityInformationVary pInfoVar) {
+    private ProbabilityInformation asProbabilityInformation(ArrayList<ProbabilityInstance>[] trainProbs, ArrayList<ProbabilityInstance>[] testProbs) {
         ProbabilityInformation infor = new ProbabilityInformation();
         int probs_index = 4;
         double probSum = 0.0;
         for(int i = 0; i < nClassifiers; i++) {
-            ArrayList<ProbabilityInstance> group = pInfoVar.getTrainGroup(i);
+            ArrayList<ProbabilityInstance> group = trainProbs[i];
 
             if (i == 0) {
                 infor.trainLabels = new double[group.size()];
@@ -218,7 +243,7 @@ public class ProbabilityTrainer_General_Memory {
         probSum = 0;
 
         for(int i = 0; i < nClassifiers; i++) {
-            ArrayList<ProbabilityInstance> group = pInfoVar.getTestGroup(i);
+            ArrayList<ProbabilityInstance> group = testProbs[i];
 
             if (i == 0) {
                 infor.testLabels = new double[group.size()];
