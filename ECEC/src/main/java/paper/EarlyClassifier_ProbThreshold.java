@@ -25,26 +25,24 @@ public class EarlyClassifier_ProbThreshold {
     
     private double m_ratio = 0.8;
     
-    private ProbabilityInformation probs_data;
-    
-    public Result predict(ProbabilityInformation data) {
-        this.probs_data = data;
-        double[][] confid = getConfidence();
-        double threshold = trainThreshold(confid);
+    public Result predict(ProbabilityInformation probInfo) {
 
-        Result result = test(confid, threshold); 
+        double[][] confid = getConfidence(probInfo);
+        double threshold = trainThreshold(probInfo, confid);
+
+        Result result = test(probInfo, confid, threshold);
         
         return result;
     }
 
-    private double[][] getConfidence() {
-        double[][] confid = new double[probs_data.stepNum][probs_data.labelNum];
-        for(int i = 0; i < probs_data.stepNum; i++) {
-            int[] nCorrect = new int[probs_data.labelNum];
-            int[] nPredicted = new int[probs_data.labelNum];
-            for(int j = 0; j < probs_data.trainNum; j++) {
-                int max_index = argmax(probs_data.trainProbs[j][i]);
-                if (probs_data.labelTypes[max_index] == probs_data.trainLabels[j]) {
+    private double[][] getConfidence(ProbabilityInformation probInfo) {
+        double[][] confid = new double[probInfo.tSteps.length][probInfo.labelset.length];
+        for(int i = 0; i < probInfo.tSteps.length; i++) {
+            int[] nCorrect = new int[probInfo.labelset.length];
+            int[] nPredicted = new int[probInfo.labelset.length];
+            for(int j = 0; j < probInfo.train.labels.length; j++) {
+                int max_index = argmax(probInfo.train.probs[j][i]);
+                if (probInfo.labelset[max_index] == probInfo.train.labels[j]) {
                     nCorrect[max_index]++;
                 }
                 nPredicted[max_index]++;
@@ -75,18 +73,18 @@ public class EarlyClassifier_ProbThreshold {
         return imax;
     }
     
-    private double trainThreshold(double[][] confid) {
-        int[][] predicted_labels = new int[probs_data.trainNum][probs_data.stepNum];
-        Double[][] confidence = new Double[probs_data.trainNum][probs_data.stepNum];
+    private double trainThreshold(ProbabilityInformation probInfo, double[][] confid) {
+        int[][] predicted_labels = new int[probInfo.train.labels.length][probInfo.tSteps.length];
+        Double[][] confidence = new Double[probInfo.train.labels.length][probInfo.tSteps.length];
         ArrayList<ArrayList<Double>> eachClass_confidence 
-            = new ArrayList<ArrayList<Double>>(probs_data.labelNum);
-        for(int i = 0; i < probs_data.labelNum; i++) {
+            = new ArrayList<ArrayList<Double>>(probInfo.labelset.length);
+        for(int i = 0; i < probInfo.labelset.length; i++) {
             eachClass_confidence.add(new ArrayList<Double>());
         }
         
-        for (int i = 0; i < probs_data.trainNum; i++) {
-            for(int j = 0; j < probs_data.trainProbs[i].length; j++) {
-                int max = argmax(probs_data.trainProbs[i][j]);
+        for (int i = 0; i < probInfo.train.labels.length; i++) {
+            for(int j = 0; j < probInfo.train.probs[i].length; j++) {
+                int max = argmax(probInfo.train.probs[i][j]);
                 predicted_labels[i][j] = max;
                 double mod = 1;
                 for(int k = 0; k <= j; k++) {
@@ -96,7 +94,7 @@ public class EarlyClassifier_ProbThreshold {
                 }
                 confidence[i][j] = 1 - mod;
                 
-                int realIndex = Arrays.binarySearch(probs_data.labelTypes, probs_data.trainLabels[i]);
+                int realIndex = Arrays.binarySearch(probInfo.labelset, probInfo.train.labels[i]);
                 eachClass_confidence.get(realIndex).add(confidence[i][j]);
             }   
         }
@@ -114,12 +112,12 @@ public class EarlyClassifier_ProbThreshold {
             double threshold = middle[i];
             int success = 0;
             double earliness = 0;
-            for(int j = 0; j < probs_data.trainNum; j++) {
-                for(int k = 0; k < probs_data.stepNum; k++) {
-                    if(confidence[j][k] > threshold || k == probs_data.stepNum - 1) {
-                        double ear = Math.min(1.0, ((double) probs_data.trainStepLength[j][k] / probs_data.trainLength[j]));
+            for(int j = 0; j < probInfo.train.labels.length; j++) {
+                for(int k = 0; k < probInfo.tSteps.length; k++) {
+                    if(confidence[j][k] > threshold || k == probInfo.tSteps.length - 1) {
+                        double ear = Math.min(1.0, ((double) probInfo.tSteps[k] / probInfo.train.length[j]));
                         earliness += ear;
-                        if (probs_data.labelTypes[predicted_labels[j][k]] == probs_data.trainLabels[j]) {
+                        if (probInfo.labelset[predicted_labels[j][k]] == probInfo.train.labels[j]) {
                             success++;
                         }
                         break;
@@ -127,7 +125,7 @@ public class EarlyClassifier_ProbThreshold {
                 }
             }
             
-            double cost = m_ratio * (probs_data.trainNum - success) + (1 - m_ratio) * earliness;
+            double cost = m_ratio * (probInfo.train.labels.length - success) + (1 - m_ratio) * earliness;
             if (cost < min) {
                 min = cost;
                 best_confidence = threshold;
@@ -138,16 +136,16 @@ public class EarlyClassifier_ProbThreshold {
         return best_confidence;
     }
     
-    public Result test(double[][] confid, double threshold) {
+    public Result test(ProbabilityInformation probInfo, double[][] confid, double threshold) {
         Result result = new Result();
-        int instanceNum = probs_data.testProbs.length;
+        int instanceNum = probInfo.test.probs.length;
         int accuracyNum = 0;
         double earliness = 0;
         
         for (int i = 0; i < instanceNum; i++) {
-            RuleResult ret = fuseConfid(probs_data.testProbs[i], confid, threshold);
-            accuracyNum += (probs_data.labelTypes[ret.label] == probs_data.testLabels[i] ? 1 : 0);
-            earliness += Math.min(1.0, ((double) probs_data.testStepLength[i][ret.step-1] / probs_data.testLength[i]));     
+            RuleResult ret = fuseConfid(probInfo.test.probs[i], confid, threshold);
+            accuracyNum += (probInfo.labelset[ret.label] == probInfo.test.labels[i] ? 1 : 0);
+            earliness += Math.min(1.0, ((double) probInfo.tSteps[ret.step-1] / probInfo.test.length[i]));     
         }
         
         result.accuracy = (double)accuracyNum /instanceNum;
