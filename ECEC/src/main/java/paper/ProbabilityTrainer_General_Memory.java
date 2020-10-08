@@ -27,7 +27,7 @@ public class ProbabilityTrainer_General_Memory {
         public int fullLength;
         public double label;
         public double[] probs;
-        
+
         public ProbabilityInstance(Predictions result, int idx, int currentLength, int fullLength, double label) {
             this.currentLength = currentLength;
             this.fullLength = fullLength;
