@@ -13,7 +13,6 @@ import Classifiers.sfa.timeseries.TimeSeries;
 import de.bwaldvogel.liblinear.SolverType;
 
 import DataStructures.ProbabilityInformation;
-import DataStructures.ProbabilityInstance;
 
 public class ProbabilityTrainer_General_Memory {
     
@@ -22,6 +21,22 @@ public class ProbabilityTrainer_General_Memory {
     public static long seed = 0;
 
     private HashMap<Double, Integer> labelIdx;
+
+    private class ProbabilityInstance {
+        public int currentLength;
+        public int fullLength;
+        public double label;
+        public double[] probs;
+        
+        public ProbabilityInstance(Predictions result, int idx, int currentLength, int fullLength, double label) {
+            this.currentLength = currentLength;
+            this.fullLength = fullLength;
+            this.label = label;
+            this.probs = new double[result.realLabels.length];
+            for(int i = 0; i < result.realLabels.length; i++)
+                this.probs[labelIdx.get(Double.valueOf(result.realLabels[i]))] = result.probabilities[idx][i];
+        }
+    }
     
     public ProbabilityTrainer_General_Memory() {
         // global WEASEL settings
@@ -131,7 +146,7 @@ public class ProbabilityTrainer_General_Memory {
                 Predictions probs = classifier.predictProbabilities(truncate(test_cv[i], tSteps[t]));
                 
                 for(int k = 0; k < probs.probabilities.length; k++) {
-                    ProbabilityInstance instance = newProbabilityInstance(probs, k, tSteps[t], test_cv[i][k].getLength(), test_cv[i][k].getLabel());
+                    ProbabilityInstance instance = new ProbabilityInstance(probs, k, tSteps[t], test_cv[i][k].getLength(), test_cv[i][k].getLabel());
                     trainProbs[t].add(instance);
                 }
                 
@@ -148,7 +163,7 @@ public class ProbabilityTrainer_General_Memory {
             
             Predictions probs = classifier.predictProbabilities(truncate(dataTest, tSteps[t]));
             for(int k = 0; k < probs.probabilities.length; k++) {
-                ProbabilityInstance instance = newProbabilityInstance(probs, k, tSteps[t], dataTest[k].getLength(), dataTest[k].getLabel());
+                ProbabilityInstance instance = new ProbabilityInstance(probs, k, tSteps[t], dataTest[k].getLength(), dataTest[k].getLabel());
                 testProbs[t].add(instance);
             }
             System.out.printf("master %02d\r", t+1);
@@ -201,17 +216,6 @@ public class ProbabilityTrainer_General_Memory {
             test_cv[i] = subset(data, testIndex);
         }
         return new TimeSeries[][][]{train_cv, test_cv};
-    }
-
-    private ProbabilityInstance newProbabilityInstance(Predictions result, int idx, int currentLength, int fullLength, double label) {
-        ProbabilityInstance ins = new ProbabilityInstance();
-        ins.currentLength = currentLength;
-        ins.fullLength = fullLength;
-        ins.label = label;
-        ins.probs = new double[result.realLabels.length];
-        for(int i = 0; i < result.realLabels.length; i++)
-            ins.probs[labelIdx.get(Double.valueOf(result.realLabels[i]))] = result.probabilities[idx][i];
-        return ins;
     }
     
     private ProbabilityInformation asProbabilityInformation(ArrayList<ProbabilityInstance>[] trainProbs, ArrayList<ProbabilityInstance>[] testProbs) {
