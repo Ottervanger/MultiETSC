@@ -1,4 +1,4 @@
-algorithm {TEASER/run}[TEASER/run]
+algorithm {TEASER/TEASERrun}[TEASER/TEASERrun]
 
 # global parameters
 nClassifiers {10, 15, 20, 30, 50, 100} [20]

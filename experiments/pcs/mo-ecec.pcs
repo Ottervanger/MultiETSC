@@ -1,0 +1,7 @@
+algorithm {TEASER/ECECrun}[TEASER/ECECrun]
+
+nClassifiers {10, 15, 20, 30, 50, 100} [20]
+nFolds {1,2..10} [5]
+minLen {3,5,10,20,50,100} [3]
+maxLen {50,75,100,150,200,300,450} [450]
+ratio {0.01,0.02..1.00} [0.8]
