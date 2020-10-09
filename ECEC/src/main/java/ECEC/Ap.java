@@ -3,12 +3,12 @@
  */
 package ECEC;
 
-public class App {
+public class Ap {
     public String getGreeting() {
         return "Hello world.";
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        System.out.println(new Ap().getGreeting());
     }
 }

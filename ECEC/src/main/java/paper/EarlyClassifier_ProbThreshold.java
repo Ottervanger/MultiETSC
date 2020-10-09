@@ -7,15 +7,11 @@ import java.util.Set;
 import java.util.Collections;
 
 import com.carrotsearch.hppc.DoubleArrayList;
-
-import DataStructures.ProbabilityInformation;
+import Classifiers.sfa.timeseries.TimeSeries;
 
 public class EarlyClassifier_ProbThreshold {
 
-    public class RuleResult {
-        int step;
-        int label;
-    }
+    private double m_ratio = 0.8;
 
     public class Result {
         public double accuracy;
@@ -23,9 +19,9 @@ public class EarlyClassifier_ProbThreshold {
         public double fcost;
     }
     
-    private double m_ratio = 0.8;
-    
-    public Result predict(ProbabilityInformation probInfo) {
+    public Result fitAndTest(TimeSeries[] trainSamples, TimeSeries[] testSamples) {
+        ProbabilityTrainer_General_Memory classifer = new ProbabilityTrainer_General_Memory();
+        ProbabilityInformation probInfo = classifer.process(trainSamples, testSamples);
 
         double[][] confid = getConfidence(probInfo);
         double threshold = trainThreshold(probInfo, confid);
@@ -33,6 +29,11 @@ public class EarlyClassifier_ProbThreshold {
         Result result = test(probInfo, confid, threshold);
         
         return result;
+    }
+
+    private class RuleResult {
+        int step;
+        int label;
     }
 
     private double[][] getConfidence(ProbabilityInformation probInfo) {
