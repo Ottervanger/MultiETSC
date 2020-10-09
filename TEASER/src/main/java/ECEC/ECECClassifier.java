@@ -13,15 +13,20 @@ public class ECECClassifier {
 
     private double m_ratio = 0.8;
 
+    private ProbabilityTrainer trainer;
+
     public class Result {
         public double accuracy;
         public double earliness;
         public double fcost;
     }
+
+    public ECECClassifier() {
+        trainer = new ProbabilityTrainer();
+    }
     
     public Result fitAndTest(TimeSeries[] trainSamples, TimeSeries[] testSamples) {
-        ProbabilityTrainer classifer = new ProbabilityTrainer();
-        Probabilities probInfo = classifer.process(trainSamples, testSamples);
+        Probabilities probInfo = trainer.process(trainSamples, testSamples);
 
         double[][] confid = getConfidence(probInfo);
         double threshold = trainThreshold(probInfo, confid);
@@ -29,6 +34,29 @@ public class ECECClassifier {
         Result result = test(probInfo, confid, threshold);
         
         return result;
+    }
+
+    public void setParameter(String name, String value) {
+        switch(name) {
+            case "ratio":
+                m_ratio = Double.parseDouble(value);
+                break;
+            case "nClassifiers":
+                trainer.nClassifiers = Integer.parseInt(value);
+                break;
+            case "nFolds":
+                trainer.nFolds = Integer.parseInt(value);
+                break;
+            case "minLen":
+                trainer.minLen = Integer.parseInt(value);
+                break;
+            case "maxLen":
+                trainer.maxLen = Integer.parseInt(value);
+                break;
+            case "seed":
+                trainer.seed = Long.parseLong(value);
+                break;
+        }
     }
 
     private class RuleResult {

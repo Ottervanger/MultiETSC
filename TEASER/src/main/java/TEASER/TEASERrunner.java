@@ -1,11 +1,11 @@
 package sfa;
+
 import sfa.classification.*;
 import sfa.timeseries.TimeSeries;
 import sfa.timeseries.TimeSeriesLoader;
 
 import java.io.PrintStream;
 import java.io.OutputStream;
-
 
 public class TEASERrunner {
   private static String trainFile, testFile;
