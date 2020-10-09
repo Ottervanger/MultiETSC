@@ -1,12 +1,12 @@
 // Copyright (c) 2016 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package Classifiers.sfa.transformation;
+package sfa.transformation;
 
 import com.carrotsearch.hppc.IntIntHashMap;
-import Classifiers.sfa.classification.Classifier.Words;
-import Classifiers.sfa.classification.ParallelFor;
-import Classifiers.sfa.timeseries.TimeSeries;
-import Classifiers.sfa.transformation.SFA.HistogramType;
+import sfa.classification.Classifier.Words;
+import sfa.classification.ParallelFor;
+import sfa.timeseries.TimeSeries;
+import sfa.transformation.SFA.HistogramType;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

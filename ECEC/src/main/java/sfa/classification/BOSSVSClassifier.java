@@ -1,13 +1,13 @@
 // Copyright (c) 2016 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package Classifiers.sfa.classification;
+package sfa.classification;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import Classifiers.sfa.timeseries.TimeSeries;
-import Classifiers.sfa.transformation.BOSS.BagOfPattern;
-import Classifiers.sfa.transformation.BOSSVS;
+import sfa.timeseries.TimeSeries;
+import sfa.transformation.BOSS.BagOfPattern;
+import sfa.transformation.BOSSVS;
 
 import com.carrotsearch.hppc.IntFloatHashMap;
 import com.carrotsearch.hppc.ObjectObjectHashMap;

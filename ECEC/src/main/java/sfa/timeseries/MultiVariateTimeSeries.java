@@ -1,6 +1,6 @@
 // Copyright (c) 2017 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package Classifiers.sfa.timeseries;
+package sfa.timeseries;
 
 public class MultiVariateTimeSeries {
 

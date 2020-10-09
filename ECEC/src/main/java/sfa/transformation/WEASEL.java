@@ -1,15 +1,15 @@
 // Copyright (c) 2017 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package Classifiers.sfa.transformation;
+package sfa.transformation;
 
 import com.carrotsearch.hppc.*;
 import com.carrotsearch.hppc.cursors.*;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.commons.math3.distribution.FDistribution;
-import Classifiers.sfa.classification.Classifier.Words;
-import Classifiers.sfa.classification.ParallelFor;
-import Classifiers.sfa.classification.WEASELClassifier;
-import Classifiers.sfa.timeseries.TimeSeries;
+import sfa.classification.Classifier.Words;
+import sfa.classification.ParallelFor;
+import sfa.classification.WEASELClassifier;
+import sfa.timeseries.TimeSeries;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

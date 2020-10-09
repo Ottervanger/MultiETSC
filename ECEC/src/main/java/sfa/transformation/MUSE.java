@@ -1,17 +1,17 @@
 // Copyright (c) 2017 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package Classifiers.sfa.transformation;
+package sfa.transformation;
 
 import com.carrotsearch.hppc.*;
 import com.carrotsearch.hppc.cursors.IntIntCursor;
 import com.carrotsearch.hppc.cursors.LongDoubleCursor;
 
 import com.carrotsearch.hppc.cursors.ObjectIntCursor;
-import Classifiers.sfa.classification.Classifier;
-import Classifiers.sfa.classification.MUSEClassifier;
-import Classifiers.sfa.classification.ParallelFor;
-import Classifiers.sfa.timeseries.MultiVariateTimeSeries;
-import Classifiers.sfa.timeseries.TimeSeries;
+import sfa.classification.Classifier;
+import sfa.classification.MUSEClassifier;
+import sfa.classification.ParallelFor;
+import sfa.timeseries.MultiVariateTimeSeries;
+import sfa.timeseries.TimeSeries;
 
 import java.util.ArrayList;
 import java.util.HashMap;

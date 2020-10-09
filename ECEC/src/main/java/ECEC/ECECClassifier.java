@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.Collections;
 
 import com.carrotsearch.hppc.DoubleArrayList;
-import Classifiers.sfa.timeseries.TimeSeries;
+import sfa.timeseries.TimeSeries;
 
 public class ECECClassifier {
 

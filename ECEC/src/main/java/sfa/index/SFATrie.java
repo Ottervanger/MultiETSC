@@ -1,6 +1,6 @@
 // Copyright (c) 2016 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package Classifiers.sfa.index;
+package sfa.index;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,9 +13,9 @@ import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import Classifiers.sfa.timeseries.TimeSeries;
-import Classifiers.sfa.transformation.SFA;
-import Classifiers.sfa.transformation.SFA.HistogramType;
+import sfa.timeseries.TimeSeries;
+import sfa.transformation.SFA;
+import sfa.transformation.SFA.HistogramType;
 
 import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.cursors.IntCursor;

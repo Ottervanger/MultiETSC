@@ -1,12 +1,12 @@
 // Copyright (c) 2016 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package Classifiers.sfa.transformation;
+package sfa.transformation;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import org.jtransforms.fft.DoubleFFT_1D;
-import Classifiers.sfa.timeseries.TimeSeries;
+import sfa.timeseries.TimeSeries;
 
 import java.io.IOException;
 import java.io.Serializable;

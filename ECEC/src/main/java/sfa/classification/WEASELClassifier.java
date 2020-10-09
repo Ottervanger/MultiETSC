@@ -1,13 +1,13 @@
 // Copyright (c) 2017 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package Classifiers.sfa.classification;
+package sfa.classification;
 
 import com.carrotsearch.hppc.cursors.LongIntCursor;
 import de.bwaldvogel.liblinear.*;
-import Classifiers.sfa.timeseries.TimeSeries;
-import Classifiers.sfa.transformation.WEASEL;
-import Classifiers.sfa.transformation.WEASEL.BagOfBigrams;
-import Classifiers.sfa.transformation.WEASEL.Dictionary;
+import sfa.timeseries.TimeSeries;
+import sfa.transformation.WEASEL;
+import sfa.transformation.WEASEL.BagOfBigrams;
+import sfa.transformation.WEASEL.Dictionary;
 
 import java.util.ArrayList;
 import java.util.Arrays;
