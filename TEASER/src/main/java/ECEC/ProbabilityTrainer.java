@@ -14,9 +14,11 @@ import de.bwaldvogel.liblinear.SolverType;
 
 public class ProbabilityTrainer {
     
-    public static int nClassifiers = 20;
-    public static int nFolds = 5;
-    public static long seed = 0;
+    protected int nClassifiers = 20;
+    protected int nFolds = 5;
+    protected int minLen = 3;
+    protected int maxLen = 250;
+    protected long seed = 0;
 
     private HashMap<Double, Integer> labelIdx;
 
@@ -50,8 +52,6 @@ public class ProbabilityTrainer {
 
         subset(dataTrain, cv.get(0));
 
-        int minLen = 3;
-        int maxLen = 250;
         int[] tSteps = generateStepData(minLen, getMax(dataTrain, maxLen));
         double[] labelset = getLabelSet(dataTrain);
         setLabelIdx(labelset);
@@ -99,10 +99,11 @@ public class ProbabilityTrainer {
     }
     
     private int[] generateStepData(int minLen, int maxLen) {
+        minLen = Math.max(3, minLen);
         int[] tSteps = new int[nClassifiers];
-        int step = maxLen / nClassifiers;
+        double step = (maxLen - minLen) / (double)nClassifiers;
         for(int i = 0; i < nClassifiers; i++) {
-            int length = Math.max(minLen, (i+1)*step);
+            int length = (int) Math.round(step * i + minLen);
             if (i == nClassifiers - 1)
                 length = maxLen;
             tSteps[i] = length;

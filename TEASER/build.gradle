@@ -71,7 +71,7 @@ task fatJar(type: Jar) {
 }
 
 // Defining the TEASER build task
-task runnerJar(type: Jar) {
+task teaserJar(type: Jar) {
     // dependsOn test
     manifest {attributes 'Main-Class': "sfa.TEASERrunner"}
     baseName = 'TEASERrunner'    
@@ -96,7 +96,7 @@ task ececJar(type: Jar) {
     with jar
 }
 
-tasks.build.dependsOn(['runnerJar'])
+tasks.jar.dependsOn(['teaserJar', 'ececJar'])
 
 
 // Define the main class for the application
