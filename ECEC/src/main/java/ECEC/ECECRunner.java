@@ -1,4 +1,4 @@
-package paper;
+package ECEC;
 
 import java.io.File;
 
@@ -6,7 +6,7 @@ import Classifiers.sfa.classification.ParallelFor;
 import Classifiers.sfa.timeseries.TimeSeries;
 import Classifiers.sfa.timeseries.TimeSeriesLoader;
 
-public class Main_TrainProbability {
+public class ECECRunner {
     
     public static void main(String[] args){
         long startTime = System.currentTimeMillis();
@@ -20,8 +20,8 @@ public class Main_TrainProbability {
         TimeSeries[] trainSamples = TimeSeriesLoader.loadDataset(trainFile);
         TimeSeries[] testSamples = TimeSeriesLoader.loadDataset(testFile);
 
-        EarlyClassifier_ProbThreshold ecec = new EarlyClassifier_ProbThreshold();
-        EarlyClassifier_ProbThreshold.Result result = ecec.fitAndTest(trainSamples, testSamples);
+        ECECClassifier ecec = new ECECClassifier();
+        ECECClassifier.Result result = ecec.fitAndTest(trainSamples, testSamples);
 
         double elapsedTime = (System.currentTimeMillis() - startTime) / 1000.;
         System.out.printf(

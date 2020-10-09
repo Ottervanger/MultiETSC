@@ -1,6 +1,6 @@
-package paper;
+package ECEC;
 
-public class ProbabilityInformation {
+public class Probabilities {
 
 	public class Element {
 		public int[] length;
@@ -14,7 +14,7 @@ public class ProbabilityInformation {
 	public Element train;
 	public Element test;
 	
-	public ProbabilityInformation() {
+	public Probabilities() {
 		train = new Element();
 		test = new Element();
 	}
