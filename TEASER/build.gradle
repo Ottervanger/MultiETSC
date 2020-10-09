@@ -20,7 +20,7 @@ apply plugin: 'idea'
 apply plugin: 'application'
 
 group = 'sfa'
-version = '0.2'
+
 // In this section you declare where to find the dependencies of your project
 repositories {
     // Use jcenter for resolving your dependencies.
@@ -81,6 +81,18 @@ task runnerJar(type: Jar) {
     from sourceSets.test.output 
     exclude("datasets/**")
     
+    with jar
+}
+
+// ECEC build task
+task ececJar(type: Jar) {
+    manifest { attributes 'Main-Class': 'ECEC.ECECRunner' }
+    baseName = 'ECECRunner'
+    from { 
+        configurations.testRuntime.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    from sourceSets.test.output
+    exclude("datasets/**")
     with jar
 }
 
