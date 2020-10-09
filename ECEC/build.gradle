@@ -43,15 +43,15 @@ dependencies {
 }
 
 // Define the main class for the application
-mainClassName = 'paper.Main_TrainProbability'
+mainClassName = 'ECEC.ECECRunner'
 
 jar {
-    manifest { attributes 'Main-Class': 'ECEC.Ap' }
+    manifest { attributes 'Main-Class': 'ECEC.ECECRunner' }
 }
 
-task probJar(type: Jar) {
-    manifest { attributes 'Main-Class': 'paper.Main_TrainProbability' }
-    baseName = 'TrainProbability'
+task ececJar(type: Jar) {
+    manifest { attributes 'Main-Class': 'ECEC.ECECRunner' }
+    baseName = 'ECECRunner'
     from { 
         configurations.testRuntime.collect { it.isDirectory() ? it : zipTree(it) }
     }
@@ -59,4 +59,4 @@ task probJar(type: Jar) {
     with jar
 }
 
-tasks.build.dependsOn(['probJar'])
+tasks.build.dependsOn(['ececJar'])

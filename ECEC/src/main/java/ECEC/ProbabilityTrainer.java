@@ -1,4 +1,4 @@
-package paper;
+package ECEC;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,7 +12,7 @@ import Classifiers.sfa.timeseries.TimeSeries;
 
 import de.bwaldvogel.liblinear.SolverType;
 
-public class ProbabilityTrainer_General_Memory {
+public class ProbabilityTrainer {
     
     public static int nClassifiers = 20;
     public static int nFolds = 5;
@@ -36,13 +36,13 @@ public class ProbabilityTrainer_General_Memory {
         }
     }
     
-    public ProbabilityTrainer_General_Memory() {
+    public ProbabilityTrainer() {
         // global WEASEL settings
         WEASELClassifier.lowerBounding = true;
         WEASELClassifier.solverType = SolverType.L2R_LR;
     }
     
-    public ProbabilityInformation process(TimeSeries[] dataTrain, TimeSeries[] dataTest) {
+    public Probabilities process(TimeSeries[] dataTrain, TimeSeries[] dataTest) {
         shuffle(dataTrain, seed);
         double[] train_labels = getLabels(dataTrain);
         
@@ -64,7 +64,7 @@ public class ProbabilityTrainer_General_Memory {
         }
         trainSlaverClassifiers(dataTrain, cv, tSteps, trainProbs);
         trainMasterClassifers(dataTrain, dataTest, tSteps, testProbs);
-        return asProbabilityInformation(trainProbs, testProbs, tSteps, labelset);
+        return asProbabilities(trainProbs, testProbs, tSteps, labelset);
     }
 
     private double[] getLabels(TimeSeries[] data) {
@@ -217,7 +217,7 @@ public class ProbabilityTrainer_General_Memory {
         return new TimeSeries[][][]{train_cv, test_cv};
     }
 
-    private void fillElement(ProbabilityInformation.Element el, ArrayList<ProbabilityInstance>[] groups) {
+    private void fillElement(Probabilities.Element el, ArrayList<ProbabilityInstance>[] groups) {
         el.labels = new double[groups[0].size()];
         el.length = new int[groups[0].size()];
         el.probs = new double[groups[0].size()][nClassifiers][];
@@ -233,12 +233,12 @@ public class ProbabilityTrainer_General_Memory {
         }
     }
     
-    private ProbabilityInformation asProbabilityInformation(
+    private Probabilities asProbabilities(
             ArrayList<ProbabilityInstance>[] trainProbs,
             ArrayList<ProbabilityInstance>[] testProbs,
             int[] tSteps,
             double[] labelset) {
-        ProbabilityInformation infor = new ProbabilityInformation();
+        Probabilities infor = new Probabilities();
         int probs_index = 4;
         infor.tSteps = tSteps.clone();
         fillElement(infor.train, trainProbs);

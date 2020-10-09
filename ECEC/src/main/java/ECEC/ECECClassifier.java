@@ -1,4 +1,4 @@
-package paper;
+package ECEC;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +9,7 @@ import java.util.Collections;
 import com.carrotsearch.hppc.DoubleArrayList;
 import Classifiers.sfa.timeseries.TimeSeries;
 
-public class EarlyClassifier_ProbThreshold {
+public class ECECClassifier {
 
     private double m_ratio = 0.8;
 
@@ -20,8 +20,8 @@ public class EarlyClassifier_ProbThreshold {
     }
     
     public Result fitAndTest(TimeSeries[] trainSamples, TimeSeries[] testSamples) {
-        ProbabilityTrainer_General_Memory classifer = new ProbabilityTrainer_General_Memory();
-        ProbabilityInformation probInfo = classifer.process(trainSamples, testSamples);
+        ProbabilityTrainer classifer = new ProbabilityTrainer();
+        Probabilities probInfo = classifer.process(trainSamples, testSamples);
 
         double[][] confid = getConfidence(probInfo);
         double threshold = trainThreshold(probInfo, confid);
@@ -36,7 +36,7 @@ public class EarlyClassifier_ProbThreshold {
         int label;
     }
 
-    private double[][] getConfidence(ProbabilityInformation probInfo) {
+    private double[][] getConfidence(Probabilities probInfo) {
         double[][] confid = new double[probInfo.tSteps.length][probInfo.labelset.length];
         for(int i = 0; i < probInfo.tSteps.length; i++) {
             int[] nCorrect = new int[probInfo.labelset.length];
@@ -74,7 +74,7 @@ public class EarlyClassifier_ProbThreshold {
         return imax;
     }
     
-    private double trainThreshold(ProbabilityInformation probInfo, double[][] confid) {
+    private double trainThreshold(Probabilities probInfo, double[][] confid) {
         int[][] predicted_labels = new int[probInfo.train.labels.length][probInfo.tSteps.length];
         Double[][] confidence = new Double[probInfo.train.labels.length][probInfo.tSteps.length];
         ArrayList<ArrayList<Double>> eachClass_confidence 
@@ -137,7 +137,7 @@ public class EarlyClassifier_ProbThreshold {
         return best_confidence;
     }
     
-    public Result test(ProbabilityInformation probInfo, double[][] confid, double threshold) {
+    public Result test(Probabilities probInfo, double[][] confid, double threshold) {
         Result result = new Result();
         int instanceNum = probInfo.test.probs.length;
         int accuracyNum = 0;
