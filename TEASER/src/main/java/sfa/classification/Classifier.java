@@ -308,8 +308,8 @@ public abstract class Classifier {
     public Double[] labels;
     public AtomicInteger correct;
 
-    double[][] probabilities;
-    int[] realLabels;
+    public double[][] probabilities;
+    public int[] realLabels;
 
 
     public Predictions(Double[] labels, int bestCorrect) {
