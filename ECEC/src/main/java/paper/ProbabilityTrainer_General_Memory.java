@@ -12,8 +12,6 @@ import Classifiers.sfa.timeseries.TimeSeries;
 
 import de.bwaldvogel.liblinear.SolverType;
 
-import DataStructures.ProbabilityInformation;
-
 public class ProbabilityTrainer_General_Memory {
     
     public static int nClassifiers = 20;
