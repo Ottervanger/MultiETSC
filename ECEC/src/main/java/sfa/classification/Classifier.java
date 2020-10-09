@@ -1,6 +1,6 @@
 // Copyright (c) 2016 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package Classifiers.sfa.classification;
+package sfa.classification;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,9 +17,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import libsvm.*;
 
-import Classifiers.sfa.timeseries.MultiVariateTimeSeries;
-import Classifiers.sfa.timeseries.TimeSeries;
-import Classifiers.sfa.transformation.MFT;
+import sfa.timeseries.MultiVariateTimeSeries;
+import sfa.timeseries.TimeSeries;
+import sfa.transformation.MFT;
 
 import com.carrotsearch.hppc.FloatContainer;
 import com.carrotsearch.hppc.IntArrayDeque;

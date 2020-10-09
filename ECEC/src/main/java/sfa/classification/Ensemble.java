@@ -1,6 +1,6 @@
-package Classifiers.sfa.classification;
+package sfa.classification;
 
-import Classifiers.sfa.classification.Classifier;
+import sfa.classification.Classifier;
 
 import java.util.ArrayList;
 import java.util.List;

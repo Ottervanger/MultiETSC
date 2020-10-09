@@ -1,13 +1,13 @@
 // Copyright (c) 2016 - Patrick Schäfer (patrick.schaefer@hu-berlin.de)
 // Distributed under the GLP 3.0 (See accompanying file LICENSE)
-package Classifiers.sfa.transformation;
+package sfa.transformation;
 
 import com.carrotsearch.hppc.ObjectIntHashMap;
 import com.carrotsearch.hppc.cursors.IntCursor;
 
-import Classifiers.sfa.classification.Classifier.Words;
-import Classifiers.sfa.timeseries.MultiVariateTimeSeries;
-import Classifiers.sfa.timeseries.TimeSeries;
+import sfa.classification.Classifier.Words;
+import sfa.timeseries.MultiVariateTimeSeries;
+import sfa.timeseries.TimeSeries;
 
 import java.io.*;
 import java.util.*;

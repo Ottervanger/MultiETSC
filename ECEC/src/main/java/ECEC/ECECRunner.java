@@ -2,9 +2,9 @@ package ECEC;
 
 import java.io.File;
 
-import Classifiers.sfa.classification.ParallelFor;
-import Classifiers.sfa.timeseries.TimeSeries;
-import Classifiers.sfa.timeseries.TimeSeriesLoader;
+import sfa.classification.ParallelFor;
+import sfa.timeseries.TimeSeries;
+import sfa.timeseries.TimeSeriesLoader;
 
 public class ECECRunner {
     

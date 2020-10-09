@@ -6,9 +6,9 @@ import java.io.Writer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import Classifiers.sfa.classification.Classifier.Predictions;
-import Classifiers.sfa.classification.WEASELClassifier;
-import Classifiers.sfa.timeseries.TimeSeries;
+import sfa.classification.Classifier.Predictions;
+import sfa.classification.WEASELClassifier;
+import sfa.timeseries.TimeSeries;
 
 import de.bwaldvogel.liblinear.SolverType;
 
