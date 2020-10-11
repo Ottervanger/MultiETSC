@@ -14,8 +14,7 @@
 #include <time.h>
 #include <limits>
 #include "DataSetInformation.h"
-#include "Euclidean.h"
-#include "quickSort.h"
+#include "util.h"
 using namespace std; 
 
 // structure of a feature
@@ -67,7 +66,6 @@ void PrintFeature(Feature * f, ofstream& ResultFile);
 void PrintTotalBitMap();
 void classification(vector<Feature *> &Fs, int classIndex, int k);
 void classificationAllLength(vector<Feature *> &Fs, int classIndex, ofstream& resultFile);
-string IntToString(int intValue);
 void PrintFeatureMoreInfo(Feature * f);
 void ReduceAllLength(vector<Feature *> &finalFset, vector<Feature *> &fSet );
 double OneKDE(double * arr, int len, double q, double h, double constant);
@@ -88,7 +86,7 @@ void createOriginalMatrix(double * array1, int iLengthOfArray1,
                           double * array2, int iLengthOfArray2,
                           double * &pMatrix);
 
-void main()
+int main()
 {  
     
 	clock_t allStart, allEnd; 
@@ -171,7 +169,7 @@ void main()
    
 		// Distance array
 		string filename="Dis"; 
-		string instanceString=IntToString(tIndex) ;
+		string instanceString=std::to_string(tIndex) ;
 		filename=filename+instanceString; 
 		filename.insert(0,path);
 		char * f;
@@ -300,7 +298,7 @@ void main()
 				// using bit operation
 				for (unsigned int j=0;j<(currentFeature->bmap).size();j++)  // for the current set, update the other set
 				{ 
-					if ((currentFeature->bmap).at(j)==1) 
+					if ((currentFeature->bmap)[j]==1) 
 					{
 						totalBmap.reset(j);  // update the total covered set
 					}
@@ -437,7 +435,7 @@ void ReduceAllLength(vector<Feature *> & finalFset, vector<Feature *> &fSet)
            
         for (unsigned int j=0;j<(currentFeature->bmap).size();j++)  // for the current set, update the other set
         { 
-		   if ((currentFeature->bmap).at(j)==1) 
+		   if ((currentFeature->bmap)[j]==1) 
            {
               allLengthBmap.reset(j);  // update the total covered set
 			 // cout<<"\n reset";
@@ -489,7 +487,7 @@ void classificationAllClassesWithDefault(vector<Feature *> &Fs, ofstream& result
                       for (int ss=0;ss<tempLength;ss++)
                       {currentseg[ss]=testing[i][ss+startingPosition];}
 					  double * tempFeatureSeg=getFeatureSegment(Fs.at(f));
-                      double tempDis=Euclidean(tempFeatureSeg, currentseg, tempLength);
+                      double tempDis=util::euclidean(tempFeatureSeg, currentseg, tempLength);
 					  delete [] tempFeatureSeg;
 					  delete [] currentseg;
                       if (tempDis<=(Fs.at(f)->threshold))
@@ -566,7 +564,7 @@ void classificationAllClasses(vector<Feature *> &Fs, ofstream& resultFile)
                       for (int ss=0;ss<tempLength;ss++)
                       {currentseg[ss]=testing[i][ss+startingPosition];}
 					  double * tempFeatureSeg=getFeatureSegment(Fs.at(f));
-                      double tempDis=Euclidean(tempFeatureSeg, currentseg, tempLength);
+                      double tempDis=util::euclidean(tempFeatureSeg, currentseg, tempLength);
 					  delete [] tempFeatureSeg;
 					  delete [] currentseg;
                       if (tempDis<=(Fs.at(f)->threshold))
@@ -659,7 +657,7 @@ void classification(vector<Feature *> &Fs, int classIndex, int k)
                     currentSegment[jj]=testing[i][jj+j];
 
                 for (unsigned int f=0;f<Fs.size();f++)
-                { double temp=Euclidean(getFeatureSegment(Fs.at(f)), currentSegment, k);
+                { double temp=util::euclidean(getFeatureSegment(Fs.at(f)), currentSegment, k);
                   //cout<<"\n instance "<<i<<", the distance is "<<temp;
                    if (temp<=(Fs.at(f)->threshold))
                    {   matched=1;
@@ -715,7 +713,7 @@ void classificationAllLength(vector<Feature *> &Fs, int classIndex, ofstream& re
                       double * currentseg=new double[tempLength];
                       for (int ss=0;ss<tempLength;ss++)
                       {currentseg[ss]=testing[i][ss+startingPosition];}
-                      double tempDis=Euclidean(getFeatureSegment(Fs.at(f)), currentseg, tempLength);
+                      double tempDis=util::euclidean(getFeatureSegment(Fs.at(f)), currentseg, tempLength);
 					  delete [] currentseg;
                       if (tempDis<=(Fs.at(f)->threshold))
                       { //cout<<"\n Instance "<<i<<"("<<labelTesting[i]<<") classified by instance Index="<<Fs.at(f)->instanceIndex<<", position="<<Fs.at(f)->startPosition<<"of length "<<Fs.at(f)->length<< "at ending position "<<j<<" as "<<Fs.at(f)->label;
@@ -784,7 +782,7 @@ void PrintFeature(Feature * f)
 	
     //  cout<<"\n bitmap=";
     // for (int i=0;i<ROWTRAINING;i++)
-    //   {cout<<(f->bmap).at(i)<<" ";}
+    //   {cout<<(f->bmap)[i]<<" ";}
    }
 }
 
@@ -812,7 +810,7 @@ void PrintFeature(Feature * f, ofstream& ResultFile)
    
     //  cout<<"\n bitmap=";
     // for (int i=0;i<ROWTRAINING;i++)
-    //   {cout<<(f->bmap).at(i)<<" ";}
+    //   {cout<<(f->bmap)[i]<<" ";}
    }
 }
 // this function is used to study the precision of best match and all matches
@@ -840,11 +838,11 @@ void PrintFeatureMoreInfo(Feature * f)
 	for (int i=0;i<ROWTRAINING;i++)
 		{for (int j=0;j<=DIMENSION-f->length;j++)
 		{
-		     // compute the Euclidean distance
+		     // compute the util::euclidean distance
 			double * temp= new double[f->length]; 
 			for (int ii=0;ii<f->length;ii++)
 			{temp[ii]= training[i][j+ii];}
-			double tempDis= Euclidean( getFeatureSegment(f), temp, f->length);
+			double tempDis= util::euclidean( getFeatureSegment(f), temp, f->length);
 			if (tempDis<=f->threshold)
 			{
 				  countTotal++; 
@@ -950,7 +948,7 @@ Feature * ThresholdLearningAll(int DisArrayIndex, int instanceIndex, int startPo
        {   
            for (unsigned int i=0;i<(currentf->bmap).size();i++)
            {
-              if ((currentf->bmap).at(i)==1)
+              if ((currentf->bmap)[i]==1)
 			  {
 				  totalBmap.set(i);  //  set the total Bmap for each length's set cover
 			      allLengthBmap.set(i); // set the all length Bmap for the second round of set cover
@@ -1164,7 +1162,7 @@ Feature * ThresholdLearningKDE(int DisArrayIndex, int Instanceindex, int startPo
        {   
            for (int i=0;i<(currentf->bmap).size();i++)
            {
-              if ((currentf->bmap).at(i)==1)
+              if ((currentf->bmap)[i]==1)
 			  {
 				  totalBmap.set(i);  //  set the total Bmap for each length's set cover
 			      allLengthBmap.set(i); // set the all length Bmap for the second round of set cover
@@ -1377,25 +1375,6 @@ void LoadData(const char * fileName, double Data[][DIMENSION], double Labels[],i
 
 	inputFile.close();
 }
-
-// the function of int to string
-string IntToString(int intValue) 
-{
-	  char *myBuff;
-	  string strRetVal;
-	  // Create a new char array
-	  myBuff = new char[100];
-	  // Set it to empty
-	  memset(myBuff,'\0',100);
-	  // Convert to string
-	  itoa(intValue,myBuff,10);
-	  // Copy the buffer into the string object
-	  strRetVal = myBuff;
-	  // Delete the buffer
-	  delete[] myBuff;
-	  return(strRetVal);
-}
-
 
 double * getFeatureSegment(Feature *f)
 {
