@@ -2,6 +2,8 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cstring>
+#include <cstdlib>
 #include "math.h"
 #include <algorithm>
 #include <vector>
@@ -9,7 +11,7 @@
 #include <time.h>
 #include <limits>
 #include "DataSetInformation.h"
-#include "Euclidean.h"
+#include "util.h"
 using namespace std; 
 
 // structure of a feature
@@ -54,13 +56,12 @@ void PrintFeature(Feature * f);
 void PrintTotalBitMap();
 void classification(vector<Feature *> &Fs, int classIndex, int k);
 void classificationAllLength(vector<Feature *> &Fs, int classIndex);
-string IntToString(int intValue);
 void PrintFeatureMoreInfo(Feature * f);
 void ReduceAllLength(vector<Feature *> &finalFset, vector<Feature *> &fSet );
 
 
 
-void main()
+int main()
 {
      cout<<"\n The naive method for time series feature selection";
      // load training data
@@ -90,9 +91,9 @@ void main()
 		}
 
     string filename="DisAc"; 
-	string Cstring=IntToString(classIndex) ;
+	string Cstring=std::to_string(classIndex) ;
     filename=filename+Cstring+"k"; 
-	string Kstring=IntToString(k) ;
+	string Kstring=std::to_string(k) ;
     filename=filename+Kstring; 
     filename.insert(0,path);
     char * f;
@@ -146,11 +147,11 @@ void main()
        
 			for (int j=0;j<(currentFeature->bmap).size();j++)  // for the current set, update the other set
 			{ 
-				if ((currentFeature->bmap).at(j)==1) 
+				if ((currentFeature->bmap)[j]==1) 
 				{
 					for (int jj=0;jj<fSet.size();jj++)
 					{  
-						if ((fSet.at(jj)->bmap).at(j)==1)
+						if ((fSet.at(jj)->bmap)[j]==1)
 						{
 							(fSet.at(jj)->bmap).reset(j); 
 							fSet.at(jj)->uncoveredRecall=(fSet.at(jj)->uncoveredRecall)-1;
@@ -224,10 +225,10 @@ void ReduceAllLength(vector<Feature *> & finalFset, vector<Feature *> &fSet )
 		
        
         for (int j=0;j<(currentFeature->ubmap).size();j++)  // for the current set, update the other set
-        { if ((currentFeature->ubmap).at(j)==1) 
+        { if ((currentFeature->ubmap)[j]==1) 
            {
               for (int jj=0;jj<fSet.size();jj++)
-              {  if ((fSet.at(jj)->ubmap).at(j)==1)
+              {  if ((fSet.at(jj)->ubmap)[j]==1)
                   {
                       (fSet.at(jj)->ubmap).reset(j); 
                        fSet.at(jj)->uncoveredRecall=(fSet.at(jj)->uncoveredRecall)-1;
@@ -266,7 +267,7 @@ void classification(vector<Feature *> &Fs, int classIndex, int k)
                     currentSegment[jj]=testing[i][jj+j];
 
                 for (int f=0;f<Fs.size();f++)
-                { double temp=Euclidean(Fs.at(f)->f, currentSegment, k);
+                { double temp=util::euclidean(Fs.at(f)->f, currentSegment, k);
                   //cout<<"\n instance "<<i<<", the distance is "<<temp;
                    if (temp<=(Fs.at(f)->threshold))
                    {   matched=1;
@@ -322,7 +323,7 @@ void classificationAllLength(vector<Feature *> &Fs, int classIndex)
                       double * currentseg=new double[tempLength];
                       for (int ss=0;ss<tempLength;ss++)
                       {currentseg[ss]=testing[i][ss+startingPosition];}
-                      double tempDis=Euclidean(Fs.at(f)->f, currentseg, tempLength);
+                      double tempDis=util::euclidean(Fs.at(f)->f, currentseg, tempLength);
 					  delete [] currentseg;
                       if (tempDis<=(Fs.at(f)->threshold))
                       {  cout<<"\n Instance "<<i<<"("<<labelTesting[i]<<") classified by segment "<<Fs.at(f)->segmentIndex<<"of length "<<Fs.at(f)->length<< "at ending position "<<j;
@@ -378,7 +379,7 @@ void PrintFeature(Feature * f)
     cout<<"\n precision="<<f->precision;
     //  cout<<"\n bitmap=";
     // for (int i=0;i<ROWTRAINING;i++)
-    //   {cout<<(f->bmap).at(i)<<" ";}
+    //   {cout<<(f->bmap)[i]<<" ";}
    }
 }
 
@@ -401,11 +402,11 @@ void PrintFeatureMoreInfo(Feature * f)
 	for (int i=0;i<ROWTRAINING;i++)
 		{for (int j=0;j<=DIMENSION-f->length;j++)
 		{
-		     // compute the Euclidean distance
+		     // compute the util::euclidean distance
 			double * temp= new double[f->length]; 
 			for (int ii=0;ii<f->length;ii++)
 			{temp[ii]= training[i][j+ii];}
-			double tempDis= Euclidean(f->f, temp, f->length);
+			double tempDis= util::euclidean(f->f, temp, f->length);
 			if (tempDis<=f->threshold)
 			{
 				  countTotal++; 
@@ -427,7 +428,7 @@ void PrintTotalBitMap()
     cout<<"\n the total bitmap=";
     for (int i=0;i<ROWTRAINING;i++)
     {
-		 cout<<totalBmap.at(i)<<" ";
+		 cout<<totalBmap[i]<<" ";
 	} 
 }
 
@@ -501,7 +502,7 @@ Feature * ThresholdLearningAll(int index, int m, int k, int targetClass, double 
        {   
            for (int i=0;i<(currentf->bmap).size();i++)
            {
-              if ((currentf->bmap).at(i)==1)
+              if ((currentf->bmap)[i]==1)
 			  {
 				  totalBmap.set(i);  //  set the total Bmap for each length's set cover
 			      allLengthBmap.set(i); // set the all length Bmap for the second round of set cover
@@ -670,7 +671,7 @@ void LoadData(const char * fileName, double Data[][DIMENSION], double Labels[],i
 	ifstream inputFile( fileName, ios::in);
 	if ( !inputFile )
 	{
-		cerr << "file could not be opened" << endl;
+		cerr << "Error reading \"" << fileName << "\": file could not be opened." << endl;
 		exit(1);
 	} // end if
 
@@ -693,22 +694,4 @@ void LoadData(const char * fileName, double Data[][DIMENSION], double Labels[],i
 	}
 
 	inputFile.close();
-}
-
-// the function of int to string
-string IntToString(int intValue) 
-{
-	  char *myBuff;
-	  string strRetVal;
-	  // Create a new char array
-	  myBuff = new char[100];
-	  // Set it to empty
-	  memset(myBuff,'\0',100);
-	  // Convert to string
-	  itoa(intValue,myBuff,10);
-	  // Copy the buffer into the string object
-	  strRetVal = myBuff;
-	  // Delete the buffer
-	  delete[] myBuff;
-	  return(strRetVal);
 }

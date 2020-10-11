@@ -42,34 +42,34 @@
 
 
 // ECG dataset
-//const int DIMENSION=96; // length of time series
-//const int ROWTRAINING=100;  // size of training data
-//const int ROWTESTING=100;  // size of testing data
-//const char* trainingFileName="ECG200/ECG200_TRAIN1";
-//const char* testingFileName="ECG200/ECG200_TEST";
-//const char* resultFileName="ECG200/Result";
-//const char* path="ECG200/";
-//const int NofClasses=2;
-//const int Classes[]={-1,1};
-//const int ClassIndexes[]={0,31}; // the data is sorted by class
-//const int ClassNumber[]={31,69};
+const int DIMENSION=96; // length of time series
+const int ROWTRAINING=100;  // size of training data
+const int ROWTESTING=100;  // size of testing data
+const char* trainingFileName="/scratch/ottervanger/UCR/ECG200/ECG200_TRAIN.tsv";
+const char* testingFileName="/scratch/ottervanger/UCR/ECG200/ECG200_TEST.tsv";
+const char* resultFileName="ECG200/Result";
+const char* path="ECG200/";
+const int NofClasses=2;
+const int Classes[]={-1,1};
+const int ClassIndexes[]={0,31}; // the data is sorted by class
+const int ClassNumber[]={31,69};
 
 
 
 
 // Gun Point
-const int DIMENSION=150; // length of time series
-const int ROWTRAINING=50;  // size of training data
-const int ROWTESTING=150;  // size of testing data
-const char* trainingFileName="Gun_Point/Gun_Point_TRAIN1";
-//const char* trainingFileName="Gun_Point/Gun_PointShort";
-const char* testingFileName="Gun_Point/Gun_Point_TEST";
-const char* resultFileName="Gun_Point/Result";
-const char* path="Gun_Point/";
-const int NofClasses= 2;
-const int Classes[]={1,2};
-const int ClassIndexes[]={0,24}; // the data is sorted by class
-const int ClassNumber[]={24,26};
+// const int DIMENSION=150; // length of time series
+// const int ROWTRAINING=50;  // size of training data
+// const int ROWTESTING=150;  // size of testing data
+// const char* trainingFileName="Gun_Point/Gun_Point_TRAIN1";
+// //const char* trainingFileName="Gun_Point/Gun_PointShort";
+// const char* testingFileName="Gun_Point/Gun_Point_TEST";
+// const char* resultFileName="Gun_Point/Result";
+// const char* path="Gun_Point/";
+// const int NofClasses= 2;
+// const int Classes[]={1,2};
+// const int ClassIndexes[]={0,24}; // the data is sorted by class
+// const int ClassNumber[]={24,26};
 
 // CBF
 //const int DIMENSION=128; // length of time series
