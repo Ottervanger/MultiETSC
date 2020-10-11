@@ -47,7 +47,6 @@ const int ROWTRAINING=100;  // size of training data
 const int ROWTESTING=100;  // size of testing data
 const char* trainingFileName="/home/gilles//UCR/ECG200/ECG200_TRAIN.tsv";
 const char* testingFileName="/home/gilles//UCR/ECG200/ECG200_TEST.tsv";
-const char* resultFileName="ECG200/Result";
 const char* path="ECG200/";
 const int NofClasses=2;
 const int Classes[]={-1,1};
