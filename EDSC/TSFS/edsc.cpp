@@ -10,12 +10,34 @@
 #include <cstring>
 #include "math.h"
 #include <algorithm>
+#include <numeric>
 #include <vector>
-#include <bitset>
+#include <unordered_map>
 #include <time.h>
 #include <climits>
-#include "DataSetInformation.h"
+#include <cfloat>
 #include "util.h"
+
+
+
+struct BitArray {
+    std::vector<bool> a;
+    BitArray() { }
+    BitArray(std::size_t size) : a(size, false) { }
+    bool operator[] (std::size_t pos) { return a[pos]; }
+    BitArray operator& (BitArray ba) {
+        BitArray r(std::max(ba.a.size(), a.size()));
+        for (int i = 0; i < a.size() && i < ba.a.size(); ++i) {
+            r.a[i] = a[i] & ba.a[i];
+        }
+        return r;
+    }
+    void set(std::size_t pos) { a[pos] = true; }
+    void reset(std::size_t pos) { a[pos] = false; }
+    int count() { int c = 0; for (bool v : a) { c += v; } return c;}
+    size_t size() { return a.size(); }
+    void resize(size_t n) { return a.resize(n); }
+};
 
 // structure of a feature
 struct Feature {
@@ -30,27 +52,24 @@ struct Feature {
     double precision;
     double fscore;
     double earlyFScore;
-    std::bitset<ROWTRAINING> bmap;  // std::bitset does not change
+    BitArray bmap;  // std::bitset does not change
 };
 
-struct BitArray {
-    std::vector<bool> a;
-    BitArray(std::size_t size) : a(size, false) { }
-    bool operator[] (std::size_t pos) { return a[pos]; }
-    BitArray operator& (BitArray ba) {
-        BitArray r(std::max(ba.a.size(), a.size()));
-        for (int i = 0; i < a.size() && i < ba.a.size(); ++i) {
-            r.a[i] = a[i] & ba.a[i];
-        }
-        return r;
-    }
-    void set() { std::fill(a.begin(), a.end(), true); }
-    void set(std::size_t pos) { a[pos] = true; }
-    void reset() { std::fill(a.begin(), a.end(), false); }
-    void reset(std::size_t pos) { a[pos] = false; }
-    void flip() { for (int i = 0; i < a.size(); ++i) { a[i] = !a[i]; } }
-    void flip(std::size_t pos) { a[pos] = !a[pos]; }
-    int count() { int c = 0; for (int i = 0; i < a.size(); ++i) { c += a[i]; } return c;}
+struct Result {
+    double earliness, errorRate, time;
+};
+
+struct Config {                 // data structure storing all hyperparameters
+    const char* trainingFileName;
+    const char* testingFileName;
+    int thresholdMethod = 1;            // thresholdMethod =1 using thresholdAll, thresholdMethod=2, using the KDE cut
+    double boundThreshold = 3;           // define the parameter of the Chebyshev's inequality; only used if thresholdMethod == 1
+    int alpha = 3;                      // only used if thresholdMethod == 1
+    double probablityThreshold = 0.95;  // only used if thresholdMethod == 2
+    int DisArrayOption = 2;             // =1 , naive version =2 fast version
+    int minK = 5;                       // minimal feature length
+    int maxK = 50;                      // maximal length
+    double recallThreshold = 0;
 };
 
 // global variable
@@ -58,94 +77,71 @@ std::vector<std::vector<double> > training;         // training data set
 std::vector<int> labelTraining;                     // training data class labels
 std::vector<std::vector<double> > testing;          // testing data set
 std::vector<int> labelTesting;                      // testing data class labels
-std::bitset<ROWTRAINING> totalBmap;                      // the union bit map of a certain length of a certain class
-std::bitset<ROWTRAINING> allLengthBmap;                  // the union bit map of all length of a certain class
 std::vector<Feature *> finalFset;
 std::vector<Feature *> AllClassesFset;
 
 
 // functions in the same file
-double * getSegment(int segIndex, int InstanceIndex);
-void DisArray(int classIndex, int instanceIndex, double ** DisArray, int ** EndP, int rows, int columns, int MinK, int MaximalK);
-void SaveDisArray(double ** DisArray, int rows, int columns, const char * filename, int ** EndP, const char * filename2);
-double getMean( double * arr, int len);  // segmentIndex starting from 1
-double getSTD(double * arr, int len, double mean);
-Feature * ThresholdLearningAll(int DisArrayIndex, int instanceIndex, int startPosition,  double m, int k, int targetClass, double ** DisA, double RecallThreshold, int ** EndP, int alpha);
+void DisArray(int instanceIndex, double ** DisArray, int ** EndP, int n, size_t tsLen, int minK, int maxK);
+void DisArray2(int instanceIndex, double ** DisArray, int ** EndP, int n, size_t tsLen, int minK, int maxK);
 double * getFeatureSegment(Feature *f);
-void PrintFeature(Feature * f);
-void PrintFeature(Feature * f, std::ostream& ResultFile);
-void PrintTotalBitMap();
-void classification(std::vector<Feature *> &Fs, int classIndex, int k);
-void classificationAllLength(std::vector<Feature *> &Fs, int classIndex, std::ofstream& resultFile);
-void PrintFeatureMoreInfo(Feature * f);
-void ReduceAllLength(std::vector<Feature *> &finalFset, std::vector<Feature *> &fSet );
-double OneKDE(double * arr, int len, double q, double h, double constant);
-//Feature * ThresholdLearningKDE(int index, int k, int targetClass, double ** DisA, double PrecisionThreshold, double RecallThreshold, double ProbalityThreshold);
+void reduceFset(std::vector<Feature *> &finalFset, std::vector<Feature *> &fSet, BitArray &bmap);
+
 double ComputeFScore(double recall, double precision);
-Feature * ThresholdLearningKDE(int DisArrayIndex, int Instanceindex, int startPosition, int k, int targetClass, double ** DisA, double RecallThreshold, double ProbalityThreshold, int ** EndP, int alpha);
-void classificationAllClasses(std::vector<Feature *> &Fs) ;
-void classificationAllClassesWithDefault(std::vector<Feature *> &Fs);
+Feature * ThresholdLearningAll(int instanceIndex, int startPosition,  double m, int k, int targetClass, double * DisAi, double RecallThreshold, int * EndPi, int alpha, const std::vector<int> &labelTraining);
+Feature * ThresholdLearningKDE(int Instanceindex, int startPosition, int k, int targetClass, double * DisAi, double RecallThreshold, double ProbalityThreshold, int * EndPi, int alpha, const std::vector<int> &labelTraining);
+Result classificationAllClasses(std::vector<Feature *> &Fs, const std::unordered_map<int,int> &classes, size_t tsLen) ;
 
 void computeWholeSubstringArray(int iLengthOfArray1,
-                                                                int iLengthOfArray2,
-                                                                double * pMatrixOriginal,
-                                                                double * pArraySubstring, double * pArraySubstringEndingPosition, int iLengthOfSubstringArray, int MaximalLength);
+                                int iLengthOfArray2,
+                                double * pMatrixOriginal,
+                                double * pArraySubstring, double * pArraySubstringEndingPosition, int MaximalLength);
 
-void DisArray2(int classIndex, int instanceIndex, double ** DisArray, int ** EndP, int rows, int columns, int MinK, int MaximalK) ;
+Feature * computeBmap(Feature * currentf, int targetClass, int nTarget, double * DisAi, int * EndPi, double RecallThreshold, int alpha);
 
-void createOriginalMatrix(double * array1, int iLengthOfArray1,
-                                                    double * array2, int iLengthOfArray2,
-                                                    double * &pMatrix);
+// compute the mean
+inline double getMean(std::vector<double> v) { // segmentIndex starting from 1
+    return std::accumulate( v.begin(), v.end(), 0.0) / v.size();
+}
 
-int main() {
+// compute the standard deviation given the mean
+inline double getSTD(std::vector<double> v, double mean) {
+    std::vector<double> d(v.size());
+    std::transform(v.begin(), v.end(), d.begin(), [mean](double x) { return x - mean; });
+    double ss = std::inner_product(d.begin(), d.end(), d.begin(), 0.0);
+    return std::sqrt(ss / v.size());
+}
+
+double OneKDE(std::vector<double> v, double q, double h, double constant) {
+    return std::accumulate(v.begin(), v.end(), 0.0,
+        [q,h](const double &a, const double &b) {
+            return a + std::exp((b - q) * (b - q) * (-1 / (2 * h * h)));
+        }) * constant;
+}
+
+Result trainAndClassify(const Config &conf) {
     clock_t tStart = clock();
     // load data
-    util::readUCRData(trainingFileName, training, labelTraining);
-    util::readUCRData(trainingFileName, testing, labelTesting);
+    util::readUCRData(conf.trainingFileName, training, labelTraining);
+    util::readUCRData(conf.testingFileName, testing, labelTesting);
 
-    // compute the best match distance array for the target class.
-    // create the space to store the disArray of length k for a certain class
+    std::unordered_map<int,int> classes;
+    for (int c : labelTraining)
+        classes[c]++;
+    size_t tsLen = training[0].size();
 
-    int option = 1; // option =1 using thresholdAll, option=2, using the KDE cut
-    int DisArrayOption = 2;  // =1 , naive version =2 fast version
-    int MaximalK = DIMENSION / 2; // maximal length
-    int MinK = 5;
-    double boundThrehold = 3;  //define the parameter of the Chebyshev's inequality
-    double recallThreshold = 0;
-    double probablityThreshold = 0.95;
-    int alpha = 3;
-
-    // create the output file for the result
-    std::ofstream resultFile("out/log", std::ios::out);
-    if (option == 1) {
-        std::cout << "Chebyshev bound" << std::endl;
-        std::cout << "boundThrehold = " << boundThrehold << std::endl;
-        std::cout << "alpha = " << alpha << std::endl;
-    } else {
-        std::cout << "KDE bound" << std::endl;
-        std::cout << "probablityThreshold = " << probablityThreshold << std::endl;
-    }
-
-    std::cout << "MinLength=" << MinK << ", MaxLength=" << MaximalK << "(" << (double)MaximalK / DIMENSION << "of " << DIMENSION << ")" << std::endl;
-    if (DisArrayOption == 1)
-        std::cout << "slow version" << std::endl;
-    if (DisArrayOption == 2)
-        std::cout << "fast version" << std::endl;
-
-
-    for (int cl = 0; cl < NofClasses; cl++) {
-        std::cout << "class: " << cl << std::endl;
-        int classIndex = cl; // pick the class
+    for (auto it : classes) {
+        int cl = it.first;
         std::vector<Feature *> reducedFset; // restore the set of the first round set cover
-        int k = 1;
-        clock_t startFeature, endFeature;
 
         // initialize the DisA and EndP
-        for (int tIndex = ClassIndexes[cl]; tIndex < ClassIndexes[cl] + ClassNumber[cl]; tIndex++) {
-            // start of outer for
+        for (int tIndex = 0; tIndex < labelTraining.size(); tIndex++) {
+            if (labelTraining[tIndex] != cl)
+                continue;
+            // loop over instances of class cl
 
             int NumberOfSegments = 0;
-            for (int i = DIMENSION - MinK + 1; i >= DIMENSION - MaximalK + 1; i--) {
+            for (int i = tsLen - conf.minK + 1; i >= tsLen - conf.maxK + 1; i--) {
                 NumberOfSegments = NumberOfSegments + i;
             }
 
@@ -156,32 +152,27 @@ int main() {
                 EndP[i] = new int[training.size()]; // ending position array
             }
 
-            if (DisArrayOption == 1)
-                DisArray(cl, tIndex,  DisA, EndP, NumberOfSegments, training.size(), MinK, MaximalK);
-            else if (DisArrayOption == 2)
-                DisArray2(cl, tIndex,  DisA, EndP, NumberOfSegments, training.size(), MinK, MaximalK);
+            if (conf.DisArrayOption == 2)
+                DisArray2(tIndex,  DisA, EndP, training.size(), tsLen, conf.minK, conf.maxK);
             else
-                DisArray(cl, tIndex,  DisA, EndP, NumberOfSegments, training.size(), MinK, MaximalK);
+                DisArray(tIndex,  DisA, EndP, training.size(), tsLen, conf.minK, conf.maxK);
 
             // compute
-            startFeature = clock();
-            totalBmap.reset();   // reset the Bmap for each length's set cover
             std::vector<Feature *> fSet;
-            //int offset=ClassIndexes[classIndex]*(DIMENSION-k+1)+1;
             int DisArrayIndex = 0;
-            for (int currentL = MinK; currentL <= MaximalK; currentL++ ) { // for each length
+            for (int currentL = conf.minK; currentL <= conf.maxK; currentL++ ) { // for each length
 
-                for (int startPosition = 0; startPosition <= DIMENSION - currentL; startPosition++) {
+                for (int startPosition = 0; startPosition <= tsLen - currentL; startPosition++) {
 
                     Feature * temp;
-                    if (option == 1) {
-                        temp = ThresholdLearningAll(DisArrayIndex, tIndex, startPosition, boundThrehold, currentL, classIndex, DisA, recallThreshold, EndP, alpha);
-                        // temp=ThresholdLearningAll(offset+s, boundThrehold, k, classIndex, DisA, recallThreshold);
-                    } else if (option == 2) {
-                        temp = ThresholdLearningKDE(DisArrayIndex, tIndex, startPosition, currentL, classIndex, DisA, recallThreshold, probablityThreshold, EndP, alpha);
+                    if (conf.thresholdMethod == 1) {
+                        temp = ThresholdLearningAll(tIndex, startPosition, conf.boundThreshold,
+                            currentL, cl, DisA[DisArrayIndex], conf.recallThreshold,
+                            EndP[DisArrayIndex], conf.alpha, labelTraining);
                     } else {
-                        std::cerr << "Error: Invalid option." << std::endl;
-                        exit(0);
+                        temp = ThresholdLearningKDE(tIndex, startPosition, currentL, cl,
+                            DisA[DisArrayIndex], conf.recallThreshold, conf.probablityThreshold,
+                            EndP[DisArrayIndex], conf.alpha, labelTraining);
                     }
 
                     if (temp != NULL) {
@@ -191,224 +182,112 @@ int main() {
                 }// end of position for
             } // end of length for
 
-            // compute the non-redundent feature set by non-redundant top-K
-            while (totalBmap.count() > 0) {
-                double max = -1;
-                double maxLength = -1;
-                int index = -1;
-                for (unsigned int i = 0; i < fSet.size(); i++) {
-                    double temp = fSet.at(i)->earlyFScore;
-                    if (temp > max ) {
-                        max = temp;
-                        maxLength = fSet.at(i)->length;
-                        index = i;
+            BitArray totalBmap(labelTraining.size());                      // the union bit map of a certain length of a certain class
+            for (Feature * p : fSet)
+                for (int i = 0; i < (p->bmap).size(); i++)
+                    if ((p->bmap)[i])
+                        totalBmap.set(i);  //  set the total Bmap for each length's set cover
 
-                    } else if  (temp == max && fSet.at(i)->length > maxLength) {
-                        max = temp;
-                        maxLength = fSet.at(i)->length;
-                        index = i;
-                    }
-                }
-                // move this feature to reducedFset
-                if (index >= 0) {
-                    Feature * currentFeature = fSet.at(index);
-                    fSet.erase(fSet.begin() + index);
-                    // check if increase the coverage
 
-                    // check current with the totalBmap if there is 1 in current and 1 in totalBmap, new coverage
-                    std::bitset<ROWTRAINING> newCoverage = currentFeature->bmap & totalBmap;
-
-                    if (newCoverage.count() > 0) {
-                        reducedFset.push_back(currentFeature);
-                    }
-
-                    // using bit operation
-                    for (unsigned int j = 0; j < (currentFeature->bmap).size(); j++) { // for the current set, update the other set
-                        if ((currentFeature->bmap)[j] == 1) {
-                            totalBmap.reset(j);  // update the total covered set
-                        }
-                    }
-                }
-            }// end while  , end of the feature selection in each length
-            std::cout << "reducedFset of instance: " << tIndex << " = " << reducedFset.size() << std::endl;
-
+            reduceFset(reducedFset, fSet, totalBmap);
             // relase the memory
             for (int i = 0; i < NumberOfSegments; i++) {
                 delete [] DisA[i];
-            }
-            delete [] DisA;
-
-            for (int i = 0; i < NumberOfSegments; i++) {
                 delete [] EndP[i];
             }
+            delete [] DisA;
             delete [] EndP;
-
-            for (unsigned int i = 0; i < fSet.size(); i++) {
-                delete fSet.at(i);
-            }
-            endFeature = clock();
         } // end of outer for, end of feature for each isntance
 
         // second round of set cover
-        std::cout << "Total Coverage Rate: " << (double)allLengthBmap.count() / ClassNumber[classIndex] << std::endl;
-        ReduceAllLength(finalFset, reducedFset);
-        std::cout << "Final set size: " << finalFset.size() << std::endl;
 
-        for (unsigned int s = 0; s < finalFset.size(); s++) {
-            std::cout << "\n" << s;
-            PrintFeature(finalFset.at(s));
-            PrintFeature(finalFset.at(s), resultFile);
-        }
+        BitArray allLengthBmap(labelTraining.size());                  // the union bit map of all length of a certain class
+        for (Feature * p : reducedFset)
+            for (int i = 0; i < (p->bmap).size(); i++)
+                if ((p->bmap)[i])
+                    allLengthBmap.set(i); // set the all length Bmap for the second round of set cover
+        reduceFset(finalFset, reducedFset, allLengthBmap);
 
         // UPDATE THE ALL CLASS DATA SET
-        while (!finalFset.empty()) {
-            Feature * tempFeature = finalFset.at(0);
-            finalFset.erase(finalFset.begin() + 0);
-            AllClassesFset.push_back(tempFeature);
-        }
+        AllClassesFset.insert(AllClassesFset.end(), finalFset.begin(), finalFset.end());
+        finalFset.clear();
     }// end of for for each classes
 
-    for (unsigned int s = 0; s < AllClassesFset.size(); s++) {
-        std::cout << s << std::endl;
-        PrintFeature(AllClassesFset.at(s));
-    }
-
-    //classification
-    classificationAllClasses(AllClassesFset);
-    clock_t classificationStart = clock();
-    classificationAllClassesWithDefault(AllClassesFset);
-    clock_t classificationEnd = clock();
-
-    std::cout << "Training time: " << (double)(clock() - tStart) / CLOCKS_PER_SEC << std::endl;
-    std::cout << "av. classifciation time: " << (double)(classificationEnd - classificationStart) / ROWTESTING / CLOCKS_PER_SEC << " seconds" << std::endl;
+    Result res = classificationAllClasses(AllClassesFset, classes, tsLen);
+    res.time = (double)(clock() - tStart) / CLOCKS_PER_SEC;
+    return res;
 }
 
-// second round of feature selection by top-K non-redundant
-void ReduceAllLength(std::vector<Feature *> & finalFset, std::vector<Feature *> &fSet) {
-    while (allLengthBmap.count() > 0) {
+// feature selection by top-K non-redundant
+void reduceFset(std::vector<Feature *> &finalFset, std::vector<Feature *> &fSet, BitArray &bmap) {
+    // until all instances that can be classified are correctly classified by at least one feature
+    while (bmap.count() > 0 && fSet.size()) {
+        // find the most promising feature
         double max = -1;
         double maxLength = -1;
         int index = -1;
         for (unsigned int i = 0; i < fSet.size(); i++) {
-            double temp = fSet.at(i)->earlyFScore;
+            double temp = fSet[i]->earlyFScore;
             if (temp > max ) {
                 max = temp;
-                maxLength = fSet.at(i)->length;
+                maxLength = fSet[i]->length;
                 index = i;
-            } else if  (temp == max && fSet.at(i)->length > maxLength) {
+            } else if  (temp == max && fSet[i]->length > maxLength) {
                 max = temp;
-                maxLength = fSet.at(i)->length;
+                maxLength = fSet[i]->length;
                 index = i;
             }
         }
         // move this feature to reducedFset and reset others
-        if (index >= 0) {
-            Feature * currentFeature = fSet.at(index);
-            fSet.erase(fSet.begin() + index);
-            // need to remove the redundancy
-
-            // check current with the totalBmap if there is 1 in current and 1 in totalBmap, new coverage
-            std::bitset<ROWTRAINING> newCoverage = currentFeature->bmap & allLengthBmap;
-
-            if (newCoverage.count() > 0) {
-                finalFset.push_back(currentFeature);
-            }
-            for (unsigned int j = 0; j < (currentFeature->bmap).size(); j++) { // for the current set, update the other set
-                if ((currentFeature->bmap)[j] == 1) {
-                    allLengthBmap.reset(j);  // update the total covered set
+        // check if the intersection of the two sets is not empty
+        if ((fSet[index]->bmap & bmap).count() > 0) {
+            finalFset.push_back(fSet[index]);
+            for (unsigned int j = 0; j < (fSet[index]->bmap).size(); j++) { // for the current set, update the other set
+                if (fSet[index]->bmap[j]) {
+                    bmap.reset(j);  // update the total covered set
                 }
             }
         }
+        fSet.erase(fSet.begin() + index);
     }// end while
-    std::cout << "finalFset:" << finalFset.size() << std::endl;
-
-    for (unsigned int i = 0; i < fSet.size(); i++) {
-        delete fSet.at(i);
-    }
+    for (Feature * p : fSet)
+        delete p;
 }
 
-
-void classificationAllClassesWithDefault(std::vector<Feature *> &Fs) {
-    int NoClassified = 0;
-    int CorrectlyClassified = 0;
-    int sumLength = 0;
-    //find the default label as the the most frequent class
-
-    int defaultlabel = -1;
-    int mostFrequent = -1;
-    for (int ci = 0; ci < NofClasses; ci++) {
-        if (ClassNumber[ci] > mostFrequent) {
-            mostFrequent = ClassNumber[ci];
-            defaultlabel = Classes[ci];
-        }
-    }
-
-    for (int i = 0; i < ROWTESTING; i++) {
-        bool matched = 0;
-        for (int j = 0; j < DIMENSION; j++) { // j is the current ending position of the stream
-            for (unsigned int f = 0; f < Fs.size(); f++) {
-                int tempLength = Fs.at(f)->length;
-                int startingPosition = j - tempLength + 1;
-                if (startingPosition >= 0) {
-                    double * currentseg = new double[tempLength];
-                    for (int ss = 0; ss < tempLength; ss++) {
-                        currentseg[ss] = testing[i][ss + startingPosition];
-                    }
-                    double * tempFeatureSeg = getFeatureSegment(Fs.at(f));
-                    double tempDis = util::euclidean(tempFeatureSeg, currentseg, tempLength);
-                    delete [] tempFeatureSeg;
-                    delete [] currentseg;
-                    if (tempDis <= (Fs.at(f)->threshold)) {
-                        matched = 1;
-                        sumLength = sumLength + j + 1;
-                        NoClassified++;
-                        if (Fs.at(f)->label == labelTesting[i])
-                            CorrectlyClassified++;
-                        break;
-                        // break to stop checking more features
-                    }
-                }
-            }
-            if (matched == 1) // break the segment loop, finish the current testing example
-                break;
-        } // end of for , finish classify the current example by the features
-        if (matched == 0) { // classified by the default classifier
-            if (labelTesting[i] == defaultlabel)
-                CorrectlyClassified++;
-            sumLength = sumLength + DIMENSION;
-        }
-    }
-    std::cout << "accuracy:  " << (double)CorrectlyClassified / ROWTESTING << std::endl;
-    std::cout << "earliness: " << (double)sumLength / ROWTESTING << std::endl;
-}
-void classificationAllClasses(std::vector<Feature *> &Fs) {
-    int NoClassified = 0;
+Result classificationAllClasses(std::vector<Feature *> &Fs, const std::unordered_map<int,int> &classes, size_t tsLen) {
     int CorrectlyClassified = 0;
     int sumLength = 0;
 
-    int n = ROWTESTING;
-    int len = DIMENSION;
+    int defaultlabel = 0;
+    int maxFreq = 0;
+    for (auto& it : classes) {
+        if (it.second > maxFreq) {
+            maxFreq = it.second;
+            defaultlabel = it.first;
+        }
+    }
+
+    int n = labelTesting.size();
     std::vector<int> predictedLabel(n);
     for (int i = 0; i < n; i++) {
         bool matched = 0;
-        for (int j = 0; j < len; j++) { // j is the current ending position of the stream
+        for (int j = 0; j < tsLen; j++) { // j is the current ending position of the stream
             for (unsigned int f = 0; f < Fs.size(); f++) {
-                int tempLength = Fs.at(f)->length;
+                int tempLength = Fs[f]->length;
                 int startingPosition = j - tempLength + 1;
                 if (startingPosition >= 0) {
                     double * currentseg = new double[tempLength];
                     for (int ss = 0; ss < tempLength; ss++)
                     {currentseg[ss] = testing[i][ss + startingPosition];}
-                    double * tempFeatureSeg = getFeatureSegment(Fs.at(f));
+                    double * tempFeatureSeg = getFeatureSegment(Fs[f]);
                     double tempDis = util::euclidean(tempFeatureSeg, currentseg, tempLength);
                     delete [] tempFeatureSeg;
                     delete [] currentseg;
-                    if (tempDis <= (Fs.at(f)->threshold)) {
-                        predictedLabel[i] = (int)Fs.at(f)->label;
+                    if (tempDis <= (Fs[f]->threshold)) {
+                        predictedLabel[i] = (int)Fs[f]->label;
                         matched = 1;
                         sumLength = sumLength + j + 1;
-                        NoClassified++;
-                        if (Fs.at(f)->label == labelTesting[i]) {
+                        if (Fs[f]->label == labelTesting[i]) {
                             CorrectlyClassified++;
                         }
                         break;
@@ -419,58 +298,17 @@ void classificationAllClasses(std::vector<Feature *> &Fs) {
             if (matched == 1) // break the segment loop, finish the current testing example
                 break;
         }
-    }
-    std::cout << "coverage: " << (double)NoClassified / n << std::endl;
-    if (NoClassified == 0)
-        std::cout << " accuracy: ---" << std::endl;
-    else {
-        std::cout << " accuracy:  " << (double)CorrectlyClassified / NoClassified << std::endl;
-        std::cout << " earliness: " << (double)sumLength / NoClassified << std::endl;
-    }
-
-    // compute the precision and recall of each class;
-    for (int c = 0; c < NofClasses; c++) {
-        int tp = 0;
-        int classifiedintoC = 0;
-        int hasLabelC = 0;
-        for (int i = 0; i < n; i++) {
-            if (predictedLabel[i] == Classes[c] && (int)labelTesting[i] == Classes[c])
-                tp++; 
-            if (predictedLabel[i] == Classes[c])
-                classifiedintoC++;
-            if ((int)labelTesting[i] == Classes[c] )
-                hasLabelC++;
+        if (matched == 0) { // classified by the default classifier
+            if (labelTesting[i] == defaultlabel)
+                CorrectlyClassified++;
+            sumLength += tsLen;
         }
-        std::cout << std::endl
-            << "Class: " << Classes[c] << std::endl
-            << " recall:    " << (double)tp / hasLabelC << std::endl
-            << " precision: " << (double)tp / classifiedintoC << std::endl;
     }
-}
 
-// print the information of the feature
-void PrintFeature(Feature * f) {
-    PrintFeature(f, std::cout);
-}
-
-// output to the result file
-void PrintFeature(Feature * f, std::ostream& of) {
-    if (f != NULL) {
-        of << "feature = [ ";
-
-        for (int i = 0; i < f->length; i++) {
-            of << training[f->instanceIndex][f->startPosition + i] << " ";
-        }
-        of << " ]" << std::endl
-           << "instance Index = " << f->instanceIndex << std::endl
-           << "startPosition = " << f->startPosition << std::endl
-           << "length = " << f->length << std::endl
-           << "threshod = " << f->threshold << std::endl
-           << "recall = " << f->recall << std::endl
-           << "precision = " << f->precision << std::endl
-           << "fscore = " << f->fscore << std::endl
-           << "earlyfscore = " << f->earlyFScore << std::endl;
-    }
+    Result res;
+    res.errorRate = 1. - ((double)CorrectlyClassified / n);
+    res.earliness =  ((double)sumLength / tsLen) / n;
+    return res;
 }
 
 double ComputeFScore(double recall, double precision) {
@@ -479,171 +317,90 @@ double ComputeFScore(double recall, double precision) {
 
 
 // learning threshold based on the one tail Chebyshev's inequality
-Feature * ThresholdLearningAll(int DisArrayIndex, int instanceIndex, int startPosition,  double m, int k, int targetClass, double ** DisA, double RecallThreshold, int ** EndP, int alpha) { // this index starting from 1, m is the parameter in the bound, k is the length of feature
-    int classofset = ClassIndexes[targetClass] * (DIMENSION - k + 1) + 1;
+// this index starting from 1, m is the parameter in the bound, k is the length of feature
+Feature * ThresholdLearningAll(int instanceIndex, int startPosition,  double m, int k, int targetClass, double * DisAi, double RecallThreshold, int * EndPi, int alpha, const std::vector<int> &labelTraining) {
     Feature * currentf = new Feature();
     currentf->instanceIndex = instanceIndex;
     currentf->startPosition = startPosition;
     currentf->length = k;
-    currentf->label = Classes[targetClass];
+    currentf->label = targetClass;
+    currentf->bmap.resize(labelTraining.size());
 
-    // get the non-target class part in the distance array
-    int nonTargetTotal = 0;
-    for (int c = 0; c < NofClasses; c++) {
-        if (c != targetClass) {
-            nonTargetTotal = nonTargetTotal + ClassNumber[c];
-        }
-    }
+    std::vector<double> nonTargetDis;
+    
+    for (int i = 0; i < labelTraining.size(); ++i)
+        if (labelTraining[i] != targetClass)
+            nonTargetDis.push_back(DisAi[i]);
 
-    double * nonTargetDis = new double[nonTargetTotal];
-
-    int i = 0;
-    for (int c = 0; c < NofClasses; c++) {
-        if (c != targetClass) {
-            int offset = ClassIndexes[c];
-            for (int e = 0; e < ClassNumber[c]; e++) {
-                nonTargetDis[i] = DisA[DisArrayIndex][offset + e];
-                i++;
-            }
-        }
-    }
     // compute the mean, standard deviation and the threshold
-    double mu = getMean(nonTargetDis, nonTargetTotal);
-    double sd = getSTD(nonTargetDis, nonTargetTotal, mu);
+    double mu = getMean(nonTargetDis);
+    double sd = getSTD(nonTargetDis, mu);
 
     currentf->threshold = mu - m * sd;
 
-    delete [] nonTargetDis; // release the memory
-
     // compute recall, precision and bitmap
-    if (currentf->threshold > 0) {
-        int targetCount = 0;
-        double weightedRecall = 0;
-        int totalCount = 0;
-        for (int i = 0; i < ROWTRAINING; i++) {
-            double temp = DisA[DisArrayIndex][i];
-            if (temp <= currentf->threshold) {
-                totalCount++;
-                if (labelTraining[i] == Classes[targetClass]) {
-                    targetCount++;
-                    (currentf->bmap).set(i);  // set the bmap
-                    weightedRecall = weightedRecall + pow(((double)1 / EndP[DisArrayIndex][i]), (double)1 / alpha);
-                }
-            }
-        }
-        currentf->recall = (double)targetCount / ClassNumber[targetClass]; // it is the absolute recall
-        currentf->precision = (double)targetCount / totalCount;
-        currentf->fscore = ComputeFScore(currentf->recall, currentf->precision);
-        currentf->earlyFScore = ComputeFScore(weightedRecall, currentf->precision);
-
-        if (currentf->recall >= RecallThreshold ) {
-            for (unsigned int i = 0; i < (currentf->bmap).size(); i++) {
-                if ((currentf->bmap)[i] == 1) {
-                    totalBmap.set(i);  //  set the total Bmap for each length's set cover
-                    allLengthBmap.set(i); // set the all length Bmap for the second round of set cover
-                }
-            }
-            return currentf;
-        } else {
-            delete currentf;
-            return NULL;
-        }
-    } else {
-        delete currentf;
-        return NULL;
-    }
-
-}
-
-double OneKDE(double * arr, int len, double q, double h, double constant) {
-    double temp = 0;
-    for (int i = 0; i < len; i++) {
-        temp = temp + exp((arr[i] - q) * (arr[i] - q) * (-1 / (2 * h * h)));
-    }
-    temp = temp * constant;
-    return temp;
+    return computeBmap(currentf, targetClass, labelTraining.size()-nonTargetDis.size(), DisAi, EndPi, RecallThreshold, alpha);
 }
 
 //learning the threshold by KDE classification.
-Feature * ThresholdLearningKDE(int DisArrayIndex, int Instanceindex, int startPosition, int k, int targetClass, double ** DisA, double RecallThreshold, double ProbalityThreshold, int ** EndP, int alpha) {
-    int classofset = ClassIndexes[targetClass] * (DIMENSION - k + 1) + 1;
+Feature * ThresholdLearningKDE(int Instanceindex, int startPosition, int k, int targetClass, double * DisAi, double RecallThreshold, double ProbalityThreshold, int * EndPi, int alpha, const std::vector<int> &labelTraining) {
     Feature * currentf = new Feature();
     currentf->instanceIndex = Instanceindex;
     currentf->startPosition = startPosition;
     currentf->length = k;
+    currentf->bmap.resize(labelTraining.size());
 
-    currentf->label = Classes[targetClass];
+    currentf->label = targetClass;
 
-    // get the target class part and non-target part in the distance array
-    int nonTargetTotal = 0;
-    for (int c = 0; c < NofClasses; c++) {
-        if (c != targetClass) {
-            nonTargetTotal = nonTargetTotal + ClassNumber[c];
-        }
-    }
-    int TargetTotal = ClassNumber[targetClass];
-
-    double * nonTargetDis = new double[nonTargetTotal];
-    double * TargetDis = new double[TargetTotal];
-    double * CurrentDis = new double[ROWTRAINING];
-
-    int nonTargeti = 0;
-    int Targeti = 0;
-    int totali = 0;
-    for (int c = 0; c < NofClasses; c++) {
-        int offset = ClassIndexes[c];
-        if (c != targetClass) {
-            for (int e = 0; e < ClassNumber[c]; e++) {
-                nonTargetDis[nonTargeti] = DisA[DisArrayIndex][offset + e];
-                nonTargeti++;
-                CurrentDis[totali] = DisA[DisArrayIndex][offset + e];
-                totali++;
-            }
+    std::vector<double> nonTargetDis;
+    std::vector<double> TargetDis;
+    std::vector<double> CurrentDis(DisAi, DisAi + labelTraining.size());
+    
+    for (int i = 0; i < labelTraining.size(); ++i) {
+        if (labelTraining[i] == targetClass) {
+            TargetDis.push_back(DisAi[i]);
         } else {
-            for (int e = 0; e < ClassNumber[c]; e++) {
-                TargetDis[Targeti] = DisA[DisArrayIndex][offset + e];
-                Targeti++;
-                CurrentDis[totali] = DisA[DisArrayIndex][offset + e];
-                totali++;
-            }
+            nonTargetDis.push_back(DisAi[i]);
         }
     }
+
     // compute the mean, standard deviation and the threshold, and optimal h
-    //  for the nonTarget Classes
-    double muNonTarget = getMean(nonTargetDis, nonTargetTotal);
+    //  for the nonTarget classes
+    double muNonTarget = getMean(nonTargetDis);
 
-    double sdNonTarget = getSTD(nonTargetDis, nonTargetTotal, muNonTarget);
+    double sdNonTarget = getSTD(nonTargetDis, muNonTarget);
 
-    double hNonTarget = 1.06 * sdNonTarget / pow (nonTargetTotal, 0.2);
+    double hNonTarget = 1.06 * sdNonTarget / pow (nonTargetDis.size(), 0.2);
 
-    double constantNT = 1 / (sqrt(2 * 3.14159265) * nonTargetTotal * hNonTarget);
+    double constantNT = 1 / (sqrt(2 * 3.14159265) * nonTargetDis.size() * hNonTarget);
     //  for the TargetClasses
-    double muTarget = getMean(TargetDis, TargetTotal);
+    double muTarget = getMean(TargetDis);
 
-    double sdTarget = getSTD(TargetDis, TargetTotal, muTarget);
+    double sdTarget = getSTD(TargetDis, muTarget);
 
-    double hTarget = 1.06 * sdTarget / pow (TargetTotal, 0.2);
-    double constantT = 1 / (sqrt(2 * 3.14159265) * TargetTotal * hTarget);
+    double hTarget = 1.06 * sdTarget / pow (TargetDis.size(), 0.2);
+    double constantT = 1 / (sqrt(2 * 3.14159265) * TargetDis.size() * hTarget);
 
     // sort the totalDis
-    util::quicksort( CurrentDis, 0, ROWTRAINING - 1);
+    std::sort(CurrentDis.begin(), CurrentDis.end());
     //  compute the Probablity<0;
-    double NegativeTestPoint = -CurrentDis[ROWTRAINING - 1] / (ROWTRAINING - 1);
-    double densityNonTarget = OneKDE(nonTargetDis, nonTargetTotal, NegativeTestPoint, hNonTarget,  constantNT);
-    double densityTarget = OneKDE(TargetDis, TargetTotal, NegativeTestPoint, hTarget,  constantT);
-    double tempTarget = ((double)ClassNumber[targetClass] / ROWTRAINING) * densityTarget;
-    double tempNonTarget = (1 - ((double)ClassNumber[targetClass] / ROWTRAINING)) * densityNonTarget;
+    int n = labelTraining.size();
+    double NegativeTestPoint = -CurrentDis[n - 1] / (n - 1);
+    double densityNonTarget = OneKDE(nonTargetDis, NegativeTestPoint, hNonTarget,  constantNT);
+    double densityTarget = OneKDE(TargetDis, NegativeTestPoint, hTarget,  constantT);
+    double tempTarget = ((double)TargetDis.size() / n) * densityTarget;
+    double tempNonTarget = (1 - ((double)TargetDis.size() / n)) * densityNonTarget;
     double ProTarget = tempTarget / ( tempTarget + tempNonTarget);
 
     if (ProTarget > ProbalityThreshold) {
         // compute the breaking Index
         int breakIndex = 0;
         int i = 0;
-        for (i = 0; i < ROWTRAINING; i++) {
-            densityNonTarget = OneKDE(nonTargetDis, nonTargetTotal, CurrentDis[i], hNonTarget,  constantNT);
-            densityTarget = OneKDE(TargetDis, TargetTotal, CurrentDis[i], hTarget,  constantT);
-            tempTarget = ((double)ClassNumber[targetClass] / ROWTRAINING) * densityTarget;
-            tempNonTarget = (1 - ((double)ClassNumber[targetClass] / ROWTRAINING)) * densityNonTarget;
+        for (i = 0; i < n; i++) {
+            densityNonTarget = OneKDE(nonTargetDis, CurrentDis[i], hNonTarget,  constantNT);
+            densityTarget = OneKDE(TargetDis, CurrentDis[i], hTarget,  constantT);
+            tempTarget = ((double)TargetDis.size() / n) * densityTarget;
+            tempNonTarget = (1 - ((double)TargetDis.size() / n)) * densityNonTarget;
             ProTarget = tempTarget / ( tempTarget + tempNonTarget);
             if (ProTarget < ProbalityThreshold) { // belong to the non-target class
                 breakIndex = i;
@@ -655,10 +412,10 @@ Feature * ThresholdLearningKDE(int DisArrayIndex, int Instanceindex, int startPo
             int NonofBreakingPoint = 20;
             double value = 0;
             for (value = CurrentDis[breakIndex - 1]; value < CurrentDis[breakIndex]; value = value + (CurrentDis[breakIndex] - CurrentDis[breakIndex - 1]) / NonofBreakingPoint) {
-                densityNonTarget = OneKDE(nonTargetDis, nonTargetTotal, value, hNonTarget,  constantNT);
-                densityTarget = OneKDE(TargetDis, TargetTotal, value, hTarget,  constantT);
-                tempTarget = ((double)ClassNumber[targetClass] / ROWTRAINING) * densityTarget;
-                tempNonTarget = (1 - ((double)ClassNumber[targetClass] / ROWTRAINING)) * densityNonTarget;
+                densityNonTarget = OneKDE(nonTargetDis, value, hNonTarget,  constantNT);
+                densityTarget = OneKDE(TargetDis, value, hTarget,  constantT);
+                tempTarget = ((double)TargetDis.size() / n) * densityTarget;
+                tempNonTarget = (1 - ((double)TargetDis.size() / n)) * densityNonTarget;
                 ProTarget = tempTarget / ( tempTarget + tempNonTarget);
                 if (ProTarget < ProbalityThreshold) { // belong to the non-target class
                     currentf->threshold = value;
@@ -677,83 +434,56 @@ Feature * ThresholdLearningKDE(int DisArrayIndex, int Instanceindex, int startPo
         currentf->threshold = -1;
     }
 
-    delete  nonTargetDis;
-    delete TargetDis;
-    delete CurrentDis;
+    return computeBmap(currentf, targetClass, TargetDis.size(), DisAi, EndPi, RecallThreshold, alpha);
+}
 
-    if (currentf->threshold > 0) {
-        int targetCount = 0;
-        double weightedRecall = 0;
-        int totalCount = 0;
-        for (int i = 0; i < ROWTRAINING; i++) {
-            double temp = DisA[DisArrayIndex][i];
-            if (temp <= currentf->threshold) {
-                totalCount++;
-                if (labelTraining[i] == Classes[targetClass]) {
-                    targetCount++;
-                    (currentf->bmap).set(i);  // set the bmap
-                    weightedRecall = weightedRecall + pow(((double)1 / EndP[DisArrayIndex][i]), (double)1 / alpha);
-
-                }
-            }
-        }
-        currentf->recall = (double)targetCount / ClassNumber[targetClass]; // it is the absolute recall
-        currentf->precision = (double)targetCount / totalCount;
-        currentf->fscore = ComputeFScore(currentf->recall, currentf->precision);
-        currentf->earlyFScore = ComputeFScore(weightedRecall, currentf->precision);
-
-        if (currentf->recall >= RecallThreshold) {
-            for (int i = 0; i < (currentf->bmap).size(); i++) {
-                if ((currentf->bmap)[i] == 1) {
-                    totalBmap.set(i);  //  set the total Bmap for each length's set cover
-                    allLengthBmap.set(i); // set the all length Bmap for the second round of set cover
-                }
-            }
-            return currentf;
-        } else {
-            delete currentf;
-            return NULL;
-        }
-    } else {
+Feature * computeBmap(Feature * currentf, int targetClass, int nTarget, double * DisAi, int * EndPi, double RecallThreshold, int alpha) {
+    if (currentf->threshold <= 0) {
         delete currentf;
         return NULL;
     }
-}
-
-// compute the mean
-double getMean( double * arr, int len) { // segmentIndex starting from 1
-    double sum = 0;
-    for (int i = 0; i < len; i++) {
-        sum = sum + arr[i];
+    int targetCount = 0;
+    double weightedRecall = 0;
+    int totalCount = 0;
+    for (int i = 0; i < labelTraining.size(); i++) {
+        double temp = DisAi[i];
+        if (temp <= currentf->threshold) {
+            totalCount++;
+            if (labelTraining[i] == targetClass) {
+                targetCount++;
+                (currentf->bmap).set(i);  // set the bmap
+                weightedRecall = weightedRecall + pow(((double)1 / EndPi[i]), (double)1 / alpha);
+            }
+        }
     }
-    return sum / len;
-}
+    currentf->recall = (double)targetCount / nTarget; // it is the absolute recall
+    currentf->precision = (double)targetCount / totalCount;
+    currentf->fscore = ComputeFScore(currentf->recall, currentf->precision);
+    currentf->earlyFScore = ComputeFScore(weightedRecall, currentf->precision);
 
-// compute the standard deviation given the mean
-double getSTD(double * arr, int len, double mean) {
-    double sum = 0;
-    for (int i = 0; i < len; i++) {
-        sum = sum + (arr[i] - mean) * (arr[i] - mean);
+    if (currentf->recall < RecallThreshold) {
+        delete currentf;
+        return NULL;
     }
-    return sqrt(sum / (len));
+    return currentf;
 }
 
 // compute the best match distance array of the selected class and the ending position
 //  the instanceIndex is the absolute instanceIndex
-void DisArray(int classIndex, int instanceIndex, double ** DisArray, int ** EndP, int rows, int columns, int MinK, int MaximalK) {
+void DisArray(int instanceIndex, double ** DisArray, int ** EndP, int n, size_t tsLen, int minK, int maxK) {
     // compute the DisArray
-    for (int tl = 0; tl < columns; tl++) { // for each training example
+    for (int tl = 0; tl < n; tl++) { // for each training example
         // listing substring, for each lenght
         int DisArrayIndex = 0;
 
-        for (int currentL = MinK; currentL <= MaximalK; currentL++ ) { // for each length
+        for (int currentL = minK; currentL <= maxK; currentL++ ) { // for each length
 
-            for (int startPosition = 0; startPosition <= DIMENSION - currentL; startPosition++) {
+            for (int startPosition = 0; startPosition <= tsLen - currentL; startPosition++) {
                 // compute the best match using naive early stopping
                 // compute the best match
                 int bestMatchStartP = -1;
-                double minDis = 10000;
-                for (int l = 0; l < DIMENSION - currentL + 1; l++) { // a possible match's starting position
+                double minDis = FLT_MAX;
+                for (int l = 0; l < tsLen - currentL + 1; l++) { // a possible match's starting position
                     double ret = 0;
                     for (int ii = 0; ii < currentL; ii++) {
                         double dist = training[instanceIndex][startPosition + ii] - training[tl][l + ii];
@@ -786,33 +516,27 @@ double * getFeatureSegment(Feature *f) {
 
 //the following code compute the DisArray
 // compute original matrix
-void createOriginalMatrix(std::vector<double> array1,
-                          std::vector<double> array2,
-                          double * &pMatrix) {
-    if (pMatrix != NULL)
-        return;
-    pMatrix = new double[array1.size()*array2.size()];
+double * createOriginalMatrix(const std::vector<double> &array1,
+                              const std::vector<double> &array2) {
+    double * pMatrix = new double[array1.size()*array2.size()];
     for (int j = 0; j < array2.size(); j++) {
         for (int i = 0; i < array1.size(); i++) {
             pMatrix[j * array1.size() + i] = (array1[i] - array2[j]) * (array1[i] - array2[j]);
         }
     }
+    return pMatrix;
 }
 
 void computeWholeSubstringArray(int iLengthOfArray1,
                                 int iLengthOfArray2,
                                 double * pMatrixOriginal,
-                                double * pArraySubstring, int * pArraySubstringEndingPosition, int iLengthOfSubstringArray, int MaximalLength) {
+                                double * pArraySubstring, int * pArraySubstringEndingPosition, int MaximalLength) {
     if (pArraySubstring == NULL)
         return;
 
-    double* tempMatrix = new double[iLengthOfArray1 * iLengthOfArray2];
+    double* tempMatrix = new double[iLengthOfArray1 * iLengthOfArray2]{0};
     int iIndexofSubstring = 0;
     int i, j, k;
-    //clear out the substring score array
-    for (i = 0; i < iLengthOfArray1 * iLengthOfArray2; i++) {
-        tempMatrix[i] = 0;
-    }
 
     //from the length of 1 ot length of Array1
     for (i = 0; i < MaximalLength; i++) { // this is the different length of segment
@@ -841,29 +565,21 @@ void computeWholeSubstringArray(int iLengthOfArray1,
 }
 // compute the best match distance array of the selected class and the ending position
 //  the instanceIndex is the absolute instanceIndex
-void DisArray2(int classIndex, int instanceIndex, double ** DisArray, int ** EndP, int rows, int columns, int MinK, int MaximalK) {
+void DisArray2(int instanceIndex, double ** DisArray, int ** EndP, int n, size_t tsLen, int minK, int maxK) {
     // compute the DisArray
+    int pLengthOfSubstringArray = 0;
+    for (int c = tsLen; c >= tsLen - maxK + 1; c--)
+        pLengthOfSubstringArray += c;
+    double* pArraySubstring = new double[pLengthOfSubstringArray];
+    int* pArraySubstringEndingPosition = new int[pLengthOfSubstringArray];
+    // how many from 1 to minK
+    int offset = 0;
+    for (int c = tsLen; c >= tsLen - (minK - 1) + 1; c--)
+        offset += c;
 
-    for (int tl = 0; tl < columns; tl++) { // for each training example
-        double * pArraySubstring = NULL; // the distances
-        int * pArraySubstringEndingPosition = NULL;  // th ending position
-        int iArraySubstringArrayLength = 0;
-        int iArraySubstringArrayEndingPositionLength = 0;
-
-        double * pMatrixOriginal = NULL;
-        createOriginalMatrix(training[instanceIndex], training[tl], pMatrixOriginal);
-        int pLengthOfSubstringArray = 0;
-        for (int c = DIMENSION; c >= DIMENSION - MaximalK + 1; c--) {
-            pLengthOfSubstringArray = pLengthOfSubstringArray + c;
-        }
-        pArraySubstring = new double[pLengthOfSubstringArray];
-        pArraySubstringEndingPosition = new int[pLengthOfSubstringArray];
-        computeWholeSubstringArray(training[instanceIndex].size(), training[tl].size(), pMatrixOriginal, pArraySubstring, pArraySubstringEndingPosition, iArraySubstringArrayLength, MaximalK);
-
-        // how many from 1 to MinK
-        int offset = 0;
-        for (int c = DIMENSION; c >= DIMENSION - (MinK - 1) + 1; c--)
-        {offset = offset + c;}
+    for (int tl = 0; tl < n; tl++) { // for each training example
+        double * pMatrixOriginal = createOriginalMatrix(training[instanceIndex], training[tl]);
+        computeWholeSubstringArray(training[instanceIndex].size(), training[tl].size(), pMatrixOriginal, pArraySubstring, pArraySubstringEndingPosition, maxK);
 
         // copy into the disarray and the pend array
         for (int i = offset; i < pLengthOfSubstringArray; i++) {
@@ -873,13 +589,44 @@ void DisArray2(int classIndex, int instanceIndex, double ** DisArray, int ** End
 
         // release the memory
         delete[] pMatrixOriginal;
-        pMatrixOriginal = NULL;
-
-        delete[] pArraySubstring;
-        delete[] pArraySubstringEndingPosition;
-        pArraySubstringEndingPosition = NULL;
-        pArraySubstring = NULL;
-        pMatrixOriginal = NULL;
     }// end of each training example for
+    delete[] pArraySubstring;
+    delete[] pArraySubstringEndingPosition;
 } // end of function
 
+Config argparse(int argc, char* argv[]) {
+    Config conf;
+    for (int i = 1; i < argc; i++) {
+        if (argv[i][0] == '-') {
+            const char * arg = argv[i] + (argv[i][1] == '-' ? 2 : 1);
+            if (strcmp(arg, "data") == 0) {
+                conf.trainingFileName = argv[++i];
+                conf.testingFileName = argv[++i];
+            } else if (strcmp(arg, "method") == 0) {
+                conf.thresholdMethod = (strcmp(argv[++i], "KDE") == 0 ? 2 : 1);
+            } else if (strcmp(arg, "boundThreshold") == 0) {
+                conf.boundThreshold = std::stoi(argv[++i]);
+            } else if (strcmp(arg, "alpha") == 0) {
+                conf.alpha = std::stoi(argv[++i]);
+            } else if (strcmp(arg, "probablityThreshold") == 0) {
+                conf.probablityThreshold = std::stod(argv[++i]);
+            } else if (strcmp(arg, "DisArrayOption") == 0) {
+                conf.DisArrayOption = (strcmp(argv[++i], "naive") == 0 ? 1 : 2);
+            } else if (strcmp(arg, "minK") == 0) {
+                conf.minK = std::stoi(argv[++i]);
+            } else if (strcmp(arg, "maxK") == 0) {
+                conf.maxK = std::stoi(argv[++i]);
+            } else if (strcmp(arg, "recallThreshold") == 0) {
+                conf.recallThreshold = std::stod(argv[++i]);
+            }
+        }
+    }
+    return conf;
+}
+
+int main (int argc, char* argv[]) {
+    Result res = trainAndClassify(argparse(argc, argv));
+    std::cout << "error rate: " << res.errorRate << std::endl
+              << "earliness:  " << res.earliness << std::endl
+              << "time:       " << res.time << std::endl;
+}

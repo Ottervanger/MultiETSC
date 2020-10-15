@@ -5,7 +5,6 @@
 
 namespace util {
 
-void quicksort(double a[], int start, int end);
 double euclidean(double * a, double * b, int length);
 
 // load data in UCR format to the 2d vector 'data' with corresponding 'labels'
