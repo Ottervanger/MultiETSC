@@ -2,5 +2,5 @@ MAINS:=$(patsubst %.cpp, bin/%, $(shell grep -l 'int main' *.cpp))
 
 all: $(MAINS)
 
-bin/%: %.cpp util.cpp util.h DataSetInformation.h
+bin/%: %.cpp util.cpp util.h
 	g++ -std=c++11 -O3 -g $< util.cpp -o $@
