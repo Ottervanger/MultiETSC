@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <string>
 #include <cstring>
@@ -605,13 +606,11 @@ Config argparse(int argc, char* argv[]) {
             } else if (strcmp(arg, "method") == 0) {
                 conf.thresholdMethod = (strcmp(argv[++i], "KDE") == 0 ? 2 : 1);
             } else if (strcmp(arg, "boundThreshold") == 0) {
-                conf.boundThreshold = std::stoi(argv[++i]);
+                conf.boundThreshold = std::stod(argv[++i]);
             } else if (strcmp(arg, "alpha") == 0) {
                 conf.alpha = std::stoi(argv[++i]);
             } else if (strcmp(arg, "probablityThreshold") == 0) {
                 conf.probablityThreshold = std::stod(argv[++i]);
-            } else if (strcmp(arg, "DisArrayOption") == 0) {
-                conf.DisArrayOption = (strcmp(argv[++i], "naive") == 0 ? 1 : 2);
             } else if (strcmp(arg, "minK") == 0) {
                 conf.minK = std::stoi(argv[++i]);
             } else if (strcmp(arg, "maxK") == 0) {
