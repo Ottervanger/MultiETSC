@@ -626,7 +626,7 @@ Config argparse(int argc, char* argv[]) {
 
 int main (int argc, char* argv[]) {
     Result res = trainAndClassify(argparse(argc, argv));
-    std::cout << "error rate: " << res.errorRate << std::endl
-              << "earliness:  " << res.earliness << std::endl
-              << "time:       " << res.time << std::endl;
+    std::cout << "Result: SUCCESS, " << std::setprecision(6) << std::fixed
+              << res.time << ", [" << res.earliness
+              << ", "  << res.errorRate << "], 0" << std::endl;
 }
