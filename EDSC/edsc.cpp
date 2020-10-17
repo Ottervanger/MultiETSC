@@ -607,7 +607,7 @@ Config argparse(int argc, char* argv[]) {
                 conf.thresholdMethod = (strcmp(argv[++i], "KDE") == 0 ? 2 : 1);
             } else if (strcmp(arg, "boundThreshold") == 0) {
                 conf.boundThreshold = std::stod(argv[++i]);
-            } else if (strcmp(arg, "alpha") == 0) {
+            } else if (strcmp(arg, "alph") == 0) {
                 conf.alpha = std::stoi(argv[++i]);
             } else if (strcmp(arg, "probablityThreshold") == 0) {
                 conf.probablityThreshold = std::stod(argv[++i]);
@@ -620,6 +620,8 @@ Config argparse(int argc, char* argv[]) {
             }
         }
     }
+    if (conf.maxK < conf.minK)
+        conf.maxK = conf.minK;
     return conf;
 }
 
