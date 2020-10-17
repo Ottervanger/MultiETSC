@@ -4,10 +4,8 @@ algorithm {ECDIRE/run}[ECDIRE/run]
 acc_perc {0,1..100}[100]
 doHPO {TRUE,FALSE}[TRUE]
 kernel {gauss,iprod,cauchy,laplace}[iprod]
-distance {euclidean,dtw,edr,fourier,tquest}[euclidean]
+distance {euclidean,dtw,edr,fourier}[euclidean]
 dSigma {.01,.02,.05,.1,.2,.5,1,1.5,2,3}[.2]
 dSigma | distance in {edr}
 dN {1,2,5,10,20,50}[20]
 dN | distance in {fourier}
-dTau {-3.,-2.,-1.5,-1.,-.5,-.2,-.1,0.,.1,.2,.5,1.,1.5,2.,3.}[0.]
-dTau | distance in {tquest}

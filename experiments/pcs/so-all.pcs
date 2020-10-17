@@ -37,14 +37,12 @@ sr | algorithm in {SR-CF/run}
 # ECDIRE and SR-CF shared parameters
 kernel {gauss,iprod,cauchy,laplace}[iprod]
 kernel | algorithm in {ECDIRE/run,SR-CF/run}
-distance {euclidean,dtw,edr,fourier,tquest}[euclidean]
+distance {euclidean,dtw,edr,fourier}[euclidean]
 distance | algorithm in {ECDIRE/run,SR-CF/run}
 dSigma {.01,.02,.05,.1,.2,.5,1,1.5,2,3}[.2]
 dSigma | distance in {edr}
 dN {1,2,5,10,20,50}[20]
 dN | distance in {fourier}
-dTau {-3.,-2.,-1.5,-1.,-.5,-.2,-.1,0.,.1,.2,.5,1.,1.5,2.,3.}[0.]
-dTau | distance in {tquest}
 
 # EARLIEST
 hiddenDim [1,20] [10]i
