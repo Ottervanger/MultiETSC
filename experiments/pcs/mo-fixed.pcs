@@ -1,0 +1,2 @@
+algorithm {fixed/run.py}[fixed/run.py]
+percLen {0.0,0.01..1.0}[0.0]
