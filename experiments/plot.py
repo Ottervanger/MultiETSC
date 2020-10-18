@@ -274,7 +274,7 @@ def plotDistributions(df, datasets, blines):
     for dataset in datasets:
         fig, ax = plt.subplots(figsize=(8, 4))
         ax = sns.scatterplot(data=df.loc[df['dataset'] == dataset].iloc[::-1],
-                             x='delta', y='HV', style='method', hue='method',
+                             x='delta', y='HV', hue='method',
                              alpha=.5, s=3, linewidth=0, ax=ax)
         ax.scatter([blines[dataset].delta()], [blines[dataset].HV()],
                    c='k', marker='*', label=blines[dataset].label)
@@ -401,9 +401,13 @@ def main():
         os.makedirs(f'output/plot/{dataset}/', exist_ok=True)
         os.makedirs(f'output/tex/{dataset}/', exist_ok=True)
     methods = ['mo-ects',
+               'mo-edsc',
                'mo-ecdire',
                'mo-srcf',
                'mo-relclass',
+               'mo-teaser',
+               'mo-ecec',
+               'mo-earliest',
                'so-all',
                'mo-all']
     metrics = ['HV', 'delta']

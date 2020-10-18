@@ -22,6 +22,7 @@
 \edef\x{\endgroup\def\noexpand\datasets{\@@input|"ls -m output/plot/" }}\x
 
 \begin{document}
+\setlength\tabcolsep{3 pt}
 \begin{table}[!hb]%
     \makebox[\textwidth][c]{%
     \input{output/tex/dataset.tex}}%
@@ -43,8 +44,8 @@
         \caption{Distibutions of the Hyper Volume and Delta metrics for dataset ``\dataset''.}%
     \end{figure}%
     \begin{table}[H]%
-        \centering
-        \input{output/tex/\dataset/table.tex}%
+        \makebox[\textwidth][c]{%
+        \input{output/tex/\dataset/table.tex}}%
         \caption{Comparison of Pareto front metrics on dataset ``\dataset''.}%
     \end{table}
     \pagebreak
