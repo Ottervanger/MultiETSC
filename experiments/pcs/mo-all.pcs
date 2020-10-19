@@ -51,7 +51,7 @@ cellType {LSTM,GRU,RNN,RNN_TANH,RNN_RELU} [LSTM]
 cellType | algorithm in {EARLIEST/run.py}
 nLayers {1,2..5} [1]
 nLayers | algorithm in {EARLIEST/run.py}
-LAMBDA {0.0,0.01..1.0}[0.5]
+LAMBDA {0.0,0.0015..0.15}[0.0]
 LAMBDA | algorithm in {EARLIEST/run.py}
 df {1.,.999,.995,.99,.975,.95,.9,1.1,1.05,1.025,1.01,1.005,1.001}[1.]
 df | algorithm in {EARLIEST/run.py}
@@ -59,7 +59,7 @@ lr {1e-4,1e-3,1e-2,5e-2}[1e-3]
 lr | algorithm in {EARLIEST/run.py}
 lrf {1.,.999,.995,.99,.975,.95,.9}[1.]
 lrf | algorithm in {EARLIEST/run.py}
-epochs {1,2..1000} [20]
+epochs {1,2,5,10,20,50,100,200,500,1000} [20]
 epochs | algorithm in {EARLIEST/run.py}
 
 # TEASER
