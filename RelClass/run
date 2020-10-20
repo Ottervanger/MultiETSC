@@ -79,5 +79,10 @@ done
 export OPENBLAS_NUM_THREADS=$NP
 CMD="runn('$TRAIN', '$TEST', $TAU, '$CONSTR', '$PRED', $LDG, $SEED);"
 cd "${0%/*}"
-octave --no-gui --quiet --eval "$CMD"
 
+handler() { kill $PID; }
+
+octave --no-gui --quiet --eval "$CMD" & 
+PID=$!
+trap handler SIGINT
+wait $PID
