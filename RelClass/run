@@ -80,7 +80,7 @@ export OPENBLAS_NUM_THREADS=$NP
 CMD="runn('$TRAIN', '$TEST', $TAU, '$CONSTR', '$PRED', $LDG, $SEED);"
 cd "${0%/*}"
 
-handler() { kill $PID; }
+handler() { kill -9 $PID; }
 
 octave --no-gui --quiet --eval "$CMD" & 
 PID=$!
