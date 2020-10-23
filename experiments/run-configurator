@@ -9,7 +9,7 @@ MAX_R=10
 # default arguments
 SEED=1
 DATASET="ECG200"
-TIMEOUT="720"
+TIMEOUT="7200"
 CUTOFF="180"
 METHOD="mo"
 ALGO="all"
