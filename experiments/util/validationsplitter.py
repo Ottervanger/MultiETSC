@@ -48,6 +48,25 @@ def argparse():
     return folds, datafile, outputpath, seed, reps
 
 
+def makeSplit(outputpath, lines, y):
+    splits = []
+    for i, (idx_train, idx_valid) in enumerate(skf.split(lines, y)):
+        train, valid = lines[idx_train], lines[idx_valid]
+        trainFileName = 'TRAIN-{:03d}.tsv'.format(i)
+        validFileName = 'VALID-{:03d}.tsv'.format(i)
+        with open(outputpath+validFileName, 'w') as f:
+            for line in valid:
+                f.write(line)
+        with open(outputpath+trainFileName, 'w') as f:
+            for line in train:
+                f.write(line)
+        splits += ['{path}{train}:{path}{valid}\n'.format(path=outputpath, train=trainFileName, valid=validFileName)]
+
+    with open(outputpath+'train_list.txt', 'w') as f:
+        for line in splits:
+            f.write(line)
+
+
 def main():
     folds, datafile, outputpath, initSeed, reps = argparse()
 
@@ -73,24 +92,15 @@ def main():
         try:
             os.makedirs(outputpath)
         except FileExistsError:
-            pass
+            continue
+        try:
+            makeSplit(output, lines, y)
+        except ValueError:
+            # on fail remove dir since existing dirs are
+            # assumed to be correctly populated
+            shutil.rmtree(f'{tmp}/UCRsplits/{dataname}/')
+            sys.exit(1)
 
-        splits = []
-        for i, (idx_train, idx_valid) in enumerate(skf.split(lines, y)):
-            train, valid = lines[idx_train], lines[idx_valid]
-            trainFileName = 'TRAIN-{:03d}.tsv'.format(i)
-            validFileName = 'VALID-{:03d}.tsv'.format(i)
-            with open(outputpath+validFileName, 'w') as f:
-                for line in valid:
-                    f.write(line)
-            with open(outputpath+trainFileName, 'w') as f:
-                for line in train:
-                    f.write(line)
-            splits += ['{path}{train}:{path}{valid}\n'.format(path=outputpath, train=trainFileName, valid=validFileName)]
-
-        with open(outputpath+'train_list.txt', 'w') as f:
-            for line in splits:
-                f.write(line)
 
 
 if __name__ == '__main__':

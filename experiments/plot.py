@@ -9,7 +9,8 @@ import glob
 import itertools
 import json
 import seaborn as sns
-from scipy.stats import wilcoxon, binom_test
+from scipy.stats import wilcoxon, binom_test, friedmanchisquare
+import Orange
 
 
 def colors(alpha=None):
@@ -68,6 +69,8 @@ class Pareto:
             annotate['angle'] += annotate['anglestep']
 
     def hmean(self):
+        if not len(self.P[np.all(self.P != 1., 1)]):
+            return 1.
         return np.min(1-2/np.sum((1-self.P[np.all(self.P != 1., 1)])**-1, 1))
 
     def HV(self):
@@ -84,6 +87,8 @@ class Pareto:
         return s
 
     def M3(self):
+        if not self._size:
+            return np.nan
         return np.linalg.norm(self.P[0]-self.P[-1])
 
     def delta(self):
@@ -178,7 +183,7 @@ def latexMetricTable(d):
     return tex
 
 
-def processData(dataset, methods, naive):
+def processData(dataset, methods, naive=None):
     files = [os.path.basename(p) for p in glob.glob(f'output/pareto/{dataset}/*')]
     print(f'{dataset}')
     if (set(files) != set(methods)):
@@ -190,7 +195,8 @@ def processData(dataset, methods, naive):
     annotate = dict(xyoffset=[ruler, .98], angle=80, ystep=-0.01, anglestep=-5)
 
     # baseline front
-    naive.plot(ax, c='k', points=False)
+    if naive is not None:
+        naive.plot(ax, c='k', points=False)
 
     for method in reversed(methods):
         try:
@@ -209,15 +215,16 @@ def processData(dataset, methods, naive):
         )
         metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
 
-    metrics = dict(
-        method=naive.label,
-        size=naive.size(),
-        delta=naive.delta(),
-        M3=naive.M3(),
-        hmean=naive.hmean(),
-        HV=naive.HV()
-    )
-    metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
+    if naive is not None:
+        metrics = dict(
+            method=naive.label,
+            size=naive.size(),
+            delta=naive.delta(),
+            M3=naive.M3(),
+            hmean=naive.hmean(),
+            HV=naive.HV()
+        )
+        metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
 
     # print metrics to terminal
     printTable(metricTable)
@@ -245,13 +252,19 @@ def bootstrap(datasets, methods, metrics):
     df = pd.DataFrame()
     for dataset in datasets:
         for method in methods:
-            Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
-            with open(f'output/pareto/{dataset}/{method}/fronts.json', 'r') as f:
-                effSets = json.load(f)
-            # match config strings from json with test performance from test.csv
-            fronts = [[Y[np.where(metadata == c)[0][0]] for c in s] for s in effSets]
+            try:
+                Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
+                with open(f'output/pareto/{dataset}/{method}/fronts.json', 'r') as f:
+                    effSets = json.load(f)
+            except FileNotFoundError:
+                continue
+            try:
+                # match config strings from json with test performance from test.csv
+                fronts = [[Y[np.where(metadata == c)[0][0]] for c in s] for s in effSets]
+            except IndexError:
+                continue
             # Extracting test Pareto fronts
-            paretos = [Pareto(np.array(f)) for f in fronts]
+            paretos = [Pareto(np.array(f+[np.ones(2)])) for f in fronts]
             # compute metrics
             dl = pd.DataFrame([[getattr(p, m)()for m in metrics] for p in paretos],
                               columns=metrics)
@@ -270,15 +283,16 @@ def addBaselines(df, blines, metrics):
     return df.append(bl.droplevel(0))
 
 
-def plotDistributions(df, datasets, blines):
+def plotDistributions(df, datasets, blines=None):
     for dataset in datasets:
         fig, ax = plt.subplots(figsize=(8, 4))
         ax = sns.scatterplot(data=df.loc[df['dataset'] == dataset].iloc[::-1],
                              x='delta', y='HV', hue='method',
                              alpha=.5, s=3, linewidth=0, ax=ax)
-        ax.scatter([blines[dataset].delta()], [blines[dataset].HV()],
-                   c='k', marker='*', label=blines[dataset].label)
-        ax.axhline(blines[dataset].HV(), c='#00000099', lw=1)
+        if blines is not None:
+            ax.scatter([blines[dataset].delta()], [blines[dataset].HV()],
+                       c='k', marker='*', label=blines[dataset].label)
+            ax.axhline(blines[dataset].HV(), c='#00000099', lw=1)
         ax.legend()
         ax.grid()
         fig.tight_layout()
@@ -354,9 +368,13 @@ def sign_test(x):
     return binom_test(sum(x > 0.), n=len(x != 0.))
 
 
-def statTest(df, methods, blines, testFn=sign_test):
+def statTest(df, methods, testFn=sign_test):
     # compute pairwise differences
     d = df.pivot(columns=['method', 'dataset'])
+    # ranks for Nemenyi test
+    obs = d.drop('delta', 1).stack('dataset')
+    ranks = obs.rank(axis=1, na_option='bottom', ascending=False)
+    _, p = friedmanchisquare(*(obs.droplevel(0, 1)[c] for c in methods))
     d.columns.rename('metric', level=0, inplace=True)
     d = d.reorder_levels(['method', 'dataset', 'metric'], 'columns')
     diff = d.sub(d['mo-all'], axis='index').drop(columns=['mo-all'], level=2)
@@ -380,10 +398,17 @@ def statTest(df, methods, blines, testFn=sign_test):
 
     # just the median metrics
     meds = d.median().unstack('method')[methods]
-    # naive = pd.DataFrame({k: {m: getattr(v, m)() for m in meds.index.levels[1]} for k, v in blines.items()}).T.stack()
-    # meds.insert(0, 'naive', naive)
     with open(f'output/tex/dataset.tex', 'w') as f:
         f.write(to_latex(meds))
+
+    # Nemenyi test critical difference plot
+    avRanks = ranks.mean()
+    cd = Orange.evaluation.compute_CD(avRanks, len(ranks), alpha="0.05", test="nemenyi")
+    Orange.evaluation.graph_ranks(avRanks, avRanks.index.get_level_values(1),
+                                  cd=cd, width=5, textspace=1.5,
+                                  filename='output/tex/difference.pdf')
+    print(f'friedmanchisquare: p = {p:f}')
+
     return res
 
 
@@ -400,7 +425,8 @@ def main():
     for dataset in datasets:
         os.makedirs(f'output/plot/{dataset}/', exist_ok=True)
         os.makedirs(f'output/tex/{dataset}/', exist_ok=True)
-    methods = ['mo-ects',
+    methods = ['mo-fixed',
+               'mo-ects',
                'mo-edsc',
                'mo-ecdire',
                'mo-srcf',
@@ -411,13 +437,13 @@ def main():
                'so-all',
                'mo-all']
     metrics = ['HV', 'delta']
-    blines = getBaselines(datasets)
+    # blines = getBaselines(datasets)
     df = bootstrap(datasets, methods, metrics)
-    plotDistributions(df, datasets, blines)
-    df = addBaselines(df, blines, metrics)
-    statTest(df, ['naive']+methods, blines)
+    plotDistributions(df, datasets)
+    # df = addBaselines(df, blines, metrics)
+    statTest(df, methods)
     for dataset in datasets:
-        processData(dataset, methods, blines[dataset])
+        processData(dataset, methods)
 
 
 if __name__ == '__main__':

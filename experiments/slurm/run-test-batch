@@ -13,5 +13,5 @@ SEED=$4
 echo "run-test-batch args: $@"
 
 CONF=$(sed "${SLURM_ARRAY_TASK_ID}q;d" $CONF_FILE)
-OUT="$(./wrapper --MO "true" $INSTANCE 0 9999 0 $SEED $CONF), $CONF"
+OUT="$(./wrapper --MO "true" $INSTANCE 0 900 0 $SEED $CONF), $CONF"
 flock -x "$TEST_FILE" echo "$OUT" >> "$TEST_FILE"
