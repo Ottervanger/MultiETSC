@@ -4,7 +4,7 @@
 #SBATCH --mem=10G
 set -e
 SEED=$SLURM_ARRAY_TASK_ID
-echo "$(date +%T.%3N) on ${HOSTNAME} ARRAY_TASK_ID:${SEED} ARGS: $@"
+echo "$(date "+%F %T.%3N") on ${HOSTNAME} ARRAY_TASK_ID:${SEED} ARGS: $@"
 
 ARGS=$@
 while [[ $# -gt 0 ]]; do
@@ -36,8 +36,9 @@ for VAR in "DATASET" "METHOD" "ALGO" "UCR_ROOT"; do
 done
 
 INSTANCE_FILE="${TMP}/UCRsplits/${DATASET}/seed-${SEED}/train_list.txt"
+CUTOFF="180"
 
-CMD="./run-configurator "${ARGS}" --seed ${SEED} --instance-file ${INSTANCE_FILE}"
+CMD="./run-configurator "${ARGS}" --seed ${SEED} --instance-file ${INSTANCE_FILE} --cutoff $CUTOFF"
 echo $CMD
 # Run configurator
 srun $CMD
@@ -45,14 +46,14 @@ echo
 
 # Add validation runs as separate jobs to the queue
 CONF_FILE="output/configurator/${DATASET}/${METHOD}-${ALGO}/run_${SEED}/configs${SEED}.txt"
-VALID_FILE="output/validation/${DATASET}/${METHOD}-${ALGO}/run_${SEED}.csv"
-mkdir -p $(dirname $VALID_FILE)
+VALID_FILE="output/configurator/${DATASET}/${METHOD}-${ALGO}/run_${SEED}/validation.csv"
 >$VALID_FILE
 
+N_FOLDS=5
 N_ARRAY=$(( $(wc -l < $CONF_FILE) * $N_FOLDS - 1))
 JOB=$( sbatch --parsable -a 0-$N_ARRAY -o /dev/null --nice=2 \
               --partition=$PARTITION --exclude=$EXCLUDE \
-              slurm/run-validate-batch $VALID_FILE $N_FOLDS $INSTANCE_FILE $CONF_FILE $SEED )
+              slurm/run-validate-batch $VALID_FILE $N_FOLDS $INSTANCE_FILE $CONF_FILE $SEED $((CUTOFF + 60)) )
 
 
 # find test jobs that depend on the current job and add validate jobs as dependency

@@ -20,9 +20,11 @@ def rmDominated(Y, conf):
 # reads data from validation files and averages runs of same configurations
 def getData(csvPath):
     # read data from csv
-    pat = re.compile('\[(.*), (.*)\], 0, (.*)')
+    pat = re.compile('^.*SUCCESS.*\[(.*), (.*)\], 0, (.*)$', re.MULTILINE)
     with open(csvPath) as f:
-        data = np.array([re.findall(pat, s)[0] for s in f.readlines()])
+        data = np.array(re.findall(pat, f.read()))
+    if not len(data):
+        return np.empty((0, 2)), np.empty((0,))
     df = pd.DataFrame(data, columns=['earliness', 'accuracy', 'configuration'])
     df[['earliness', 'accuracy']] = df[['earliness', 'accuracy']].astype(float)
     # compute evaluation means by configuration
@@ -39,10 +41,10 @@ def mergeFronts(fronts):
 
 
 def processData(condition, resample=None):
-    dirname = 'output/validation/' + condition
-    files = np.sort(glob.glob(dirname+'/*'))
+    dirname = 'output/configurator/' + condition
+    files = np.sort(glob.glob(dirname+'/*/validation.csv'))
     if not len(files):
-        sys.exit('No files found in '+dirname)
+        sys.exit('No validation files found in '+dirname)
     fronts = [rmDominated(*getData(f)) for f in files]
     pFronts = []
     if resample:
@@ -56,11 +58,11 @@ def processData(condition, resample=None):
     else:
         Y, confs = mergeFronts(fronts)
         pFronts += [list(set(confs))]
-    os.makedirs('output/pareto/{}'.format(condition), exist_ok=True)
-    with open('output/pareto/{}/confs.txt'.format(condition), 'w') as f:
+    os.makedirs('output/test/{}'.format(condition), exist_ok=True)
+    with open('output/test/{}/confs.txt'.format(condition), 'w') as f:
         for line in set(confs):
             f.write('{:s}\n'.format(line))
-    with open('output/pareto/{}/fronts.json'.format(condition), 'w') as f:
+    with open('output/test/{}/fronts.json'.format(condition), 'w') as f:
         json.dump(pFronts, f, indent=2)
     print('Found {:3d} nondominated configurations for {}'.format(len(set(confs)), condition))
 
