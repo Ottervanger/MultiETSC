@@ -36,19 +36,16 @@ def argparse():
         if not datafile:
             datafile = arg
             continue
-        if not outputpath:
-            outputpath = arg
-            continue
         break
     if not folds:
         folds = 5
     if not datafile:
         usage()
         sys.exit('Error: no data path specified')
-    return folds, datafile, outputpath, seed, reps
+    return folds, datafile, seed, reps
 
 
-def makeSplit(outputpath, lines, y):
+def makeSplit(outputpath, lines, y, skf):
     splits = []
     for i, (idx_train, idx_valid) in enumerate(skf.split(lines, y)):
         train, valid = lines[idx_train], lines[idx_valid]
@@ -68,7 +65,7 @@ def makeSplit(outputpath, lines, y):
 
 
 def main():
-    folds, datafile, outputpath, initSeed, reps = argparse()
+    folds, datafile, initSeed, reps = argparse()
 
     # read data
     y = np.genfromtxt(datafile)[:, 0]
@@ -77,30 +74,26 @@ def main():
     from sklearn.model_selection import StratifiedShuffleSplit
     skf = StratifiedShuffleSplit(n_splits=folds, test_size=1/folds)
 
+    tmp = os.environ['TMP']
+    if not tmp:
+        tmp = '/tmp'
+    dataname = datafile.split('/')[datafile.split('/').index('UCR')+1]
+    outputpath = f'{tmp}/UCRsplits/{dataname}/seed-{{}}/'
+
     for seed in range(initSeed, initSeed+reps):
         np.random.seed(seed)
-        # prepare output dir
-        if not outputpath:
-            tmp = os.environ['TMP']
-            if not tmp:
-                tmp = '/tmp'
-            dataname = datafile.split('/')[datafile.split('/').index('UCR')+1]
-            outputpath = tmp+'/UCRsplits/{}/seed-{}'.format(dataname, seed)
-        if (outputpath[-1] != '/'):
-            outputpath += '/'
         # for simplicity we assume if the dir exists it is correctly populated
         try:
-            os.makedirs(outputpath)
+            os.makedirs(outputpath.format(seed))
         except FileExistsError:
             continue
         try:
-            makeSplit(output, lines, y)
+            makeSplit(outputpath.format(seed), lines, y, skf)
         except ValueError:
             # on fail remove dir since existing dirs are
             # assumed to be correctly populated
             shutil.rmtree(f'{tmp}/UCRsplits/{dataname}/')
             sys.exit(1)
-
 
 
 if __name__ == '__main__':
