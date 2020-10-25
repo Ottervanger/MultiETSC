@@ -1,4 +1,5 @@
 output
+util/__pycache__
 report/*
 !report
 !report/*.tex

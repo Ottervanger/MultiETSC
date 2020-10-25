@@ -10,7 +10,7 @@ import itertools
 import json
 import seaborn as sns
 from scipy.stats import wilcoxon, binom_test, friedmanchisquare
-import Orange
+from util.cdgraph import cdGraph
 
 
 def colors(alpha=None):
@@ -124,18 +124,18 @@ def cleanConfStr(s):
 
 def getData(csvPath):
     # read data from csv
-    pat = re.compile(r'\[(.*), (.*)\], 0, (.*)')
+    pat = re.compile('^.*\[(.*), (.*)\], 0, (.*)$', re.MULTILINE)
     with open(csvPath) as f:
-        data = np.array([re.findall(pat, s)[0] for s in f.readlines()])
-
+        data = np.array(re.findall(pat, f.read()))
+    if not len(data):
+        return np.empty((0, 2)), np.empty((0,))
     df = pd.DataFrame(data, columns=['earliness', 'accuracy', 'configuration'])
     df[['earliness', 'accuracy']] = df[['earliness', 'accuracy']].astype(float)
     # compute evaluation means by configuration
     df = df.groupby('configuration', as_index=False).mean()
-    df = df.sort_values(by=['earliness'])
     Y = np.array(df[['earliness', 'accuracy']])
-    metadata = np.array(df['configuration'])
-    return Y, metadata
+    conf = np.array(df['configuration'])
+    return Y, conf
 
 
 def best(metric, val, l):
@@ -183,9 +183,8 @@ def latexMetricTable(d):
     return tex
 
 
-def processData(dataset, methods, naive=None):
-    files = [os.path.basename(p) for p in glob.glob(f'output/pareto/{dataset}/*')]
-    print(f'{dataset}')
+def processData(dataset, methods):
+    files = [os.path.basename(p) for p in glob.glob(f'output/test/{dataset}/*')]
     if (set(files) != set(methods)):
         print('some files are missing')
     fig, ax = plt.subplots(figsize=(8, 4))
@@ -193,10 +192,6 @@ def processData(dataset, methods, naive=None):
     metricTable = {}
     ruler = 1.02
     annotate = dict(xyoffset=[ruler, .98], angle=80, ystep=-0.01, anglestep=-5)
-
-    # baseline front
-    if naive is not None:
-        naive.plot(ax, c='k', points=False)
 
     for method in reversed(methods):
         try:
@@ -215,20 +210,10 @@ def processData(dataset, methods, naive=None):
         )
         metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
 
-    if naive is not None:
-        metrics = dict(
-            method=naive.label,
-            size=naive.size(),
-            delta=naive.delta(),
-            M3=naive.M3(),
-            hmean=naive.hmean(),
-            HV=naive.HV()
-        )
-        metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
-
     # print metrics to terminal
-    printTable(metricTable)
-    print()
+    # print(f'{dataset}')
+    # printTable(metricTable)
+    # print()
     ax.set_xlim([0, 1])
     ax.set_ylim([0, 1])
     ticks = np.arange(0, 1.1, .1)
@@ -249,12 +234,13 @@ def processData(dataset, methods, naive=None):
 
 
 def bootstrap(datasets, methods, metrics):
+    print('Bootstrapping')
     df = pd.DataFrame()
     for dataset in datasets:
         for method in methods:
             try:
                 Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
-                with open(f'output/pareto/{dataset}/{method}/fronts.json', 'r') as f:
+                with open(f'output/test/{dataset}/{method}/fronts.json', 'r') as f:
                     effSets = json.load(f)
             except FileNotFoundError:
                 continue
@@ -271,16 +257,9 @@ def bootstrap(datasets, methods, metrics):
             dl['method'] = method
             dl['dataset'] = dataset
             df = df.append(dl)
+        print(f'DONE: {dataset}')
     df = df.replace([np.inf, -np.inf], np.nan)
     return df
-
-
-def addBaselines(df, blines, metrics):
-    naive = pd.DataFrame({k: {m: getattr(v, m)() for m in metrics} for k, v in blines.items()}).T.stack()
-    bl = pd.concat([naive.to_frame().T]*1000, ignore_index=True).stack(0).reorder_levels([1,0]).sort_index()
-    bl['dataset'] = bl.index.get_level_values(0)
-    bl['method'] = 'naive'
-    return df.append(bl.droplevel(0))
 
 
 def plotDistributions(df, datasets, blines=None):
@@ -297,7 +276,6 @@ def plotDistributions(df, datasets, blines=None):
         ax.grid()
         fig.tight_layout()
         plt.savefig(f'output/plot/{dataset}/scatter.pdf')
-        print(f'DONE: {dataset}')
 
 
 def fmt(vp):
@@ -368,6 +346,18 @@ def sign_test(x):
     return binom_test(sum(x > 0.), n=len(x != 0.))
 
 
+def nemenyiCD(k, n):
+    """
+    Returns critical difference for Nemenyi test for alpha = 0.05
+    for k groups with n paired observations.
+    """
+    q = [0, 0, 1.959964, 2.343701, 2.569032, 2.727774, 2.849705, 2.94832,
+         3.030879, 3.101730, 3.163684, 3.218654, 3.268004, 3.312739, 3.353618,
+         3.39123, 3.426041, 3.458425, 3.488685, 3.517073, 3.543799]
+    cd = q[k] * (k * (k + 1) / (6.0 * n)) ** 0.5
+    return cd
+
+
 def statTest(df, methods, testFn=sign_test):
     # compute pairwise differences
     d = df.pivot(columns=['method', 'dataset'])
@@ -403,28 +393,20 @@ def statTest(df, methods, testFn=sign_test):
 
     # Nemenyi test critical difference plot
     avRanks = ranks.mean()
-    cd = Orange.evaluation.compute_CD(avRanks, len(ranks), alpha="0.05", test="nemenyi")
-    Orange.evaluation.graph_ranks(avRanks, avRanks.index.get_level_values(1),
-                                  cd=cd, width=5, textspace=1.5,
-                                  filename='output/tex/difference.pdf')
+    cd = nemenyiCD(len(avRanks), len(ranks)/1000)
+    cdGraph(avRanks, names=avRanks.index.get_level_values(1), cd=cd,
+            filename='output/tex/difference.pdf')
     print(f'friedmanchisquare: p = {p:f}')
 
     return res
 
 
-def getBaselines(datasets):
-    return {dataset: Pareto(np.genfromtxt(f'output/baseline/{dataset}.csv', delimiter=","), label='naive') for dataset in datasets}
-
-
 def main():
     os.chdir(os.path.dirname(sys.argv[0]))
-    datasetDirs = glob.glob('output/pareto/*')
+    datasetDirs = glob.glob('output/test/*')
     if not len(datasetDirs):
-        sys.exit('No files found in output/pareto/. Nothing to be done.')
+        sys.exit('No files found in output/test/. Nothing to be done.')
     datasets = [os.path.basename(p) for p in sorted(datasetDirs)]
-    for dataset in datasets:
-        os.makedirs(f'output/plot/{dataset}/', exist_ok=True)
-        os.makedirs(f'output/tex/{dataset}/', exist_ok=True)
     methods = ['mo-fixed',
                'mo-ects',
                'mo-edsc',
@@ -436,11 +418,24 @@ def main():
                'mo-earliest',
                'so-all',
                'mo-all']
+    filterDatasets = []
+    for dataset in datasets:
+        for method in methods:
+            cFile = f'output/test/{dataset}/{method}/confs.txt'
+            tFile = f'output/test/{dataset}/{method}/test.csv'
+            nConf = int(os.popen(f'wc -l < {cFile}').read())
+            nTest = int(os.popen(f'wc -l < {tFile}').read())
+            if nConf != nTest:
+                print(f'Skipping {dataset}: test not complete.')
+                break
+        else:
+            filterDatasets += [dataset]
+            os.makedirs(f'output/plot/{dataset}/', exist_ok=True)
+            os.makedirs(f'output/tex/{dataset}/', exist_ok=True)
+    datasets = filterDatasets
     metrics = ['HV', 'delta']
-    # blines = getBaselines(datasets)
     df = bootstrap(datasets, methods, metrics)
     plotDistributions(df, datasets)
-    # df = addBaselines(df, blines, metrics)
     statTest(df, methods)
     for dataset in datasets:
         processData(dataset, methods)
