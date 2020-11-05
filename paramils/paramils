@@ -16,4 +16,4 @@ if [ ! -d "$DIR/lib" ]; then
   DIR="$(dirname "$DIR")"
 fi
 
-exec java -Xmx"$ParamILSMEM"m -cp "./lib/*" ca.ubc.cs.beta.aeatk.ant.execscript.Launcher $EXEC "$@"
+exec java -XX:-UsePerfData -Djava.io.tmpdir="$TMP" -Xmx"$ParamILSMEM"m -cp "./lib/*" ca.ubc.cs.beta.aeatk.ant.execscript.Launcher $EXEC "$@"
