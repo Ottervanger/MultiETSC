@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=earlytsc-configurator
 #SBATCH -c 4
-#SBATCH --mem=10G
+#SBATCH --mem=20G
 set -e
 SEED=$SLURM_ARRAY_TASK_ID
 echo "$(date "+%F %T.%3N") on ${HOSTNAME} ARRAY_TASK_ID:${SEED} ARGS: $@"
@@ -37,6 +37,9 @@ done
 
 INSTANCE_FILE="${TMP}/UCRsplits/${DATASET}/seed-${SEED}/train_list.txt"
 CUTOFF="180"
+if [[ $ALGO == *'-long' ]]; then 
+    CUTOFF="600"
+fi
 
 CMD="./run-configurator "${ARGS}" --seed ${SEED} --instance-file ${INSTANCE_FILE} --cutoff $CUTOFF"
 echo $CMD
@@ -51,7 +54,7 @@ VALID_FILE="output/configurator/${DATASET}/${METHOD}-${ALGO}/run_${SEED}/validat
 
 N_FOLDS=5
 N_ARRAY=$(( $(wc -l < $CONF_FILE) * $N_FOLDS - 1))
-JOB=$( sbatch --parsable -a 0-$N_ARRAY -o /dev/null --nice=2 \
+JOB=$( sbatch --parsable -a 0-$N_ARRAY -o /dev/null --nice=300 \
               --partition=$PARTITION --exclude=$EXCLUDE \
               slurm/run-validate-batch $VALID_FILE $N_FOLDS $INSTANCE_FILE $CONF_FILE $SEED $((CUTOFF + 60)) )
 

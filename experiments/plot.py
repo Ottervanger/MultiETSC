@@ -7,8 +7,10 @@ import sys
 import re
 import glob
 import itertools
+import subprocess
 import json
 import seaborn as sns
+import random
 from scipy.stats import wilcoxon, binom_test, friedmanchisquare
 from util.cdgraph import cdGraph
 
@@ -29,6 +31,180 @@ def colors(alpha=None):
             yield c if not alpha else c + alpha
 
 
+UCR_TYPE_MAP = {
+    'ACSF1': 'DEVICE',
+    'Adiac': 'IMAGE',
+    'AllGestureWiimoteX': 'MOTION',
+    'AllGestureWiimoteY': 'MOTION',
+    'AllGestureWiimoteZ': 'MOTION',
+    'ArrowHead': 'IMAGE',
+    'Beef': 'SPECTRO',
+    'BeetleFly': 'IMAGE',
+    'BirdChicken': 'IMAGE',
+    'BME': 'SIMULATED',
+    'Car': 'SENSOR',
+    'CBF': 'SIMULATED',
+    'Chinatown': 'TRAFFIC',
+    'ChlorineConcentration': 'SIMULATED',
+    'CinCECGTorso': 'ECG',
+    'Coffee': 'SPECTRO',
+    'Computers': 'DEVICE',
+    'Cricket': 'HAR',
+    'CricketX': 'MOTION',
+    'CricketY': 'MOTION',
+    'CricketZ': 'MOTION',
+    'Crop': 'IMAGE',
+    'DiatomSizeReduction': 'IMAGE',
+    'DistalPhalanxOutlineAgeGroup': 'IMAGE',
+    'DistalPhalanxOutlineCorrect': 'IMAGE',
+    'DistalPhalanxTW': 'IMAGE',
+    'DodgerLoopDay': 'SENSOR',
+    'DodgerLoopGame': 'SENSOR',
+    'DodgerLoopWeekend': 'SENSOR',
+    'DuckDuckGeese': 'AUDIO',
+    'DucksAndGeese': 'AUDIO',
+    'Earthquakes': 'SENSOR',
+    'ECG200': 'ECG',
+    'ECG5000': 'ECG',
+    'ECGFiveDays': 'ECG',
+    'EigenWorms': 'MOTION',
+    'ElectricDeviceDetection': 'DEVICE',
+    'ElectricDevices': 'DEVICE',
+    'EOGHorizontalSignal': 'EOG',
+    'EOGVerticalSignal': 'EOG',
+    'Epilepsy': 'HAR',
+    'ERing': 'HAR',
+    'EthanolConcentration': 'OTHER',
+    'EthanolLevel': 'SPECTRO',
+    'EyesOpenShut': 'EEG',
+    'FaceAll': 'IMAGE',
+    'FaceDetection': 'EEG',
+    'FaceFour': 'IMAGE',
+    'FacesUCR': 'IMAGE',
+    'FiftyWords': 'IMAGE',
+    'FingerMovements': 'EEG',
+    'Fish': 'IMAGE',
+    'FordA': 'SENSOR',
+    'FordB': 'SENSOR',
+    'FreezerRegularTrain': 'SENSOR',
+    'FreezerSmallTrain': 'SENSOR',
+    'FruitFlies': 'AUDIO',
+    'Fungi': 'OTHER',
+    'GestureMidAirD1': 'MOTION',
+    'GestureMidAirD2': 'MOTION',
+    'GestureMidAirD3': 'MOTION',
+    'GesturePebbleZ1': 'MOTION',
+    'GesturePebbleZ2': 'MOTION',
+    'GunPoint': 'MOTION',
+    'GunPointAgeSpan': 'MOTION',
+    'GunPointMaleVersusFemale': 'MOTION',
+    'GunPointOldVersusYoung': 'MOTION',
+    'Ham': 'SPECTRO',
+    'HandMovementDirection': 'EEG',
+    'HandOutlines': 'IMAGE',
+    'Handwriting': 'HAR',
+    'Haptics': 'MOTION',
+    'Heartbeat': 'AUDIO',
+    'Herring': 'IMAGE',
+    'HouseTwenty': 'DEVICE',
+    'InlineSkate': 'MOTION',
+    'InsectEPGRegularTrain': 'EPG',
+    'InsectEPGSmallTrain': 'EPG',
+    'InsectSound': 'AUDIO',
+    'InsectWingbeat': 'AUDIO',
+    'ItalyPowerDemand': 'SENSOR',
+    'JapaneseVowels': 'AUDIO',
+    'LargeKitchenAppliances': 'DEVICE',
+    'Libras': 'HAR',
+    'Lightning2': 'SENSOR',
+    'Lightning7': 'SENSOR',
+    'LSST': 'OTHER',
+    'Mallat': 'SIMULATED',
+    'Meat': 'SPECTRO',
+    'MedicalImages': 'IMAGE',
+    'MelbournePedestrian': 'TRAFFIC',
+    'MiddlePhalanxOutlineAgeGroup': 'IMAGE',
+    'MiddlePhalanxOutlineCorrect': 'IMAGE',
+    'MiddlePhalanxTW': 'IMAGE',
+    'MixedShapes': 'IMAGE',
+    'MixedShapesRegularTrain': 'IMAGE',
+    'MixedShapesSmallTrain': 'IMAGE',
+    'MosquitoSound': 'AUDIO',
+    'MoteStrain': 'SENSOR',
+    'MotorImagery': 'EEG',
+    'NATOPS': 'HAR',
+    'NonInvasiveFetalECGThorax1': 'ECG',
+    'NonInvasiveFetalECGThorax2': 'ECG',
+    'OliveOil': 'SPECTRO',
+    'OSULeaf': 'IMAGE',
+    'PenDigits': 'MOTION',
+    'PhalangesOutlinesCorrect': 'IMAGE',
+    'PickupGestureWiimoteZ': 'SENSOR',
+    'PigAirwayPressure': 'HEMODYNAMICS',
+    'PigArtPressure': 'HEMODYNAMICS',
+    'PigCVP': 'HEMODYNAMICS',
+    'PLAID': 'DEVICE',
+    'Plane': 'SENSOR',
+    'PowerCons': 'DEVICE',
+    'ProximalPhalanxOutlineAgeGroup': 'IMAGE',
+    'ProximalPhalanxOutlineCorrect': 'IMAGE',
+    'ProximalPhalanxTW': 'IMAGE',
+    'RacketSports': 'HAR',
+    'RefrigerationDevices': 'DEVICE',
+    'RightWhaleCalls': 'AUDIO',
+    'Rock': 'SPECTRO',
+    'ScreenType': 'DEVICE',
+    'SelfRegulationSCP1': 'EEG',
+    'SelfRegulationSCP2': 'EEG',
+    'SemgHandGenderCh2': 'SPECTRO',
+    'SemgHandMovementCh2': 'SPECTRO',
+    'SemgHandSubjectCh2': 'SPECTRO',
+    'ShakeGestureWiimoteZ': 'SENSOR',
+    'ShapeletSim': 'SIMULATED',
+    'ShapesAll': 'IMAGE',
+    'SmallKitchenAppliances': 'DEVICE',
+    'SmoothSubspace': 'SIMULATED',
+    'SonyAIBORobotSurface1': 'SENSOR',
+    'SonyAIBORobotSurface2': 'SENSOR',
+    'SpokenArabicDigits': 'SPEECH',
+    'StandWalkJump': 'ECG',
+    'StarLightCurves': 'SENSOR',
+    'Strawberry': 'SPECTRO',
+    'SwedishLeaf': 'IMAGE',
+    'Symbols': 'IMAGE',
+    'SyntheticControl': 'SIMULATED',
+    'Tiselac': 'IMAGE',
+    'ToeSegmentation1': 'MOTION',
+    'ToeSegmentation2': 'MOTION',
+    'Trace': 'SENSOR',
+    'TwoLeadECG': 'ECG',
+    'TwoPatterns': 'SIMULATED',
+    'UMD': 'SIMULATED',
+    'UrbanSound': 'AUDIO',
+    'UWaveGestureLibrary': 'HAR',
+    'UWaveGestureLibraryAll': 'MOTION',
+    'UWaveGestureLibraryX': 'MOTION',
+    'UWaveGestureLibraryY': 'MOTION',
+    'UWaveGestureLibraryZ': 'MOTION',
+    'Wafer': 'SENSOR',
+    'Wine': 'SPECTRO',
+    'WordSynonyms': 'IMAGE',
+    'Worms': 'MOTION',
+    'WormsTwoClass': 'MOTION',
+    'Yoga': 'IMAGE'
+}
+
+UCR_TYPE_NAMES = {
+    'DEVICE': 'Electric Devices',
+    'AUDIO': 'Audio',
+    'ECG': 'Electro Cardiogram',
+    'EEG': 'Electro Encephalogram',
+    'HAR': 'Motion Capture',
+    'HEMODYNAMICS': 'HEMODYNAMICS',
+    'IMAGE': 'Image Outlines',
+}
+
+
 class Pareto:
     def __init__(self, Y, metadata=None, label=None):
         inp = np.ones(len(Y), dtype="bool")
@@ -45,11 +221,11 @@ class Pareto:
         if label is not None:
             self.label = label
 
-    def plot(self, ax, c, annotate=None, points=True):
+    def plot(self, ax, c, annotate=None, points=True, **args):
         # stepped line
         ax.step(np.hstack((0, self.P[:, 0], 1)),
                 np.hstack((1, self.P[:, 1], 0)),
-                where='post', label=self.label, c=c, linewidth=1)
+                where='post', label=self.label, c=c, **args)
         # points
         if points:
             ax.plot(self.P[:, 0], self.P[:, 1],
@@ -146,11 +322,18 @@ def best(metric, val, l):
     return val == max(l)
 
 
-def formatCell(x, spec=None):
+def formatCell(x, metric=None, spec=None):
     formats = dict(int=     '{:8d}'+' '*4,
                    float=   '{:12.3f}',
                    float64= '{:12.3f}',
                    str=     ' {:>11s}')
+    if 'str' not in x.__class__.__name__:
+        if metric == 'HV' and x == 0:
+            return formats['str'].format('')
+        if metric == 'hmean' and x > (1 - 1e-14):
+            return formats['str'].format('')
+        if np.isnan(x):
+            return formats['str'].format('')
     if spec and spec in ['b', 'bf', 'bold']:
         s = formats[x.__class__.__name__].format(x).strip()
         return formats['str'].format(f'\\bft{{{s}}}')
@@ -164,8 +347,8 @@ def printTable(d):
 
 def hlfmt(val, metric=None, l=None):
     if metric and l and best(metric, val, l):
-        return formatCell(val, 'bf')
-    return formatCell(val)
+        return formatCell(val, metric=metric, spec='bf')
+    return formatCell(val, metric=metric)
 
 
 def twoColumn(s):
@@ -183,9 +366,20 @@ def latexMetricTable(d):
     return tex
 
 
+def metName(m):
+    return {
+     'mo-fixed': 'Fixed',
+     'mo-srcf': 'SR-CF',
+     'mo-relclass': 'RelClass',
+     'mo-earliest-long': 'EARLIEST 10m',
+     'so-all': 'SO-All',
+     'mo-all': 'MultiETSC'
+    }.get(m, m[3:].upper())
+
+
 def processData(dataset, methods):
     files = [os.path.basename(p) for p in glob.glob(f'output/test/{dataset}/*')]
-    if (set(files) != set(methods)):
+    if not (set(methods) <= set(files)):
         print('some files are missing')
     fig, ax = plt.subplots(figsize=(8, 4))
     color = colors('aa')
@@ -198,10 +392,10 @@ def processData(dataset, methods):
             Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
         except FileNotFoundError:
             continue
-        pareto = Pareto(Y, metadata, label=method)
+        pareto = Pareto(Y, metadata, label=metName(method))
         pareto.plot(ax, c=next(color))
         metrics = dict(
-            method=method,
+            method=metName(method),
             size=pareto.size(),
             delta=pareto.delta(),
             M3=pareto.M3(),
@@ -228,15 +422,81 @@ def processData(dataset, methods):
     fig.tight_layout()
     # save plot
     plt.savefig(f'output/plot/{dataset}/pareto.pdf')
+    fig.clear()
+    plt.close(fig)
     # save tex table
     with open(f'output/tex/{dataset}/table.tex', 'w') as f:
         f.write(latexMetricTable(metricTable))
 
 
-def bootstrap(datasets, methods, metrics):
+def randomSample(dataset, methods):
+    fig, ax = plt.subplots(figsize=(8, 4))
+    color = colors('aa')
+    metricTable = {}
+    ruler = 1.02
+    annotate = dict(xyoffset=[ruler, .98], angle=80, ystep=-0.01, anglestep=-5)
+
+    for method in reversed(methods):
+        try:
+            Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
+            with open(f'output/test/{dataset}/{method}/fronts.json', 'r') as f:
+                effSets = json.load(f)
+        except FileNotFoundError:
+            continue
+        try:
+            # match config strings from json with test performance from test.csv
+            s = random.choice(effSets)
+            f = [Y[np.where(metadata == c)[0][0]] for c in s]
+        except IndexError:
+            continue
+        pareto = Pareto(np.array(f+[np.ones(2)]), np.array(s+['default']), label=metName(method))
+        ls = '-' if method[-3:] == 'all' else '--'
+        lw = 2 if method[-3:] == 'all' else 1.5
+        pareto.plot(ax, c=next(color), ls=ls, linewidth=lw)
+        metrics = dict(
+            method=metName(method),
+            size=pareto.size(),
+            delta=pareto.delta(),
+            M3=pareto.M3(),
+            hmean=pareto.hmean(),
+            HV=pareto.HV()
+        )
+        metricTable = {k: metricTable.get(k, []) + [metrics[k]] for k in metrics}
+
+    # print metrics to terminal
+    # print(f'{dataset}')
+    # printTable(metricTable)
+    # print()
+    ax.set_xlim([0, 1])
+    ax.set_ylim([0, 1])
+    ticks = np.arange(0, 1.1, .1)
+    plt.xticks(ticks)
+    plt.yticks(ticks)
+    ax.grid()
+    ax.legend(loc=(ruler, 0))
+    plt.title(f'Earliness-Accuracy tradeoff\n{dataset}')
+    plt.xlabel("Earliness")
+    plt.ylabel("Error rate")
+
+    fig.tight_layout()
+    # save plot
+    plt.savefig(f'output/plot/{dataset}/pareto.pdf')
+    fig.clear()
+    plt.close(fig)
+    # save tex table
+    with open(f'output/tex/{dataset}/table.tex', 'w') as f:
+        f.write(latexMetricTable(metricTable))
+
+
+def bootstrap(datasets, methods, metrics, df=None):
     print('Bootstrapping')
-    df = pd.DataFrame()
+    if df is None:
+        df = pd.DataFrame()
     for dataset in datasets:
+        if dataset in ['Crop', 'ElectricDevices', 'FordB', 'FordA', 'InsectWingbeatSound']:
+            continue
+        if 'dataset' in df and dataset in df['dataset'].values:
+            continue
         for method in methods:
             try:
                 Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
@@ -254,10 +514,11 @@ def bootstrap(datasets, methods, metrics):
             # compute metrics
             dl = pd.DataFrame([[getattr(p, m)()for m in metrics] for p in paretos],
                               columns=metrics)
-            dl['method'] = method
+            dl['method'] = metName(method)
             dl['dataset'] = dataset
             df = df.append(dl)
         print(f'DONE: {dataset}')
+    print('All Done')
     df = df.replace([np.inf, -np.inf], np.nan)
     return df
 
@@ -276,25 +537,41 @@ def plotDistributions(df, datasets, blines=None):
         ax.grid()
         fig.tight_layout()
         plt.savefig(f'output/plot/{dataset}/scatter.pdf')
+        fig.clear()
+        plt.close(fig)
 
 
-def fmt(vp):
+def violins(df, metric):
+    plt.clf()
+    sns.set_theme(style="whitegrid")
+    fig, ax = plt.subplots(figsize=(8, 4))
+    sns.violinplot(x="method", y=metric, data=df, bw=.1,
+                   cut=0, width=1, linewidth=1, ax=ax)
+    sns.despine(ax=ax, left=True, bottom=True)
+    plt.xticks(rotation=-30)
+    fig.tight_layout()
+    plt.savefig(f'output/tex/dist-{metric}.pdf')
+    fig.clear()
+    plt.close(fig)
+
+
+def fmt(vp, metric=None):
     v = vp[0]
     p = vp[1]
     s = f'{v:.3f}'
-    if ((vp.name[1] == 'HV' and v > 0.) or
-        (vp.name[1] == 'delta' and v < 0.)):
+    if ((metric == 'HV' and v > 0.) or
+            (metric == 'delta' and v < 0.)):
         s = f'\\bft{{{s}}}'
     if p < 0.001:
-        s += '\\sstr'
+        s += '\\ssignif'
     elif p < 0.05:
-        s += '\\str'
+        s += '\\signif'
     return s
 
 
-def to_latex(df):
+def to_latex(df, metric):
     rename = {'delta': r'$\Delta$'}
-    pre = r'\begin{tabular}{'+'l'*len(df.index.names)+'rr'*(len(df.columns))+'@{}}\n\\toprule\n'
+    pre = r'\begin{tabular}{'+'l'*len(df.index.names)+'r'*(len(df.columns))+'@{}}\n\\toprule\n'
     head = [[]]*2
     cells = [[] for _ in range(len(df))]
     post = '\\bottomrule\n\\end{tabular}\n'
@@ -304,32 +581,37 @@ def to_latex(df):
     head[1] = list(df.index.names)
 
     # row indices
-    for lvl in range(df.index.nlevels):
-        i = 0
-        while i < len(df.index):
-            nrow = 1
-            rname = df.index[i][lvl]
-            rlen = len(df.index.names) + len(df.columns) - lvl
-            cline = f'\\cline{{1-{rlen}}}\n'
-            if i == 0:
-                cline = ''
-            for r in df.index[i+1:]:
-                if rname == r[lvl]:
-                    nrow += 1
+    if df.index.nlevels > 1:
+        for lvl in range(df.index.nlevels):
+            i = 0
+            while i < len(df.index):
+                nrow = 1
+                rname = df.index[i][lvl]
+                rlen = len(df.index.names) + len(df.columns) - lvl
+                cline = f'\\cline{{1-{rlen}}}\n'
+                if i == 0:
+                    cline = ''
+                for r in df.index[i+1:]:
+                    if rname == r[lvl]:
+                        nrow += 1
+                    else:
+                        break
+                rname = rename.get(rname, rname)
+                if nrow == 1:
+                    cells[i] += [rname]
                 else:
-                    break
-            rname = rename.get(rname, rname)
-            if nrow == 1:
-                cells[i] += [rname]
-            else:
-                cells[i] += [f'{cline}\\multirow{{{nrow:d}}}{{*}}{{{rname}}}']
-                for j in range(i+1, i+nrow):
-                    cells[j] += ['']
-            i += nrow
+                    cells[i] += [f'{cline}\\multirow{{{nrow:d}}}{{*}}{{{rname}}}']
+                    for j in range(i+1, i+nrow):
+                        cells[j] += ['']
+                i += nrow
+    else:
+        for i, rname in enumerate(df.index):
+            cells[i] += [rname]
+
 
     # cells
     for i, (idx, row) in enumerate(df.iterrows()):
-        cells[i] += [hlfmt(v, row.name[1], list(row)) for v in row]
+        cells[i] += [hlfmt(v, metric, list(row)) for v in row]
 
     hlines = ['&'.join([f'{c:^14}' for c in rc]) for rc in head]
     clines = ['&'.join([f'{c:^14}' for c in rc]) for rc in cells]
@@ -358,16 +640,46 @@ def nemenyiCD(k, n):
     return cd
 
 
-def statTest(df, methods, testFn=sign_test):
-    # compute pairwise differences
+def cdTestAndGraph(df, methods, metric):
     d = df.pivot(columns=['method', 'dataset'])
-    # ranks for Nemenyi test
-    obs = d.drop('delta', 1).stack('dataset')
-    ranks = obs.rank(axis=1, na_option='bottom', ascending=False)
-    _, p = friedmanchisquare(*(obs.droplevel(0, 1)[c] for c in methods))
-    d.columns.rename('metric', level=0, inplace=True)
-    d = d.reorder_levels(['method', 'dataset', 'metric'], 'columns')
-    diff = d.sub(d['mo-all'], axis='index').drop(columns=['mo-all'], level=2)
+    obs = d[metric].stack('dataset')
+    ranks = obs.rank(axis=1, na_option='bottom', ascending=(metric != 'HV'))
+    _, p = friedmanchisquare(*(obs[c] for c in methods))
+    print(f'friedmanchisquare: p = {p:f}')
+
+    # Nemenyi test critical difference plot
+    avRanks = ranks.mean()
+    cd = nemenyiCD(len(avRanks), len(ranks))
+    cdGraph(avRanks, names=avRanks.index, cd=cd,
+            filename=f'output/tex/difference-{metric}.pdf')
+
+
+def percentWins(df, methods, metric):
+    df['type'] = df['dataset'].map(UCR_TYPE_MAP)
+    d = df.pivot_table(columns=['method'], index=[df.index, df['dataset'], df['type']])[metric]
+    dbest = (d.rank(axis=1, na_option='bottom', ascending=(metric != 'HV')) == 1)
+    pbest = dbest.groupby('type').mean() * 100
+    pbest['Counts'] = dbest.groupby('type').size()
+    ptotal = dbest.mean() * 100
+    ptotal.name = 'Overall'
+    pcounts = dbest.sum()
+    pcounts['Counts'] = len(dbest)
+    pcounts.name = 'Counts'
+    pbest = pbest.append([ptotal, pcounts])
+    with open(f'output/tex/perc-best-{metric}.tex', 'w') as f:
+        f.write(pbest.to_latex(
+            escape=False,
+            column_format='l'+'r'*len(pbest.columns),
+            float_format="{:0.2f}".format))
+    pBetterSO = (d[metName('mo-all')] > d[metName('so-all')]).mean() * 100
+    print(f'MO-All     > SO-All:     {pBetterSO:.3f}')
+    df.drop('type', axis=1, inplace=True)
+
+
+def makeBigTables(df, methods, metric, testFn=sign_test):
+    # compute pairwise differences
+    d = df.pivot(columns=['method', 'dataset'])[metric]
+    diff = d.sub(d[metName('mo-all')], axis='index').drop(columns=[metName('mo-all')], level=0)
     diffa = diff.stack('dataset')
     # compute medians and p values of Wilcoxon rank-sum test
     # (test symmetric distribution of differences about 0)
@@ -376,32 +688,30 @@ def statTest(df, methods, testFn=sign_test):
     resa = pd.concat({'median': diffa.median(),
                      'p': diffa.apply(testFn)}, 1)
 
-    res = res.append(pd.concat({'All': resa}, names=['dataset']))
+    res = res.append(pd.concat({'All': resa}, names=['dataset']).reorder_levels([1,0]))
     res = res.unstack('method').stack(0)
 
     # dfPrint stores formated strings
-    dfPrint = res.stack('method').unstack(2).apply(fmt, 1).unstack('method')
+    dfPrint = res.stack('method').unstack(1).apply(fmt, 1, metric=metric).unstack('method')
     dfPrint.rename(index={'delta': r'$\Delta$'}, inplace=True)
+    # move 'All' to top
+    dfPrint['order'] = range(1, len(dfPrint)+1)
+    dfPrint.loc['All', 'order'] = 0
+    dfPrint = dfPrint.sort_values("order").drop('order', axis=1)
     dfPrint = dfPrint[methods[:-1]]
-    with open(f'output/tex/stats.tex', 'w') as f:
-        f.write(dfPrint.to_latex(escape=False, multirow=True, column_format='ll'+'r'*len(dfPrint.columns)))
+    with open(f'output/tex/stats-{metric}.tex', 'w') as f:
+        f.write(dfPrint.to_latex(escape=False, column_format='l'+'r'*len(dfPrint.columns)))
 
     # just the median metrics
     meds = d.median().unstack('method')[methods]
-    with open(f'output/tex/dataset.tex', 'w') as f:
-        f.write(to_latex(meds))
-
-    # Nemenyi test critical difference plot
-    avRanks = ranks.mean()
-    cd = nemenyiCD(len(avRanks), len(ranks)/1000)
-    cdGraph(avRanks, names=avRanks.index.get_level_values(1), cd=cd,
-            filename='output/tex/difference.pdf')
-    print(f'friedmanchisquare: p = {p:f}')
+    with open(f'output/tex/dataset-{metric}.tex', 'w') as f:
+        f.write(to_latex(meds, metric))
 
     return res
 
 
 def main():
+    datacache = 'output/datacache.pkl'
     os.chdir(os.path.dirname(sys.argv[0]))
     datasetDirs = glob.glob('output/test/*')
     if not len(datasetDirs):
@@ -423,8 +733,12 @@ def main():
         for method in methods:
             cFile = f'output/test/{dataset}/{method}/confs.txt'
             tFile = f'output/test/{dataset}/{method}/test.csv'
-            nConf = int(os.popen(f'wc -l < {cFile}').read())
-            nTest = int(os.popen(f'wc -l < {tFile}').read())
+            try:
+                nConf = int(subprocess.check_output(['wc', '-l', f'{cFile}'], stderr=subprocess.DEVNULL).split()[0])
+                nTest = int(subprocess.check_output(['wc', '-l', f'{tFile}'], stderr=subprocess.DEVNULL).split()[0])
+            except (ValueError, subprocess.CalledProcessError) as e:
+                print(f'Skipping {dataset}: test not complete.')
+                break
             if nConf != nTest:
                 print(f'Skipping {dataset}: test not complete.')
                 break
@@ -433,12 +747,34 @@ def main():
             os.makedirs(f'output/plot/{dataset}/', exist_ok=True)
             os.makedirs(f'output/tex/{dataset}/', exist_ok=True)
     datasets = filterDatasets
-    metrics = ['HV', 'delta']
-    df = bootstrap(datasets, methods, metrics)
-    plotDistributions(df, datasets)
-    statTest(df, methods)
+    metrics = ['HV', 'delta', 'hmean']
+    try:
+        df = pd.read_pickle(datacache)
+    except FileNotFoundError:
+        df = pd.DataFrame()
+    df = bootstrap(datasets, methods, metrics, df)
+    df.to_pickle(datacache)
+    methodnames = [metName(m) for m in methods]
+
+    print(methodnames)
+    # Scatter plots
+    # plotDistributions(df, datasets)
+    random.seed(3)
     for dataset in datasets:
-        processData(dataset, methods)
+        # load raw results; plot Pareto front; make table
+        # processData(dataset, methods)
+        randomSample(dataset, methods)
+        pass
+
+    for metric in metrics:
+        # CD graphs for desired metrics
+        cdTestAndGraph(df, methodnames, metric)
+        # median table; difference table
+        makeBigTables(df, methodnames, metric)
+        # violin plots
+        violins(df, metric)
+        # table with percentages where each method performed best
+        percentWins(df, methodnames, metric)
 
 
 if __name__ == '__main__':

@@ -1,53 +1,79 @@
 \batchmode
-\documentclass{article}
+\documentclass[a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
+\usepackage{xcolor}
 \usepackage{pgffor}
 \usepackage{float}
 \usepackage[font=small,labelfont=bf]{caption}
 % For pandas df tables
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
 
 \title{EarlyECTS Results}
 
 % bold fase for tables (should make bf equally spaced as normal text)
 % succes depends on font and font size
-\newcommand{\bft}[1]{{\fontseries{b}\selectfont #1}}
-\newcommand{\str}{\rlap{\textsuperscript{*}}}
-\newcommand{\sstr}{\rlap{\textsuperscript{**}}}
+% \newcommand{\bft}[1]{{\fontseries{bx}\selectfont #1}}
+\newcommand{\bft}[1]{\setlength{\fboxsep}{0pt} \colorbox[RGB]{180,240,200}{#1}}
+\newcommand{\signif}{\rlap{\smash{\textsuperscript{*}}}}
+\newcommand{\ssignif}{\rlap{\smash{\textsuperscript{**}}}}
 
 % get dataset names
 \begingroup\makeatletter\endlinechar=\m@ne\everyeof{\noexpand}
 \edef\x{\endgroup\def\noexpand\datasets{\@@input|"ls -m output/plot/" }}\x
 
 \begin{document}
-\setlength\tabcolsep{3 pt}
-\begin{table}[!hb]%
+\setlength\tabcolsep{7 pt}
+\begin{table}[!htbp]%
+    \tiny
     \makebox[\textwidth][c]{%
-    \input{output/tex/dataset.tex}}%
-    \caption{Hyper volume (HV) and Delta ($\Delta$) metrics for compared methods on different dataset in the UCR Archive.}%
+    \input{output/tex/dataset-HV.tex}}%
+    \caption{Median hypervolume metric for compared methods on different dataset in the UCR Archive.}%
 \end{table}
-\begin{table}[!hb]%
+\begin{table}[!htbp]%
+    \tiny
     \makebox[\textwidth][c]{%
-    \input{output/tex/stats.tex}}%
-    \caption{Median pairwise differences with `mo-all' for Hyper Volume (HV) and Delta ($\Delta$) metrics. \str~ and \sstr~~ denote $p < 0.05$ and $p < 0.001$ respectively on the sign-test.}%
+    \input{output/tex/stats-HV.tex}}%
+    \caption{Median pairwise differences with `mo-all' for hypervolume metric. \signif~ and \ssignif~~ denote $p < 0.05$ and $p < 0.001$ respectively on the sign-test.}%
 \end{table}
 \pagebreak
 \begin{figure}[H]%
-    \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/tex/difference.pdf}}%
-    \caption{CD diagram of the Nemenyi test on the compared methods.}%
+    \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/tex/difference-HV.pdf}}%
+    \caption{CD diagram of the Nemenyi test on the hypervolume metric of compared methods.}%
+\end{figure}%
+\begin{figure}[H]%
+    \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/tex/difference-hmean.pdf}}%
+    \caption{CD diagram of the Nemenyi test on the $HM$ metric of compared methods.}%
+\end{figure}%
+\begin{figure}[H]%
+    \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/tex/difference-delta.pdf}}%
+    \caption{CD diagram of the Nemenyi test on the Delta metric of compared methods.}%
+\end{figure}%
+\begin{figure}[H]%
+    \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/tex/dist-HV.pdf}}%
+    \caption{Distribution of the hypervolume metric over all subsamples and all data sets.}%
+\end{figure}%
+\begin{figure}[H]%
+    \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/tex/dist-hmean.pdf}}%
+    \caption{Distribution of the $HM$ metric over all subsamples and all data sets.}%
+\end{figure}%
+\begin{figure}[H]%
+    \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/tex/dist-delta.pdf}}%
+    \caption{Distribution of the Delta metric over all subsamples and all data sets.}%
 \end{figure}%
 \pagebreak
 \foreach \dataset in \datasets {%
     \begin{figure}[H]%
-        \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/plot/\dataset/pareto.pdf}}%
+        \makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{output/plot/\dataset/pareto.pdf}}%
         \caption{Earliness Accuracy tradeoff on dataset ``\dataset''.}%
     \end{figure}%
-    \begin{figure}[H]%
-        \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/plot/\dataset/scatter.pdf}}%
-        \caption{Distibutions of the Hyper Volume and Delta metrics for dataset ``\dataset''.}%
-    \end{figure}%
+    % \begin{figure}[H]%
+    %     \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{output/plot/\dataset/scatter.pdf}}%
+    %     \caption{Distibutions of the Hyper Volume and Delta metrics for dataset ``\dataset''.}%
+    % \end{figure}%
     \begin{table}[H]%
         \makebox[\textwidth][c]{%
         \input{output/tex/\dataset/table.tex}}%

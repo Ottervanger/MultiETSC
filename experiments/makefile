@@ -4,24 +4,26 @@ PLOTDIR:=./output/plot/
 REPORT:=./report/report.pdf
 
 # find the tables and plots that can be made using the results
-TABLES=$(patsubst %,$(TABLEDIR)%/table.tex, $(shell ls -1 ./output/test/ ))
-PLOTS=$(patsubst %,$(PLOTDIR)%/scatter.pdf, $(shell ls -1 ./output/test/ ))
+TABLES=$(wildcard $(TABLEDIR)*/table.tex)
+SCATTER=$(wildcard $(PLOTDIR)*/scatter.pdf)
+PARETO=$(wildcard $(PLOTDIR)*/pareto.tex)
 
 all: $(REPORT)
 
-%.pdf: %.tex $(TABLES) $(PLOTS) FORCE
+%.pdf: %.tex $(TABLES) $(SCATTER) $(PARETO)
 	export TEXINPUTS="./report/theme:$$TEXINPUTS"
 	pdflatex -shell-escape -output-directory ./report $<
 
-$(TABLEDIR)%/table.tex: plot.py $(wildcard $(TESTDIR)%/*/test.csv)
-	./plot.py
+$(TABLEDIR)%/table.tex: plot.py $(wildcard $(TESTDIR)%/*/test.csv) plot
 
-$(PLOTDIR)%/scatter.pdf: plot.py $(wildcard $(TESTDIR)%/*/test.csv)
-	./plot.py
+$(PLOTDIR)%/scatter.pdf: plot.py $(wildcard $(TESTDIR)%/*/test.csv) plot
 
-$(PLOTDIR)%/pareto.pdf: plot.py $(wildcard $(TESTDIR)%/*/test.csv)
-	./plot.py
+$(PLOTDIR)%/pareto.pdf: plot.py $(wildcard $(TESTDIR)%/*/test.csv) plot
 
+.PHONY: plot deptest
+plot:
+	./plot.py
 
 FORCE:
 	
+
