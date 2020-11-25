@@ -189,7 +189,7 @@ def cdGraph(avranks, names, cd, filename,
         ax.text((ew+bw)/2, distancehh - 0.05/height, 'CD', ha="center", va="bottom", **kwargs)
 
     # no-significance lines
-    def drawLines(lines, side=0.05, height=0.1):
+    def drawLines(lines, side=0.02, height=0.1):
         start = cline + 0.2
         for l, r in lines:
             line([(rankpos(ssums[l]) - side, start),
@@ -202,6 +202,7 @@ def cdGraph(avranks, names, cd, filename,
 
     if filename:
         print_figure(fig, filename, **kwargs)
+    fig.clear()
 
 
 if __name__ == '__main__':

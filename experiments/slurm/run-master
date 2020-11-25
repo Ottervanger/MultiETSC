@@ -2,7 +2,136 @@
 set -e
 # run from "experiments" dir
 cd "${0%/*}/.."
-DATASETS=(Coffee CBF ECG200 TwoPatterns Wafer Fish GestureMidAirD3 OliveOil Phoneme)
+DATASETS=(
+  ACSF1
+  Adiac
+  AllGestureWiimoteX
+  AllGestureWiimoteY
+  AllGestureWiimoteZ
+  ArrowHead
+  Beef
+  BeetleFly
+  BirdChicken
+  BME
+  Car
+  CBF
+  Chinatown
+  ChlorineConcentration
+  CinCECGTorso
+  Coffee
+  Computers
+  CricketX
+  CricketY
+  CricketZ
+  Crop                # out of mem 20GB
+  DiatomSizeReduction # Failed to split
+  DistalPhalanxOutlineAgeGroup
+  DistalPhalanxOutlineCorrect
+  DistalPhalanxTW
+  DodgerLoopDay
+  DodgerLoopGame
+  DodgerLoopWeekend
+  Earthquakes
+  ECG200
+  ECG5000
+  ECGFiveDays
+  ElectricDevices     # out of mem 20GB
+  EOGHorizontalSignal
+  EOGVerticalSignal
+  EthanolLevel
+  FaceAll
+  FaceFour
+  FacesUCR
+  FiftyWords          # Failed to split
+  Fish
+  FordA               # out of mem 20GB
+  FordB               # out of mem 20GB
+  FreezerRegularTrain
+  FreezerSmallTrain
+  Fungi               # Failed to split
+  GestureMidAirD1
+  GestureMidAirD2
+  GestureMidAirD3
+  GesturePebbleZ1
+  GesturePebbleZ2
+  GunPoint
+  GunPointAgeSpan
+  GunPointMaleVersusFemale
+  GunPointOldVersusYoung
+  Ham
+  HandOutlines
+  Haptics
+  Herring
+  HouseTwenty
+  InlineSkate
+  InsectEPGRegularTrain
+  InsectEPGSmallTrain
+  InsectWingbeatSound
+  ItalyPowerDemand
+  LargeKitchenAppliances
+  Lightning2
+  Lightning7
+  Mallat
+  Meat
+  MedicalImages
+  MelbournePedestrian
+  MiddlePhalanxOutlineAgeGroup
+  MiddlePhalanxOutlineCorrect
+  MiddlePhalanxTW
+  MixedShapesRegularTrain
+  MixedShapesSmallTrain
+  MoteStrain
+  NonInvasiveFetalECGThorax1
+  NonInvasiveFetalECGThorax2
+  OliveOil
+  OSULeaf
+  PhalangesOutlinesCorrect
+  Phoneme             # Failed to split
+  PickupGestureWiimoteZ
+  PigAirwayPressure   # Failed to split
+  PigArtPressure      # Failed to split
+  PigCVP              # Failed to split
+  PLAID
+  Plane
+  PowerCons
+  ProximalPhalanxOutlineAgeGroup
+  ProximalPhalanxOutlineCorrect
+  ProximalPhalanxTW
+  RefrigerationDevices
+  Rock
+  ScreenType
+  SemgHandGenderCh2
+  SemgHandMovementCh2
+  SemgHandSubjectCh2
+  ShakeGestureWiimoteZ
+  ShapeletSim
+  ShapesAll
+  SmallKitchenAppliances
+  SmoothSubspace
+  SonyAIBORobotSurface1
+  SonyAIBORobotSurface2
+  StarLightCurves
+  Strawberry
+  SwedishLeaf
+  Symbols             # Failed to split
+  SyntheticControl
+  ToeSegmentation1
+  ToeSegmentation2
+  Trace
+  TwoLeadECG
+  TwoPatterns
+  UMD
+  UWaveGestureLibraryAll
+  UWaveGestureLibraryX
+  UWaveGestureLibraryY
+  UWaveGestureLibraryZ
+  Wafer
+  Wine
+  WordSynonyms
+  Worms
+  WormsTwoClass
+  Yoga
+)
 ALGS=(all all fixed ects edsc ecdire srcf relclass teaser ecec earliest)
 METHODS=(mo so mo mo mo mo mo mo mo mo mo)
 CONFJOBS=()
@@ -10,7 +139,7 @@ TESTJOBS=()
 REPS=25
 export UCR_ROOT="/scratch/ottervanger/UCR/"
 export PARTITION="graceADA"
-export EXCLUDE="ethnode[23]"
+export EXCLUDE="ethnode[01-02,23-30]"
 export GLOBAL_SEED=0
 START=$GLOBAL_SEED
 
@@ -25,7 +154,7 @@ for DATASET in ${DATASETS[*]}; do
         if [ ! "$1" == "noconf" ]; then
             eval mkdir -p "output/configurator/${DATASET}/${METHOD}-${ALG}/run_{${START}..$((REPS - 1 - START))}"
             # configuration and validation
-            CONFJOB=$( sbatch --parsable --hold --array=${START}-$((REPS - 1 - START)) --nice=3 \
+            CONFJOB=$( sbatch --parsable --hold --array=${START}-$((REPS - 1 - START)) --nice=400 \
                               --partition=$PARTITION --exclude=$EXCLUDE \
                               --output=output/configurator/${DATASET}/${METHOD}-${ALG}/run_%a/log \
                               slurm/run-configurator-batch --dataset $DATASET --method $METHOD --algorithm $ALG )
@@ -34,7 +163,7 @@ for DATASET in ${DATASETS[*]}; do
         fi
         # pareto extraction and test evaluation
         mkdir -p output/test/${DATASET}/${METHOD}-${ALG}
-        TESTJOB=$( sbatch --parsable $DEP --kill-on-invalid-dep=yes --nice=1 \
+        TESTJOB=$( sbatch --parsable $DEP --kill-on-invalid-dep=yes --nice=200 \
                           --partition=$PARTITION --exclude=$EXCLUDE \
                           --output=output/test/${DATASET}/${METHOD}-${ALG}/log \
                           slurm/run-test-master $DATASET $METHOD $ALG )

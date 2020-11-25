@@ -22,6 +22,6 @@ TEST_FILE="output/test/$DATASET/$METHOD-$ALG/test.csv"
 INSTANCE="${UCR_ROOT}${DATASET}/${DATASET}_TRAIN.tsv:${UCR_ROOT}${DATASET}/${DATASET}_TEST.tsv"
 
 N_ARRAY=$(( $(wc -l < $CONF_FILE)))
-JOB=$( sbatch --parsable -a 1-$N_ARRAY -o /dev/null \
+JOB=$( sbatch --parsable -a 1-$N_ARRAY -o /dev/null --nice=100 \
               --partition=$PARTITION --exclude=$EXCLUDE \
               slurm/run-test-batch $INSTANCE $TEST_FILE $CONF_FILE $SEED )
