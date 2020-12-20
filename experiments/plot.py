@@ -11,6 +11,7 @@ import subprocess
 import json
 import seaborn as sns
 import random
+import pickle
 from scipy.stats import wilcoxon, binom_test, friedmanchisquare
 from util.cdgraph import cdGraph
 
@@ -488,10 +489,12 @@ def randomSample(dataset, methods):
         f.write(latexMetricTable(metricTable))
 
 
-def bootstrap(datasets, methods, metrics, df=None):
+def bootstrap(datasets, methods, metrics, df, algCounts):
     print('Bootstrapping')
     if df is None:
         df = pd.DataFrame()
+    algCountsValid = algCounts[0]
+    algCountsTest = algCounts[1]
     for dataset in datasets:
         if dataset in ['Crop', 'ElectricDevices', 'FordB', 'FordA', 'InsectWingbeatSound']:
             continue
@@ -510,7 +513,17 @@ def bootstrap(datasets, methods, metrics, df=None):
             except IndexError:
                 continue
             # Extracting test Pareto fronts
-            paretos = [Pareto(np.array(f+[np.ones(2)])) for f in fronts]
+            paretos = [Pareto(np.array(f+[np.ones(2)]), np.array(s+['alg ref'])) for f, s in zip(fronts, effSets)]
+
+            if method == 'mo-all':
+                for pareto in paretos:
+                    for conf in pareto.metadata:
+                        alg = conf.split()[1]
+                        algCountsTest[alg] = algCountsTest.get(alg, 0) + 1
+                for effSet in effSets:
+                    for conf in effSet:
+                        alg = cleanConfStr(conf).split()[1]
+                        algCountsValid[alg] = algCountsValid.get(alg, 0) + 1
             # compute metrics
             dl = pd.DataFrame([[getattr(p, m)()for m in metrics] for p in paretos],
                               columns=metrics)
@@ -520,7 +533,47 @@ def bootstrap(datasets, methods, metrics, df=None):
         print(f'DONE: {dataset}')
     print('All Done')
     df = df.replace([np.inf, -np.inf], np.nan)
-    return df
+    return df, (algCountsValid, algCountsTest)
+
+
+def plotAlgCounts(algCountsValid, algCountsTest):
+    barWidth = 1./3
+    xlabels = np.array(list(algCountsValid.keys()))
+
+    bars1 = np.array([algCountsValid[k] for k in xlabels])
+    bars1 = bars1 / np.sum(bars1)
+    bars2 = np.array([algCountsTest[k] for k in xlabels])
+    bars2 = bars2 / np.sum(bars2)
+    order = np.argsort(bars1)[::-1]
+
+    algName = {
+        "EDSC/bin/edsc": "EDSC",
+        "ECDIRE/run": "ECDIRE",
+        "SR-CF/run": "SR-CF",
+        "ECTS/bin/ects": "ECTS",
+        "TEASER/ECECrun": "ECEC",
+        "RelClass/run": "RelClass",
+        "EARLIEST/run.py": "EARLIEST",
+        "TEASER/TEASERrun": "TEASER",
+        "fixed/run.py": "Fixed"
+    }
+    xlabels = np.array([algName[k] for k in xlabels])
+
+    r1 = np.arange(len(bars1))
+    r2 = [x + barWidth for x in r1]
+    fig, ax = plt.subplots(figsize=(8, 4))
+    ax.bar(r1, bars1[order], width=barWidth, edgecolor='white', label='Validation')
+    ax.bar(r2, bars2[order], width=barWidth, edgecolor='white', label='Test')
+    plt.xticks([r + barWidth/2 for r in range(len(bars1))], xlabels[order])
+    plt.xticks(rotation=45)
+    plt.xlabel('Algorithm')
+    plt.ylabel('Proportion')
+    ax.set_title('Selected algorithms\nas proportion of non-dominated solutions')
+    ax.legend()
+    fig.tight_layout()
+    plt.savefig('output/tex/counts.pdf')
+    fig.clear()
+    plt.close(fig)
 
 
 def plotDistributions(df, datasets, blines=None):
@@ -749,11 +802,15 @@ def main():
     datasets = filterDatasets
     metrics = ['HV', 'delta', 'hmean']
     try:
-        df = pd.read_pickle(datacache)
+        with open(datacache, 'rb') as f:
+            df, algCounts = pickle.load(f)
     except FileNotFoundError:
         df = pd.DataFrame()
-    df = bootstrap(datasets, methods, metrics, df)
-    df.to_pickle(datacache)
+        algCounts = (dict(), dict())
+    df, algCounts = bootstrap(datasets, methods, metrics, df, algCounts)
+    plotAlgCounts(*algCounts)
+    with open(datacache, 'wb') as f:
+        pickle.dump((df, algCounts), f)
     methodnames = [metName(m) for m in methods]
 
     print(methodnames)
