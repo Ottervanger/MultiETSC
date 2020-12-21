@@ -46,6 +46,7 @@ case "$1" in
         shift; shift
         ;;
     *)
+        echo "ignoring unknown argument \"$1\""
         shift
         ;;
 esac
