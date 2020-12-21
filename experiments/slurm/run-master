@@ -132,14 +132,15 @@ DATASETS=(
   WormsTwoClass
   Yoga
 )
+DATASETS=(ECG200)
 ALGS=(all all fixed ects edsc ecdire srcf relclass teaser ecec earliest)
 METHODS=(mo so mo mo mo mo mo mo mo mo mo)
 CONFJOBS=()
 TESTJOBS=()
 REPS=25
 export UCR_ROOT="/scratch/ottervanger/UCR/"
-export PARTITION="graceADA"
-export EXCLUDE="ethnode[01-02,23-30]"
+export PARTITION="graceCPU"
+export EXCLUDE="ethnode[23]"
 export GLOBAL_SEED=0
 START=$GLOBAL_SEED
 

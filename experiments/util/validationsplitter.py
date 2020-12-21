@@ -33,6 +33,9 @@ def argparse():
         if 'seed' in argname:
             seed = int(argval)
             continue
+        if 'outpath' in argname:
+            outputpath = argval
+            continue
         if not datafile:
             datafile = arg
             continue
@@ -42,7 +45,7 @@ def argparse():
     if not datafile:
         usage()
         sys.exit('Error: no data path specified')
-    return folds, datafile, seed, reps
+    return folds, datafile, seed, reps, outputpath
 
 
 def makeSplit(outputpath, lines, y, skf):
@@ -65,7 +68,7 @@ def makeSplit(outputpath, lines, y, skf):
 
 
 def main():
-    folds, datafile, initSeed, reps = argparse()
+    folds, datafile, initSeed, reps, outputpath = argparse()
 
     # read data
     y = np.genfromtxt(datafile)[:, 0]
@@ -74,11 +77,12 @@ def main():
     from sklearn.model_selection import StratifiedShuffleSplit
     skf = StratifiedShuffleSplit(n_splits=folds, test_size=1/folds)
 
-    tmp = os.environ['TMP']
-    if not tmp:
-        tmp = '/tmp'
-    dataname = datafile.split('/')[datafile.split('/').index('UCR')+1]
-    outputpath = f'{tmp}/UCRsplits/{dataname}/seed-{{}}/'
+    if outputpath is None:
+        tmp = os.environ['TMP']
+        if not tmp:
+            tmp = '/tmp'
+        dataname = datafile.split('/')[datafile.split('/').index('UCR')+1]
+        outputpath = f'{tmp}/UCRsplits/{dataname}/seed-{{}}/'
 
     for seed in range(initSeed, initSeed+reps):
         np.random.seed(seed)
@@ -90,9 +94,7 @@ def main():
         try:
             makeSplit(outputpath.format(seed), lines, y, skf)
         except ValueError:
-            # on fail remove dir since existing dirs are
-            # assumed to be correctly populated
-            shutil.rmtree(f'{tmp}/UCRsplits/{dataname}/')
+            shutil.rmtree(outputpath.format(seed))
             sys.exit(1)
 
 

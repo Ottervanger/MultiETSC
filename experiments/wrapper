@@ -33,7 +33,7 @@ TIMEOUT="${ARGS[2]}"
 SEED="${ARGS[4]}"
 ARGS=${ARGS[*]:5}
 CMD="../${ALGO//[\'\"]/} -data $DATA -seed $SEED ${ARGS//[\'\"]/}"
->&2 echo "$CMD"
+
 ret="$(timeout -s2 $TIMEOUT $CMD)"
 if [ $? -ne 0 ]; then
     ret="Result: TIMEOUT, ${TIMEOUT}, [1.0001, 1.0001], 0"
