@@ -1,8 +1,14 @@
-# EarlyTSC
+# MultiETSC
 
-Implementation of early time series classification algorithms. The aim is to produce a python package that provides interface to these methods conforming to scikit-learn standards. This is done by keeping as much of the existing implementations intact as possible.
+MultiETSC implements Automated Machine Learing (AutoML) for 
+Early Time Series Classification (ETSC).
+This is done by simultaneously optimizing for both earliness and accuracy using the 
+multi-objective algorithm configurator MO-ParamILS.
+The search space of this optimization consists of the set of ETSC algorithms and 
+their hyper-parameters.
 
-The following algorithms are (planned to be) included:
+
+The following algorithms are included:
 
 | Algorithm | code | Publication |
 | --------- | ---- | ----------- |
@@ -16,3 +22,41 @@ The following algorithms are (planned to be) included:
 | TEASER | Java | [P. Sch ̈afer and U. Leser (2019). “Teaser: Early and accurate time series classification”](https://arxiv.org/abs/1908.03405) |
 | EARLIEST | Python | [T. Hartvigsen, C. Sen, X. Kong, and E. Rundensteiner (2019). “Adaptive-haltingpolicy network for early classification”](https://web.cs.wpi.edu/~xkong/publications/papers/kdd19.pdf) |
 
+## Installation
+MultiETSC is mainly built as a combination of python and bash scripts and in itself requires no installation.
+However, the set of ETSC algorithms as well as the algorithm configurator(s) 
+do each have their own dependencies which are non-obvious.
+In order to set up all dependencies of MultiETSC run the following command:
+```bash
+$ make build # TODO: not implemeted
+```
+
+## Usage
+Included is the main script that can be used to find optimal algorithm configurations for a specific dataset.
+MultiETSC uses the training set for algorithm configuration and can provide test performance on a specified test set.
+MultiETSC is designed to use a 5 fold crossvalidation protocol for the algorithm configuration phase,
+which requires the training set to include at least 5 examples of each class.
+MultiETSC, having been developed with the [UCR Archive](https://www.cs.ucr.edu/~eamonn/time_series_data_2018/)
+in mind, will be able to run on by far the most UCR datasets out of the box.
+
+We have included a few UCR datasets for testing which can be used to run a simple instance of MultiETSC. 
+The following command will run on the `Coffee` dataset using 60 seconds for algorithm configuration with 
+a max running time per algorithm of 1 second. 
+Note that this is meant as a very short example, in our experiments we used 7200s configurator time
+with a cutoff of 180s which might still be considered as little time.
+```bash
+$ experiments/run-configurator -d test/data/Coffee_TRAIN.tsv  --test test/data/Coffee_TEST.tsv --timeout 60 --cutoff 1
+```
+This command, after multiple lines of progress output, returns the following result:
+```
+Running test evaluation:
+Result: status, time, [earliness, error rate], 0, configuration
+Result: SUCCESS, 0.0142195, [0, 0.464286], 0, -algorithm 'fixed/run.py' -percLen '0.0'
+Result: SUCCESS, 0.010000, [0.719905, 0.000000], 0, -algorithm 'ECTS/bin/ects' -min_support '0.0' -version 'loose'
+Result: SUCCESS, 0.119657, [0.101399, 0.107143], 0, -algorithm 'fixed/run.py' -percLen '0.1'
+Result: SUCCESS, 0.119354, [0.178322, 0.178571], 0, -algorithm 'fixed/run.py' -percLen '0.18'
+```
+What can be seen here is the test evaluation of the four selected algorithm combinations.
+Note that, while all four are non-dominated on the validation data,
+some might be dominated when evaluated on the test data.
+The fourth configuration is an example of this.
