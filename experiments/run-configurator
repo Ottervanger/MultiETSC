@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 # change dir to script location
+oldPDW=$(pwd)
 cd "${0%/*}"
 
 # config
@@ -25,6 +26,10 @@ case "$1" in
         DATASET="$2"
         shift; shift
         ;;
+    --testset|--test)
+        TESTSET="$2"
+        shift; shift
+        ;;
     --timeout|--time|-t)
         TIMEOUT="$2"
         shift; shift
@@ -45,6 +50,10 @@ case "$1" in
         INSTANCE_FILE="$2"
         shift; shift
         ;;
+    --batch)
+        BATCH="true"
+        shift
+        ;;
     *)
         echo "ignoring unknown argument \"$1\""
         shift
@@ -62,6 +71,22 @@ PARAMILS="../paramils/paramils \
         --log-details true \
         --max-runs ${MAX_R}"
 
+# for stand-alone use
+if [ -z "$BATCH" ]; then
+    NFOLDS=5
+    DATANAME=$(basename $DATASET)
+    DATANAME=${DATANAME%.*}
+    OUTPATH="$TMP/MultiETSC/${DATANAME}-{}/"
+    INSTANCE_FILE="$TMP/MultiETSC/${DATANAME}-$SEED/train_list.txt"
+    if ! python util/validationsplitter.py --folds=$NFOLDS  --seed=$SEED --outpath="$OUTPATH" "${oldPDW}/${DATASET}" &> /dev/null; then
+        printf "%20s: \e[31mFailed to split dataset.\e[0m\n" $DATASET
+        printf "Not sufficient training data to create a $NFOLDS-fold split\n"
+        exit 1
+    fi
+else
+    DATANAME="$DATASET"
+fi
+
 if [[ $METHOD == "so" ]]; then
     CONFIGURATOR="${SMAC}"
     WRAPPER="./wrapper --MO false"
@@ -69,7 +94,11 @@ else
     CONFIGURATOR="${PARAMILS}"
 fi
 
-CONDITION="${DATASET}/${METHOD}-${ALGO}"
+if [ ! -z "$BATCH" ]; then
+    CONDITION="${DATANAME}/${METHOD}-${ALGO}"
+else
+    CONDITION="${DATANAME}"
+fi
 CONF_OUT="output/configurator/${CONDITION}"
 mkdir -p "${CONF_OUT}"
 
@@ -88,9 +117,18 @@ ${CONFIGURATOR} --scenario "scenario.txt" \
                 --param-file "pcs/${METHOD}-${ALGO}.pcs"
 
 # make sure the configs file is populated
+CONFIGS="${CONF_OUT}/run_${SEED}/configs${SEED}.txt"
 if [[ $METHOD == "so" ]]; then
-    CONFIGS="${CONF_OUT}/run_${SEED}/configs${SEED}.txt"
     ../smac/configs.py "${CONF_OUT}/run_${SEED}/traj.json" > "${CONFIGS}"
     mv "${CONF_OUT}/run_${SEED}.OLD/log" "${CONF_OUT}/run_${SEED}"
     rm -rf ${CONF_OUT}/run_${SEED}.OLD
+fi
+
+if [ ! -z "$TESTSET" ]; then
+    echo "Running test evaluation:"
+    echo "Result: status, time, [earliness, error rate], 0, configuration"
+    INSTANCE="${oldPDW}/${DATASET}:${oldPDW}/${TESTSET}"
+    while read CONF; do
+        echo "$(./wrapper --MO "true" $INSTANCE 0 900 0 $SEED $CONF), $CONF"
+    done < $CONFIGS
 fi
