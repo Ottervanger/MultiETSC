@@ -13,7 +13,7 @@ import seaborn as sns
 import random
 import pickle
 from scipy.stats import wilcoxon, binom_test, friedmanchisquare
-from util.cdgraph import cdGraph
+from cdgraph import cdGraph
 
 
 def colors(alpha=None):
