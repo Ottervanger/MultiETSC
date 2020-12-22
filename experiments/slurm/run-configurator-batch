@@ -41,7 +41,7 @@ if [[ $ALGO == *'-long' ]]; then
     CUTOFF="600"
 fi
 
-CMD="./run-configurator --batch "${ARGS}" --seed ${SEED} --instance-file ${INSTANCE_FILE} --cutoff $CUTOFF"
+CMD="../MultiETSC/main --batch "${ARGS}" --seed ${SEED} --instance-file ${INSTANCE_FILE} --cutoff $CUTOFF"
 echo $CMD
 # Run configurator
 srun $CMD

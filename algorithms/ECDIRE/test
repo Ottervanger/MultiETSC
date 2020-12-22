@@ -2,10 +2,11 @@
 set -e
 
 data="Herring"
-train="../data/${data}_TRAIN.tsv"
-test="../data/${data}_TEST.tsv"
+train="../../test/data/${data}_TRAIN.tsv"
+test="../../test/data/${data}_TEST.tsv"
 ./run -data $train $test -acc_perc 80  -kernel gauss   -doHPO FALSE -distance fourier
 ./run -data $train $test -acc_perc 80  -kernel gauss   -doHPO FALSE -distance fourier -dN 2
+exit
 ./run -data $train $test -acc_perc 100 -kernel iprod   -doHPO FALSE -distance edr
 
 data="Coffee"
