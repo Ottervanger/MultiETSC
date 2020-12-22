@@ -145,7 +145,7 @@ export GLOBAL_SEED=0
 START=$GLOBAL_SEED
 
 for DATASET in ${DATASETS[*]}; do
-    if ! python util/validationsplitter.py --folds=5  --seed=$GLOBAL_SEED --reps=$REPS "${UCR_ROOT}${DATASET}/${DATASET}_TRAIN.tsv" &> /dev/null; then
+    if ! python ../../MultiETSC/validationsplitter.py --folds=5  --seed=$GLOBAL_SEED --reps=$REPS "${UCR_ROOT}${DATASET}/${DATASET}_TRAIN.tsv" &> /dev/null; then
         printf "%20s: \e[31mFailed to split dataset.\e[0m\n" $DATASET
         continue
     fi

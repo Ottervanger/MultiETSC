@@ -24,8 +24,7 @@ The following algorithms are included:
 
 ## Installation
 MultiETSC is mainly built as a combination of python and bash scripts and in itself requires no installation.
-However, the set of ETSC algorithms as well as the algorithm configurator(s) 
-do each have their own dependencies which are non-obvious.
+However, the set of ETSC algorithms as well as the algorithm configurator(s) do each have their own dependencies.
 In order to set up all dependencies of MultiETSC run the following command:
 ```bash
 $ make build # TODO: not implemeted
@@ -45,7 +44,7 @@ a max running time per algorithm of 1 second.
 Note that this is meant as a very short example, in our experiments we used 7200s configurator time
 with a cutoff of 180s which might still be considered as little time.
 ```bash
-$ experiments/run-configurator -d test/data/Coffee_TRAIN.tsv  --test test/data/Coffee_TEST.tsv --timeout 60 --cutoff 1
+$ MultiETSC/main --dataset test/data/Coffee_TRAIN.tsv  --test test/data/Coffee_TEST.tsv --timeout 60 --cutoff 1
 ```
 This command, after multiple lines of progress output, returns the following result:
 ```

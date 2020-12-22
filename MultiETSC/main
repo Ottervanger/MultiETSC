@@ -78,7 +78,7 @@ if [ -z "$BATCH" ]; then
     DATANAME=${DATANAME%.*}
     OUTPATH="$TMP/MultiETSC/${DATANAME}-{}/"
     INSTANCE_FILE="$TMP/MultiETSC/${DATANAME}-$SEED/train_list.txt"
-    if ! python util/validationsplitter.py --folds=$NFOLDS  --seed=$SEED --outpath="$OUTPATH" "${oldPDW}/${DATASET}" &> /dev/null; then
+    if ! python validationsplitter.py --folds=$NFOLDS  --seed=$SEED --outpath="$OUTPATH" "${oldPDW}/${DATASET}" &> /dev/null; then
         printf "%20s: \e[31mFailed to split dataset.\e[0m\n" $DATASET
         printf "Not sufficient training data to create a $NFOLDS-fold split\n"
         exit 1
@@ -96,10 +96,11 @@ fi
 
 if [ ! -z "$BATCH" ]; then
     CONDITION="${DATANAME}/${METHOD}-${ALGO}"
+    CONF_OUT="../experiments/output/configurator/${CONDITION}"
 else
     CONDITION="${DATANAME}"
+    CONF_OUT="../MultiETSC/output/configurator/${CONDITION}"
 fi
-CONF_OUT="output/configurator/${CONDITION}"
 mkdir -p "${CONF_OUT}"
 
 # Start the configurator
@@ -112,8 +113,8 @@ ${CONFIGURATOR} --scenario "scenario.txt" \
                 --deterministic 0 \
                 --run-obj "quality" \
                 --overall-obj "mean" \
-                --execdir "../experiments/" \
-                --output-dir "../experiments/${CONF_OUT}" \
+                --execdir "../MultiETSC/" \
+                --output-dir "${CONF_OUT}" \
                 --param-file "pcs/${METHOD}-${ALGO}.pcs"
 
 # make sure the configs file is populated

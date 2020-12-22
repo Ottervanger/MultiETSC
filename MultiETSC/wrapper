@@ -32,7 +32,7 @@ DATA=$(tr ":" " "<<<"${ARGS[0]}")
 TIMEOUT="${ARGS[2]}"
 SEED="${ARGS[4]}"
 ARGS=${ARGS[*]:5}
-CMD="../${ALGO//[\'\"]/} -data $DATA -seed $SEED ${ARGS//[\'\"]/}"
+CMD="../algorithms/${ALGO//[\'\"]/} -data $DATA -seed $SEED ${ARGS//[\'\"]/}"
 
 ret="$(timeout -s2 $TIMEOUT $CMD)"
 if [ $? -ne 0 ]; then
