@@ -1,0 +1,1346 @@
+18:15:56.807 [main] INFO  c.u.c.b.a.l.ComplexLoggingOptions - Logging to: /home/ottervanger/earlytsc/MultiETSC/output/configurator/Coffee_TRAIN/run_1/log-run1.txt
+18:15:56.818 [main] INFO  c.u.c.b.a.m.version.VersionTracker - Version of Java Runtime Environment is OpenJDK 64-Bit Server VM (1.8.0_252) 
+18:15:56.818 [main] INFO  c.u.c.b.a.m.version.VersionTracker - Version of OS is Linux 3.10.0-1127.13.1.el7.x86_64 (amd64) 
+18:15:56.818 [main] INFO  c.u.c.b.a.m.version.VersionTracker - Version of ParamILS is 3.0.0 
+18:15:56.818 [main] INFO  c.u.c.b.a.m.version.VersionTracker - Version of Random Forest Library is v1.05.01-master-106 (7fba58fe4271) 
+18:15:56.818 [main] INFO  c.u.c.b.a.m.version.VersionTracker - Version of SMAC is ERROR LOADING VERSION INFORMATION 
+18:15:56.818 [main] INFO  c.u.c.b.a.m.j.JCommanderHelper - Call String: paramils --validation false --MO true --rungroup run_1 --log-details true --max-runs 10 --scenario /home/ottervanger/earlytsc/MultiETSC/scenario.txt --algo /home/ottervanger/earlytsc/MultiETSC/wrapper --seed 1 --instance-file /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/train_list.txt --wallclock-limit 60 --cutoff-time 1 --deterministic 0 --run-obj quality --overall-obj mean --execdir /home/ottervanger/earlytsc/MultiETSC --output-dir /home/ottervanger/earlytsc/MultiETSC/output/configurator/Coffee_TRAIN --param-file /home/ottervanger/earlytsc/MultiETSC/pcs/mo-all.pcs 
+18:15:56.819 [main] INFO  c.u.c.b.p.executors.ParamILSExecutor - ********** The next bit of output can be ignored, it is merely useful for debugging **********
+18:15:56.819 [main] INFO  c.u.c.b.p.executors.ParamILSExecutor - ==========Environment Variables===========
+BASH_FUNC_module()=() {  eval `/usr/bin/modulecmd bash $*`
+}
+CONDA_DEFAULT_ENV=msc
+CONDA_EXE=/home/ottervanger/anaconda3/bin/conda
+CONDA_PREFIX=/home/ottervanger/anaconda3/envs/msc
+CONDA_PREFIX_1=/home/ottervanger/anaconda3
+CONDA_PROMPT_MODIFIER=(msc) 
+CONDA_PYTHON_EXE=/home/ottervanger/anaconda3/bin/python
+CONDA_SHLVL=2
+CPATH=/home/ottervanger/anaconda3/envs/msc/include/:/home/ottervanger/.rpm/usr/include
+GRADLE_HOME=/home/ottervanger/.rpm/gradle/gradle-5.0
+HISTCONTROL=ignorespace:erasedups
+HISTFILESIZE=10000
+HISTSIZE=10000
+HOME=/home/ottervanger
+HOSTNAME=fs.grace.liacs.nl
+LANG=en_US.UTF-8
+LD_LIBRARY_PATH=/home/ottervanger/anaconda3/envs/msc/lib/:/home/ottervanger/.usr/openblas/lib/:/home/ottervanger/.rpm/usr/lib64/:/home/ottervanger/.rpm/usr/lib/:/usr/lib64/:/usr/lib/
+LESSOPEN=||/usr/bin/lesspipe.sh %s
+LIBRARY_PATH=/home/ottervanger/anaconda3/envs/msc/lib/:/home/ottervanger/.usr/openblas/lib/:/home/ottervanger/.rpm/usr/lib64/:/home/ottervanger/.rpm/usr/lib/:/usr/lib64/:/usr/lib/
+LOADEDMODULES=
+LOGNAME=ottervanger
+LS_COLORS=rs=0:di=38;5;27:ln=38;5;51:mh=44;38;5;15:pi=40;38;5;11:so=38;5;13:do=38;5;5:bd=48;5;232;38;5;11:cd=48;5;232;38;5;3:or=48;5;232;38;5;9:mi=05;48;5;232;38;5;15:su=48;5;196;38;5;15:sg=48;5;11;38;5;16:ca=48;5;196;38;5;226:tw=48;5;10;38;5;16:ow=48;5;10;38;5;21:st=48;5;21;38;5;15:ex=38;5;34:*.tar=38;5;9:*.tgz=38;5;9:*.arc=38;5;9:*.arj=38;5;9:*.taz=38;5;9:*.lha=38;5;9:*.lz4=38;5;9:*.lzh=38;5;9:*.lzma=38;5;9:*.tlz=38;5;9:*.txz=38;5;9:*.tzo=38;5;9:*.t7z=38;5;9:*.zip=38;5;9:*.z=38;5;9:*.Z=38;5;9:*.dz=38;5;9:*.gz=38;5;9:*.lrz=38;5;9:*.lz=38;5;9:*.lzo=38;5;9:*.xz=38;5;9:*.bz2=38;5;9:*.bz=38;5;9:*.tbz=38;5;9:*.tbz2=38;5;9:*.tz=38;5;9:*.deb=38;5;9:*.rpm=38;5;9:*.jar=38;5;9:*.war=38;5;9:*.ear=38;5;9:*.sar=38;5;9:*.rar=38;5;9:*.alz=38;5;9:*.ace=38;5;9:*.zoo=38;5;9:*.cpio=38;5;9:*.7z=38;5;9:*.rz=38;5;9:*.cab=38;5;9:*.jpg=38;5;13:*.jpeg=38;5;13:*.gif=38;5;13:*.bmp=38;5;13:*.pbm=38;5;13:*.pgm=38;5;13:*.ppm=38;5;13:*.tga=38;5;13:*.xbm=38;5;13:*.xpm=38;5;13:*.tif=38;5;13:*.tiff=38;5;13:*.png=38;5;13:*.svg=38;5;13:*.svgz=38;5;13:*.mng=38;5;13:*.pcx=38;5;13:*.mov=38;5;13:*.mpg=38;5;13:*.mpeg=38;5;13:*.m2v=38;5;13:*.mkv=38;5;13:*.webm=38;5;13:*.ogm=38;5;13:*.mp4=38;5;13:*.m4v=38;5;13:*.mp4v=38;5;13:*.vob=38;5;13:*.qt=38;5;13:*.nuv=38;5;13:*.wmv=38;5;13:*.asf=38;5;13:*.rm=38;5;13:*.rmvb=38;5;13:*.flc=38;5;13:*.avi=38;5;13:*.fli=38;5;13:*.flv=38;5;13:*.gl=38;5;13:*.dl=38;5;13:*.xcf=38;5;13:*.xwd=38;5;13:*.yuv=38;5;13:*.cgm=38;5;13:*.emf=38;5;13:*.axv=38;5;13:*.anx=38;5;13:*.ogv=38;5;13:*.ogx=38;5;13:*.aac=38;5;45:*.au=38;5;45:*.flac=38;5;45:*.mid=38;5;45:*.midi=38;5;45:*.mka=38;5;45:*.mp3=38;5;45:*.mpc=38;5;45:*.ogg=38;5;45:*.ra=38;5;45:*.wav=38;5;45:*.axa=38;5;45:*.oga=38;5;45:*.spx=38;5;45:*.xspf=38;5;45:
+MAIL=/var/spool/mail/ottervanger
+MODULEPATH=/usr/share/Modules/modulefiles:/etc/modulefiles
+MODULESHOME=/usr/share/Modules
+OLDPWD=/home/ottervanger/earlytsc/MultiETSC
+PATH=/home/ottervanger/.rpm/gradle/gradle-5.0/bin:/home/ottervanger/.usr/octave/bin:/home/ottervanger/.rpm/usr/sbin:/home/ottervanger/.rpm/usr/bin:/home/ottervanger/.rpm/usr/sbin:/home/ottervanger/.rpm/usr/bin:/home/ottervanger/anaconda3/envs/msc/bin:/home/ottervanger/anaconda3/condabin:/home/ottervanger/.rpm/usr/sbin:/home/ottervanger/.rpm/usr/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/ottervanger/.local/bin:/home/ottervanger/bin:/home/ottervanger/.local/bin:/home/ottervanger/bin
+PWD=/home/ottervanger/earlytsc/paramils
+QT_GRAPHICSSYSTEM_CHECKED=1
+R_LIBS_USER=/home/ottervanger/.R/Rpackages
+SHELL=/bin/bash
+SHLVL=4
+SSH_CLIENT=132.229.44.36 38288 22
+SSH_CONNECTION=132.229.44.36 54718 132.229.16.100 22
+SSH_TTY=/dev/pts/12
+TEMP=/scratch/ottervanger
+TERM=xterm-256color
+TIME=  TIME: \t%E\n  CPU:  \t%P\n  MEM avg/max: \t%t/%M\n  FS I/O: \t%I/%O\n  pfaults M/m: \t%F/%R
+TMP=/scratch/ottervanger
+TMPDIR=/scratch/ottervanger
+TMUX=/tmp/tmux-1036/default,5013,0
+TMUX_PANE=%10
+USER=ottervanger
+XDG_RUNTIME_DIR=/run/user/1036
+XDG_SESSION_ID=13330
+_CE_CONDA=
+_CE_M=
+
+18:15:56.821 [main] INFO  c.u.c.b.p.executors.ParamILSExecutor - Hostname:fs.grace.liacs.nl
+18:15:56.822 [main] INFO  c.u.c.b.p.executors.ParamILSExecutor - ==========System Properties==============
+ERRLOG=/home/ottervanger/earlytsc/MultiETSC/output/configurator/Coffee_TRAIN/run_1/log-err1.txt
+NUMRUN=1
+OUTPUTDIR=/home/ottervanger/earlytsc/MultiETSC/output/configurator/Coffee_TRAIN/run_1
+ROOT-LEVEL=INFO
+RUNLOG=/home/ottervanger/earlytsc/MultiETSC/output/configurator/Coffee_TRAIN/run_1/log-run1.txt
+STDOUT-LEVEL=INFO
+WARNLOG=/home/ottervanger/earlytsc/MultiETSC/output/configurator/Coffee_TRAIN/run_1/log-warn1.txt
+awt.toolkit=sun.awt.X11.XToolkit
+file.encoding=UTF-8
+file.encoding.pkg=sun.io
+file.separator=/
+java.awt.graphicsenv=sun.awt.X11GraphicsEnvironment
+java.awt.printerjob=sun.print.PSPrinterJob
+java.class.path=./lib/paramils.jar:./lib/logback-core-1.1.2.jar:./lib/commons-math3-3.2.jar:./lib/logback-access-1.1.2.jar:./lib/smac.jar:./lib/fastrf.jar:./lib/exp4j-0.3.10.jar:./lib/aeatk.jar:./lib/commons-collections-3.2.1.jar:./lib/commons-io-2.1.jar:./lib/guava-14.0.1.jar:./lib/logback-classic-1.1.2.jar:./lib/jackson-annotations-2.3.1.jar:./lib/numerics4j-1.3.jar:./lib/Jama-1.0.2.jar:./lib/slf4j-api-1.7.5.jar:./lib/opencsv-2.3.jar:./lib/jmatharray.jar:./lib/jackson-databind-2.3.1.jar:./lib/DomainInter.jar:./lib/jcommander.jar:./lib/commons-math-2.2.jar:./lib/jackson-core-2.3.1.jar:./lib/jcip-annotations.jar:./lib/spi-0.2.4.jar
+java.class.version=52.0
+java.endorsed.dirs=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/lib/endorsed
+java.ext.dirs=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/lib/ext:/usr/java/packages/lib/ext
+java.home=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre
+java.io.tmpdir=/scratch/ottervanger
+java.library.path=/home/ottervanger/anaconda3/envs/msc/lib/:/home/ottervanger/.usr/openblas/lib/:/home/ottervanger/.rpm/usr/lib64/:/home/ottervanger/.rpm/usr/lib/:/usr/lib64/:/usr/lib/:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+java.runtime.name=OpenJDK Runtime Environment
+java.runtime.version=1.8.0_252-b09
+java.specification.name=Java Platform API Specification
+java.specification.vendor=Oracle Corporation
+java.specification.version=1.8
+java.vendor=Oracle Corporation
+java.vendor.url=http://java.oracle.com/
+java.vendor.url.bug=http://bugreport.sun.com/bugreport/
+java.version=1.8.0_252
+java.vm.info=mixed mode
+java.vm.name=OpenJDK 64-Bit Server VM
+java.vm.specification.name=Java Virtual Machine Specification
+java.vm.specification.vendor=Oracle Corporation
+java.vm.specification.version=1.8
+java.vm.vendor=Oracle Corporation
+java.vm.version=25.252-b09
+line.separator=
+
+logback.configurationFile=ca/ubc/cs/beta/aeatk/logging/complex-logback.xml
+os.arch=amd64
+os.name=Linux
+os.version=3.10.0-1127.13.1.el7.x86_64
+path.separator=:
+sun.arch.data.model=64
+sun.boot.class.path=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/lib/resources.jar:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/lib/rt.jar:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/lib/jsse.jar:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/lib/jce.jar:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/lib/charsets.jar:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/lib/jfr.jar:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/classes
+sun.boot.library.path=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.252.b09-2.el7_8.x86_64/jre/lib/amd64
+sun.cpu.endian=little
+sun.cpu.isalist=
+sun.io.unicode.encoding=UnicodeLittle
+sun.java.command=ca.ubc.cs.beta.aeatk.ant.execscript.Launcher ca.ubc.cs.beta.paramils.executors.ParamILSExecutor --validation false --MO true --rungroup run_1 --log-details true --max-runs 10 --scenario /home/ottervanger/earlytsc/MultiETSC/scenario.txt --algo /home/ottervanger/earlytsc/MultiETSC/wrapper --seed 1 --instance-file /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/train_list.txt --wallclock-limit 60 --cutoff-time 1 --deterministic 0 --run-obj quality --overall-obj mean --execdir /home/ottervanger/earlytsc/MultiETSC --output-dir /home/ottervanger/earlytsc/MultiETSC/output/configurator/Coffee_TRAIN --param-file /home/ottervanger/earlytsc/MultiETSC/pcs/mo-all.pcs
+sun.java.launcher=SUN_STANDARD
+sun.jnu.encoding=UTF-8
+sun.management.compiler=HotSpot 64-Bit Tiered Compilers
+sun.os.patch.level=unknown
+user.country=US
+user.dir=/home/ottervanger/earlytsc/paramils
+user.home=/home/ottervanger
+user.language=en
+user.name=ottervanger
+user.timezone=Europe/Amsterdam
+
+18:15:56.824 [main] INFO  c.u.c.b.a.m.j.JCommanderHelper - ==========Configuration Options==========
+[ParamILSOptions]
+ multiObjective = true
+ initialIncumbent = DEFAULT
+ initialIncumbentFile = 
+ minRuns = 1
+ maxRuns = 10
+ R = 10
+ perturbationLength = 3
+ randomRestartProbability = 0.05
+ approach = FOCUSED
+ bonusRunsMode = INTENSIFY
+ cappingMode = AUTO
+ aggressiveCapping = true
+ aggressiveCappingFactor = 2.0
+ cutoffThreshold = 0.1
+ cappingMinValue = 0.0
+ doValidation = false
+ validationRuns = 1000
+ compareInitialConfiguration = false
+ validateOnTrainingSet = false
+ logDetails = true
+ alwaysRunInitialConfiguration = false
+ deterministicInstanceOrdering = false
+ experimentDir = /home/ottervanger/earlytsc/paramils/
+help = [HelpOptions]
+		 showHiddenParameters = false
+		 showHelp = false
+		 helpLevel = BASIC
+		 showVersion = false
+		 helpDefaults = /home/ottervanger/.aeatk/help.opt
+
+logOptions = [ComplexLoggingOptions]
+		 consoleLogLevel = INFO
+		 logLevel = INFO
+
+ optionFile = null
+ optionFile2 = null
+runGroupOptions = [RunGroupOptions]
+		 runGroupName = run_1
+		 runGroupExit = false
+		 replacementChar = %
+
+scenarioConfig = [ScenarioOptions]
+		 _runObj = QUALITY
+		 intraInstanceObj = MEAN
+		 interInstanceObj = MEAN
+		limitOptions = [TerminationCriteriaOptions]
+				 tunerTimeout = 2147483647
+				 numIterations = 2147483647
+				 runtimeLimit = 60
+				 totalNumRunsLimit = 9223372036854775807
+				 countSMACTimeAsTunerTime = false
+				 challengeIncumbentAttempts = 1000
+				 fileToWatch = null
+
+		instanceOptions = [ProblemInstanceOptions]
+				 instanceFile = /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/train_list.txt
+				 instanceFeatureFile = null
+				 testInstanceFile = null
+				 checkInstanceFilesExist = false
+				 useInstances = true
+				 instanceSuffix = null
+				 testInstanceSuffix = null
+				 ignoreFeatures = false
+
+		 scenarioFile = /home/ottervanger/earlytsc/MultiETSC/scenario.txt
+		 outputDirectory = /home/ottervanger/earlytsc/MultiETSC/output/configurator/Coffee_TRAIN
+		 invalidScenarioReason = null
+		algoExecOptions = [AlgorithmExecutionOptions]
+				 algoExec = /home/ottervanger/earlytsc/MultiETSC/wrapper
+				 algoExecDir = /home/ottervanger/earlytsc/MultiETSC
+				 deterministic = false
+				 cutoffTime = 1.0
+				 cutoffLength = -1.0
+				 additionalContext = {}
+				taeOpts = [TargetAlgorithmEvaluatorOptions]
+						 targetAlgorithmEvaluator = CLI
+						 abortOnCrash = false
+						 abortOnFirstRunCrash = true
+						 retryCount = 0
+						 cacheRuns = false
+						 cacheDebug = false
+						 useDynamicCappingExclusively = false
+						 reportStrictlyIncreasingRuntimes = false
+						 boundRuns = false
+						 maxConcurrentAlgoExecs = 1
+						 exitOnFailure = false
+						 runHashCodeFile = null
+						 leakMemory = false
+						 leakMemoryAmount = 1024
+						 verifySAT = null
+						 checkSATConsistency = true
+						 checkSATConsistencyException = true
+						 callObserverBeforeCompletion = true
+						prePostOptions = [PrePostCommandOptions]
+								 preCommand = null
+								 postCommand = null
+								 exceptionOnError = false
+								 logOutput = true
+								 directory = /home/ottervanger/earlytsc/paramils/.
+
+						 checkResultOrderConsistent = false
+						 skipOutstandingEvaluationsTAE = false
+						 logRequestResponses = false
+						 logRequestResponsesRCOnly = false
+						 trackRunsScheduled = false
+						 trackRunsScheduledResolution = 1.0
+						 uncleanShutdownCheck = true
+						 killCaptimeExceedingRun = true
+						 killCaptimeExceedingRunFactor = 10.0
+						 checkRunConfigsUnique = true
+						 checkRunConfigsUniqueException = true
+						 observeWalltimeIfNoRuntime = true
+						 observeWalltimeScale = 0.95
+						 observeWalltimeDelay = 5.0
+						 synchronousObserver = true
+						 taeDefaults = /home/ottervanger/.aeatk/tae.opt
+						ttaedo = [TransformTargetAlgorithmEvaluatorDecoratorOptions]
+								 transform = false
+								 transformValidValuesOnly = true
+								 SAT_runtime_transform = R
+								 SAT_quality_transform = Q
+								 UNSAT_runtime_transform = R
+								 UNSAT_quality_transform = Q
+								 TIMEOUT_runtime_transform = R
+								 TIMEOUT_quality_transform = Q
+								 other_runtime_transform = R
+								 other_quality_transform = Q
+
+						tForkOptions = [ForkingTargetAlgorithmEvaluatorDecoratorOptions]
+								 forkToTAE = null
+								fPolicyOptions = [ForkingTargetAlgorithmEvaluatorDecoratorPolicyOptions]
+										 fPolicy = null
+										 duplicateOnSlaveQuickTimeout = 5
+
+
+						 fileToWatch = null
+						 warnIfNoResponseFromTAE = 120
+						 taeStopProcessingOnShutdown = true
+						 filecache = false
+						 fileCacheSource = null
+						 fileCacheOutput = null
+						 fileCacheCrashOnMiss = false
+
+				paramFileDelegate = [ParamConfigurationSpaceOptions]
+						 paramFile = /home/ottervanger/earlytsc/MultiETSC/pcs/mo-all.pcs
+						 searchSubspace = null
+						 searchSubspaceFile = null
+						 continuousNeighbours = 4
+
+
+
+seedOptions = [SeedOptions]
+		 seedOffset = 0
+		 numRun = 1
+		 initialSeedMap = {}
+
+ paramilsDefaults = /home/ottervanger/.aeatk/paramils.opt
+trackingOptions = [ParamConfigurationOriginTrackingOptions]
+		 configTracking = false
+
+ validationSeed = 0
+
+[AnalyticTargetAlgorithmEvaluatorOptions]
+ simulateDelay = false
+ cores = 0
+ observerFrequency = 100
+ func = CAMELBACK
+ scaleDelay = 1.0
+
+[BlackHoleTargetAlgorithmEvaluatorOptions]
+ warnings = true
+
+[CommandLineTargetAlgorithmEvaluatorOptions]
+ observerFrequency = 500
+ concurrentExecution = true
+ cores = 1
+ logAllCallStrings = false
+ logAllResultLines = false
+ logAllCallsAndResultLines = false
+ logAllProcessOutput = false
+ listenForUpdates = true
+ paramArgumentsContainQuotes = false
+ pgEnvKillCommand = null
+ pgNiceKillCommand = bash -c "kill -s TERM -%pid"
+ pgForceKillCommand = bash -c "kill -s KILL -%pid"
+ procNiceKillCommand = kill -s TERM %pid
+ procForceKillCommand = kill -s KILL %pid
+ smacDefaults = /home/ottervanger/.aeatk/cli-tae.opt
+
+[IPCTargetAlgorithmEvaluatorOptions]
+ persistent = false
+ ipcMechanism = UDP
+ encodingMechanism = CALL_STRING
+ remoteHost = 127.0.0.1
+ remotePort = 5050
+ udpPacketSize = 4096
+ localPort = 0
+ execScript = null
+ execScriptOutput = false
+ poolConnections = false
+ ipcDefaults = /home/ottervanger/.aeatk/ipc-tae.opt
+ asyncThreads = 33
+
+[PreloadedResponseTargetAlgorithmEvaluatorOptions]
+ preloadedResponses = 
+ runLength = -1.0
+ quality = 0.0
+ additionalRunData = 
+
+[RandomResponseTargetAlgorithmEvaluatorOptions]
+ simulateDelay = false
+ additionalRunData = 
+ cores = 0
+ maxResponse = 10.0
+ minResponse = 0.0
+ observerFrequency = 500
+ trendCoefficient = 0.0
+ seed = 1608657346437
+ persistent = false
+ scaleDelay = 1.0
+
+
+18:15:56.916 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - ParamILS started at: Dec 22, 2020 6:15:56 PM. Minimizing mean quality.
+18:15:56.917 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #1 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:15:57.079 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.809599, 0.0], 5320365"
+18:15:57.079 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - New incumbent! #1
+18:15:57.082 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - size: 1
+18:15:57.082 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #1 with 1 run: <-algorithm ECTS/bin/ects -min_support 0.0 -version strict>
+18:15:57.083 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0.8096, 0]
+18:15:57.083 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Looking for random initial solutions better than the initial incumbent
+18:15:57.084 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (0.10s) trying #2 <-algorithm SR-CF/run -alpha 0.84 -dSigma 3 -distance edr -kernel iprod -lambda 5 -optimizer optim -reg L0 -sr sr2>
+18:15:57.085 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #2 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:15:58.141 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  
+18:15:58.142 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Execution halted
+18:15:58.195 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:15:58.196 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (1.10s) trying #2 <-algorithm SR-CF/run -alpha 0.84 -dSigma 3 -distance edr -kernel iprod -lambda 5 -optimizer optim -reg L0 -sr sr2>
+18:15:58.197 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (1.10s) trying #3 <-LAMBDA 0.129 -algorithm EARLIEST/run.py -cellType RNN -epochs 400 -hiddenDim 12 -lr 2e-2 -lrf .995 -nLayers 2>
+18:15:58.198 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #3 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:15:59.255 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Traceback (most recent call last):
+18:15:59.256 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 157, in <module>
+18:15:59.256 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      main()
+18:15:59.257 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 151, in main
+18:15:59.257 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      lrf=arg['lrf'], epochs=arg['epochs'], df=arg['df'])
+18:15:59.257 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 62, in trainModel
+18:15:59.258 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      predictions = model(X)
+18:15:59.258 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/nn/modules/module.py", line 541, in __call__
+18:15:59.258 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      result = self.forward(*input, **kwargs)
+18:15:59.258 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/earlytsc/algorithms/EARLIEST/model.py", line 83, in forward
+18:15:59.258 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      S_t, hidden = self.BaseRNN(x_t, hidden) # Run sequence model
+18:15:59.264 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/nn/modules/module.py", line 541, in __call__
+18:15:59.264 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      result = self.forward(*input, **kwargs)
+18:15:59.264 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/earlytsc/algorithms/EARLIEST/modules.py", line 60, in forward
+18:15:59.264 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      output, h_t = self.rnn(x_t, h_t_prev)
+18:15:59.265 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/nn/modules/module.py", line 541, in __call__
+18:15:59.265 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      result = self.forward(*input, **kwargs)
+18:15:59.265 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/nn/modules/rnn.py", line 207, in forward
+18:15:59.265 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      self.dropout, self.training, self.bidirectional, self.batch_first)
+18:15:59.266 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  KeyboardInterrupt
+18:15:59.368 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:15:59.370 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (2.10s) trying #4 <-acc_perc 79 -algorithm ECDIRE/run -dN 10 -distance fourier -doHPO FALSE -kernel cauchy>
+18:15:59.370 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #4 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:00.427 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  
+18:16:00.427 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Execution halted
+18:16:00.479 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:00.480 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (3.10s) trying #5 <-algorithm EDSC/bin/edsc -alph 4 -maxK 50 -method KDE -minK 70 -probablityThreshold 0.8 -recallThreshold 0.05>
+18:16:00.481 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #5 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:01.539 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:01.540 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (4.10s) trying #6 <-algorithm RelClass/run -constr Naive -ldg 0 -tau 1.06e-22>
+18:16:01.540 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #6 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:02.596 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:02.597 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (5.10s) trying #7 <-algorithm TEASER/TEASERrun -maxLen 300 -minLen 100 -nClassifiers 100 -nu 0.002 -svmKernelType POLY -threshold 2>
+18:16:02.597 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #7 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:03.703 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:03.704 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (6.10s) trying #8 <-algorithm SR-CF/run -alpha 0.06 -distance dtw -kernel iprod -optimizer ga -sr sr1>
+18:16:03.704 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #8 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:04.760 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  
+18:16:04.761 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Execution halted
+18:16:04.813 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:04.814 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (7.10s) trying #9 <-algorithm TEASER/TEASERrun -maxLen 50 -minLen 5 -nClassifiers 50 -nu 0.001 -svmKernelType LINEAR -threshold 9>
+18:16:04.814 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #9 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:05.973 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:05.974 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (8.10s) trying #10 <-LAMBDA 0.024 -algorithm EARLIEST/run.py -cellType GRU -epochs 10 -hiddenDim 6 -lr 1e-2 -lrf .975 -nLayers 2>
+18:16:05.974 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #10 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:07.030 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Traceback (most recent call last):
+18:16:07.031 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 157, in <module>
+18:16:07.031 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      main()
+18:16:07.032 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 151, in main
+18:16:07.032 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      lrf=arg['lrf'], epochs=arg['epochs'], df=arg['df'])
+18:16:07.032 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 69, in trainModel
+18:16:07.032 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      optimizer.step()
+18:16:07.032 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/optim/lr_scheduler.py", line 51, in wrapper
+18:16:07.033 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      return wrapped(*args, **kwargs)
+18:16:07.033 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/optim/adam.py", line 95, in step
+18:16:07.033 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      exp_avg.mul_(beta1).add_(1 - beta1, grad)
+18:16:07.033 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  KeyboardInterrupt
+18:16:07.135 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:07.136 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Intensifying...
+18:16:07.136 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... intensifying #1 (incumbent)
+18:16:07.136 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #1 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:07.199 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:07.200 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #1 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:07.254 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:07.255 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #1 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-004.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-004.tsv with seed 7163446
+18:16:07.309 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.728067, 0.0], 7163446"
+18:16:07.309 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - 3 bonus runs on #1 (incumbent)
+18:16:07.309 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - == Starting Iteration 1 ==
+18:16:07.310 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Tuner time: 9.40s elapsed
+18:16:07.310 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Initial archive:
+18:16:07.310 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - size: 1
+18:16:07.310 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #1 with 4 runs: <-algorithm ECTS/bin/ects -min_support 0.0 -version strict>
+18:16:07.310 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0.802, 0]
+18:16:07.310 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - -- cleaning --
+18:16:07.310 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - -- selection --
+18:16:07.311 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - -- exploration --
+18:16:07.312 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (9.40s) trying #11 <-algorithm ECTS/bin/ects -min_support 0.39 -version strict>
+18:16:07.313 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #11 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:07.367 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:07.367 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #11 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:07.421 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:07.422 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #11 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:07.476 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:07.476 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:07.477 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (9.70s) trying #12 <-algorithm ECTS/bin/ects -min_support 0.94 -version strict>
+18:16:07.477 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #12 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:07.531 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:07.531 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #12 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:07.585 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.914336, 0.0], 16049169"
+18:16:07.585 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #12 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:07.640 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:07.640 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:07.640 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (10.00s) trying #13 <-algorithm ECTS/bin/ects -min_support 0.22 -version strict>
+18:16:07.641 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #13 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:07.694 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:07.695 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #13 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:07.748 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:07.749 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #13 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:07.802 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:07.802 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:07.802 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (10.30s) trying #14 <-algorithm ECTS/bin/ects -min_support 0.92 -version strict>
+18:16:07.803 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #14 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:07.856 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:07.856 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #14 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:07.910 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.914336, 0.0], 16049169"
+18:16:07.910 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #14 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:07.964 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:07.965 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:07.966 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (10.60s) trying #15 <-algorithm ECTS/bin/ects -min_support 0.23 -version strict>
+18:16:07.966 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #15 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:08.020 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:08.021 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #15 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:08.075 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.874603, 0.0], 16049169"
+18:16:08.075 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #15 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:08.129 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:08.129 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:08.130 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (10.90s) trying #16 <-algorithm ECTS/bin/ects -min_support 0.1 -version strict>
+18:16:08.130 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #16 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:08.184 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:08.185 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #16 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:08.239 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.833757, 0.0], 16049169"
+18:16:08.239 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #16 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:08.293 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:08.294 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:08.294 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (11.20s) trying #17 <-algorithm ECTS/bin/ects -min_support 0.86 -version strict>
+18:16:08.294 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #17 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:08.348 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:08.349 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #17 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:08.403 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.909568, 0.0], 16049169"
+18:16:08.403 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #17 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:08.457 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:08.457 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:08.458 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (11.50s) trying #18 <-algorithm ECTS/bin/ects -min_support 0.55 -version strict>
+18:16:08.458 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #18 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:08.513 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:08.513 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #18 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:08.567 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:08.567 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #18 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:08.621 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:08.622 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:08.622 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (11.80s) trying #19 <-algorithm ECTS/bin/ects -min_support 0.3 -version strict>
+18:16:08.622 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #19 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:08.676 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:08.677 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #19 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:08.730 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.874603, 0.0], 16049169"
+18:16:08.731 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #19 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:08.785 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:08.786 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:08.786 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (12.10s) trying #20 <-algorithm ECTS/bin/ects -min_support 0.5 -version strict>
+18:16:08.786 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #20 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:08.840 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:08.840 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #20 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:08.894 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:08.894 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #20 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:08.948 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:08.948 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:08.949 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (12.40s) trying #21 <-algorithm ECTS/bin/ects -min_support 0.54 -version strict>
+18:16:08.949 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #21 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:09.002 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:09.003 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #21 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:09.056 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:09.057 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #21 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:09.110 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:09.110 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:09.111 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (12.70s) trying #22 <-acc_perc 100 -algorithm ECDIRE/run -distance euclidean -doHPO TRUE -kernel iprod>
+18:16:09.111 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #22 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:10.166 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  
+18:16:10.167 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Execution halted
+18:16:10.218 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:10.218 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #22 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:11.273 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  
+18:16:11.274 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Execution halted
+18:16:11.325 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 16049169"
+18:16:11.326 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #22 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:12.381 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR] Execution halted
+18:16:12.382 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 8765092"
+18:16:12.383 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:12.383 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (15.70s) trying #23 <-algorithm ECTS/bin/ects -min_support 0.56 -version strict>
+18:16:12.383 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #23 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:12.437 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:12.437 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #23 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:12.490 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:12.490 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #23 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:12.543 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:12.544 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:12.544 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (16.00s) trying #24 <-algorithm ECTS/bin/ects -min_support 0.77 -version strict>
+18:16:12.544 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #24 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:12.597 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:12.598 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #24 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:12.651 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:12.651 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #24 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:12.705 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:12.705 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:12.705 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (16.30s) trying #25 <-algorithm ECTS/bin/ects -min_support 0.61 -version strict>
+18:16:12.706 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #25 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:12.759 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:12.759 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #25 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:12.813 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:12.813 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #25 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:12.867 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:12.867 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:12.868 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (16.60s) trying #26 <-algorithm ECTS/bin/ects -min_support 0.74 -version strict>
+18:16:12.868 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #26 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:12.921 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:12.922 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #26 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:12.975 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:12.975 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #26 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:13.029 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:13.029 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:13.030 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (16.90s) trying #27 <-LAMBDA 0.0 -algorithm EARLIEST/run.py -cellType LSTM -epochs 20 -hiddenDim 10 -lr 1e-3 -lrf 1. -nLayers 1>
+18:16:13.030 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #27 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:14.085 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Traceback (most recent call last):
+18:16:14.085 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 157, in <module>
+18:16:14.085 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      main()
+18:16:14.085 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 151, in main
+18:16:14.085 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      lrf=arg['lrf'], epochs=arg['epochs'], df=arg['df'])
+18:16:14.085 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 67, in trainModel
+18:16:14.085 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      loss.backward()
+18:16:14.086 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/tensor.py", line 166, in backward
+18:16:14.086 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      torch.autograd.backward(self, gradient, retain_graph, create_graph)
+18:16:14.086 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/autograd/__init__.py", line 99, in backward
+18:16:14.086 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      allow_unreachable=True)  # allow_unreachable flag
+18:16:14.086 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  KeyboardInterrupt
+18:16:14.187 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:14.188 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #27 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:15.243 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Traceback (most recent call last):
+18:16:15.243 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 157, in <module>
+18:16:15.243 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      main()
+18:16:15.243 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 151, in main
+18:16:15.244 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      lrf=arg['lrf'], epochs=arg['epochs'], df=arg['df'])
+18:16:15.244 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 69, in trainModel
+18:16:15.244 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      optimizer.step()
+18:16:15.244 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/optim/lr_scheduler.py", line 51, in wrapper
+18:16:15.244 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      return wrapped(*args, **kwargs)
+18:16:15.244 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/optim/adam.py", line 103, in step
+18:16:15.244 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      denom = (exp_avg_sq.sqrt() / math.sqrt(bias_correction2)).add_(group['eps'])
+18:16:15.244 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  KeyboardInterrupt
+18:16:15.346 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 16049169"
+18:16:15.347 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #27 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:16.401 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Traceback (most recent call last):
+18:16:16.402 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 157, in <module>
+18:16:16.402 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      main()
+18:16:16.402 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 151, in main
+18:16:16.402 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      lrf=arg['lrf'], epochs=arg['epochs'], df=arg['df'])
+18:16:16.402 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "../algorithms/EARLIEST/run.py", line 67, in trainModel
+18:16:16.403 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      loss.backward()
+18:16:16.403 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/tensor.py", line 166, in backward
+18:16:16.403 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      torch.autograd.backward(self, gradient, retain_graph, create_graph)
+18:16:16.403 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]    File "/home/ottervanger/anaconda3/envs/msc/lib/python3.7/site-packages/torch/autograd/__init__.py", line 99, in backward
+18:16:16.403 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]      allow_unreachable=True)  # allow_unreachable flag
+18:16:16.403 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  KeyboardInterrupt
+18:16:16.505 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 8765092"
+18:16:16.505 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:16.505 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (19.90s) trying #28 <-algorithm ECTS/bin/ects -min_support 0.87 -version strict>
+18:16:16.506 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #28 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:16.559 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:16.559 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #28 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:16.613 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:16.613 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #28 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:16.666 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:16.667 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:16.667 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (20.20s) trying #29 <-algorithm ECTS/bin/ects -min_support 0.52 -version strict>
+18:16:16.667 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #29 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:16.721 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:16.721 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #29 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:16.774 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.874603, 0.0], 16049169"
+18:16:16.775 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #29 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:16.828 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:16.828 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:16.829 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (20.50s) trying #30 <-algorithm ECTS/bin/ects -min_support 0.35 -version strict>
+18:16:16.829 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #30 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:16.882 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:16.883 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #30 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:16.936 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:16.936 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #30 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:16.990 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:16.991 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:16.991 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (20.80s) trying #31 <-algorithm ECTS/bin/ects -min_support 0.44 -version strict>
+18:16:16.992 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #31 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:17.046 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:17.047 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #31 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:17.100 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:17.101 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #31 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:17.154 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:17.155 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:17.155 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (21.10s) trying #32 <-algorithm ECTS/bin/ects -min_support 0.18 -version strict>
+18:16:17.155 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #32 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:17.209 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:17.209 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #32 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:17.262 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:17.262 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #32 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:17.315 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:17.316 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:17.316 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (21.40s) trying #33 <-algorithm ECTS/bin/ects -min_support 0.38 -version strict>
+18:16:17.316 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #33 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:17.369 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:17.370 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #33 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:17.423 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:17.423 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #33 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:17.477 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:17.477 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:17.477 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (21.70s) trying #34 <-algorithm ECTS/bin/ects -min_support 0.83 -version strict>
+18:16:17.477 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #34 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:17.530 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:17.530 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #34 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:17.583 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:17.584 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #34 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:17.637 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:17.637 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:17.637 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (22.00s) trying #35 <-algorithm ECTS/bin/ects -min_support 0.81 -version strict>
+18:16:17.637 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #35 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:17.690 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:17.690 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #35 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:17.743 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.909568, 0.0], 16049169"
+18:16:17.743 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #35 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:17.796 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:17.796 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:17.797 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (22.30s) trying #36 <-algorithm ECTS/bin/ects -min_support 0.76 -version strict>
+18:16:17.797 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #36 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:17.850 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:17.850 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #36 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:17.903 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:17.904 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #36 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:17.957 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:17.957 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:17.957 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (22.60s) trying #37 <-algorithm ECTS/bin/ects -min_support 0.11 -version strict>
+18:16:17.958 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #37 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:18.011 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:18.011 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #37 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:18.064 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:18.064 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #37 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:18.118 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:18.118 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:18.118 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (22.90s) trying #38 <-algorithm ECTS/bin/ects -min_support 0.7 -version strict>
+18:16:18.118 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #38 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:18.172 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:18.172 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #38 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:18.225 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.909568, 0.0], 16049169"
+18:16:18.225 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #38 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:18.278 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:18.278 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:18.279 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (23.20s) trying #39 <-algorithm ECTS/bin/ects -min_support 0.32 -version strict>
+18:16:18.279 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #39 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:18.332 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:18.333 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #39 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:18.386 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.874603, 0.0], 16049169"
+18:16:18.386 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #39 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:18.440 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:18.440 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:18.440 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (23.50s) trying #40 <-algorithm ECTS/bin/ects -min_support 0.84 -version strict>
+18:16:18.440 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #40 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:18.494 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:18.494 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #40 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:18.547 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:18.547 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #40 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:18.601 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:18.601 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:18.601 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (23.80s) trying #41 <-algorithm ECTS/bin/ects -min_support 0.63 -version strict>
+18:16:18.601 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #41 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:18.655 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:18.655 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #41 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:18.708 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:18.708 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #41 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:18.762 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:18.762 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:18.763 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (24.10s) trying #42 <-algorithm ECTS/bin/ects -min_support 0.99 -version strict>
+18:16:18.763 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #42 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:18.816 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:18.816 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #42 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:18.870 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.914336, 0.0], 16049169"
+18:16:18.870 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #42 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:18.931 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:18.932 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:18.932 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (24.40s) trying #43 <-algorithm ECTS/bin/ects -min_support 0.07 -version strict>
+18:16:18.932 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #43 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:18.986 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.809599, 0.0], 5320365"
+18:16:18.986 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #43 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:19.039 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:19.039 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #43 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:19.092 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:19.092 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:19.093 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (24.70s) trying #44 <-algorithm ECTS/bin/ects -min_support 0.95 -version strict>
+18:16:19.093 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #44 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:19.146 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:19.146 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #44 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:19.199 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.914336, 0.0], 16049169"
+18:16:19.199 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #44 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:19.252 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:19.252 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:19.253 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (25.00s) trying #45 <-algorithm ECTS/bin/ects -min_support 0.01 -version strict>
+18:16:19.253 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #45 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:19.305 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:19.306 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #45 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:19.358 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:19.359 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #45 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:19.412 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.836618, 0.0], 8765092"
+18:16:19.412 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:19.412 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (25.30s) trying #46 <-algorithm ECTS/bin/ects -min_support 0.14 -version strict>
+18:16:19.412 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #46 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:19.465 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:19.465 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #46 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:19.518 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:19.518 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #46 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:19.571 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:19.571 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:19.571 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (25.60s) trying #47 <-algorithm ECTS/bin/ects -min_support 0.6 -version strict>
+18:16:19.571 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #47 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:19.624 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:19.624 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #47 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:19.677 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:19.677 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #47 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:19.730 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:19.730 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:19.731 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (25.90s) trying #48 <-algorithm ECTS/bin/ects -min_support 0.08 -version strict>
+18:16:19.731 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #48 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:19.784 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:19.784 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #48 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:19.837 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:19.837 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #48 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:19.890 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:19.891 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:19.891 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (26.20s) trying #49 <-algorithm ECTS/bin/ects -min_support 0.05 -version strict>
+18:16:19.891 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #49 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:19.946 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:19.946 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #49 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:19.999 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.833757, 0.0], 16049169"
+18:16:20.000 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #49 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:20.052 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:20.053 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:20.053 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (26.50s) trying #50 <-algorithm ECTS/bin/ects -min_support 0.96 -version strict>
+18:16:20.053 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #50 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:20.106 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:20.106 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #50 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:20.159 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.914336, 0.0], 16049169"
+18:16:20.160 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #50 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:20.213 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:20.213 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:20.213 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (26.80s) trying #51 <-algorithm ECTS/bin/ects -min_support 0.79 -version strict>
+18:16:20.213 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #51 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:20.267 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:20.267 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #51 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:20.320 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:20.320 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #51 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:20.373 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:20.373 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:20.373 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (27.10s) trying #52 <-algorithm ECTS/bin/ects -min_support 0.72 -version strict>
+18:16:20.374 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #52 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:20.427 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:20.427 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #52 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:20.480 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:20.480 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #52 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:20.533 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:20.533 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:20.534 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (27.40s) trying #53 <-algorithm ECTS/bin/ects -min_support 0.91 -version strict>
+18:16:20.534 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #53 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:20.587 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:20.587 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #53 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:20.640 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.914336, 0.0], 16049169"
+18:16:20.640 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #53 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:20.693 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:20.694 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:20.694 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (27.70s) trying #54 <-algorithm fixed/run.py -percLen 0.0>
+18:16:20.694 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #54 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:21.449 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0113373, -1.0, [0.0, 0.5], 5320365"
+18:16:21.449 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #54 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:22.154 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.00813746, -1.0, [0.0, 0.5], 16049169"
+18:16:22.154 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #54 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:22.859 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.00926495, -1.0, [0.0, 0.5], 8765092"
+18:16:22.859 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #54 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-004.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-004.tsv with seed 7163446
+18:16:23.564 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.00812817, -1.0, [0.0, 0.5], 7163446"
+18:16:23.564 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - New incumbent! #54
+18:16:23.566 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - size: 2
+18:16:23.566 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #54 with 4 runs: <-algorithm fixed/run.py -percLen 0.0>
+18:16:23.566 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0, 0.5]
+18:16:23.566 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #1 with 4 runs: <-algorithm ECTS/bin/ects -min_support 0.0 -version strict>
+18:16:23.566 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0.802, 0]
+18:16:23.566 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... new neutral local best!
+18:16:23.566 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  [0.802, 0] -> [0, 0.5] (based on 4 and 4 runs)
+18:16:23.567 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (28.10s) trying #55 <-algorithm ECTS/bin/ects -min_support 0.65 -version strict>
+18:16:23.567 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #55 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:23.620 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:23.620 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #55 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:23.673 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:23.674 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #55 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:23.727 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:23.727 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:23.727 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (28.40s) trying #56 <-algorithm EDSC/bin/edsc -alph 3 -boundThreshold 3.0 -maxK 50 -method ALL -minK 3 -recallThreshold 0.0>
+18:16:23.727 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #56 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:24.783 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:24.783 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #56 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:25.837 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 16049169"
+18:16:25.838 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #56 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:26.893 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 8765092"
+18:16:26.893 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:26.893 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (31.40s) trying #57 <-algorithm ECTS/bin/ects -min_support 0.21 -version strict>
+18:16:26.894 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #57 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:26.946 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:26.947 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #57 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:26.999 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:26.999 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #57 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:27.052 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:27.053 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:27.053 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (31.70s) trying #58 <-algorithm ECTS/bin/ects -min_support 0.31 -version strict>
+18:16:27.053 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #58 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:27.106 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:27.106 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #58 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:27.159 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:27.160 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #58 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:27.213 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:27.213 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:27.214 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (32.00s) trying #59 <-algorithm ECTS/bin/ects -min_support 0.06 -version strict>
+18:16:27.214 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #59 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:27.267 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:27.267 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #59 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:27.320 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:27.320 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #59 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:27.373 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:27.374 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:27.374 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (32.30s) trying #60 <-algorithm ECTS/bin/ects -min_support 0.29 -version strict>
+18:16:27.374 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #60 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:27.427 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:27.427 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #60 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:27.480 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:27.481 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #60 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:27.533 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:27.533 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:27.534 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (32.60s) trying #61 <-algorithm ECTS/bin/ects -min_support 0.67 -version strict>
+18:16:27.534 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #61 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:27.587 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:27.587 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #61 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:27.640 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:27.640 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #61 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:27.693 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:27.693 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:27.693 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (32.90s) trying #62 <-algorithm ECTS/bin/ects -min_support 0.45 -version strict>
+18:16:27.693 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #62 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:27.746 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:27.746 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #62 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:27.799 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:27.799 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #62 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:27.852 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:27.853 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:27.853 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (33.20s) trying #63 <-algorithm ECTS/bin/ects -min_support 0.16 -version strict>
+18:16:27.853 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #63 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:27.906 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.809599, 0.0], 5320365"
+18:16:27.906 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #63 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:27.959 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:27.959 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #63 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:28.012 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:28.012 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:28.013 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (33.50s) trying #64 <-algorithm ECTS/bin/ects -min_support 0.53 -version strict>
+18:16:28.013 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #64 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:28.066 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:28.066 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #64 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:28.119 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.874603, 0.0], 16049169"
+18:16:28.119 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #64 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:28.172 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:28.172 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:28.172 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (33.80s) trying #65 <-algorithm ECTS/bin/ects -min_support 0.62 -version strict>
+18:16:28.173 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #65 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:28.225 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:28.226 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #65 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:28.279 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:28.279 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #65 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:28.332 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:28.332 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:28.333 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (34.10s) trying #66 <-algorithm ECTS/bin/ects -min_support 0.57 -version strict>
+18:16:28.333 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #66 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:28.386 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:28.386 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #66 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:28.439 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:28.439 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #66 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:28.492 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:28.493 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:28.493 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (34.40s) trying #67 <-algorithm ECTS/bin/ects -min_support 0.98 -version strict>
+18:16:28.493 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #67 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:28.546 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:28.547 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #67 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:28.599 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.914336, 0.0], 16049169"
+18:16:28.600 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #67 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:28.653 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:28.653 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:28.653 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (34.70s) trying #68 <-algorithm ECTS/bin/ects -min_support 0.78 -version strict>
+18:16:28.653 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #68 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:28.706 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:28.707 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #68 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:28.760 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:28.760 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #68 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:28.813 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:28.813 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:28.813 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (35.00s) trying #69 <-algorithm TEASER/TEASERrun -maxLen 450 -minLen 3 -nClassifiers 20 -nu 0.05 -svmKernelType RBF -threshold 2>
+18:16:28.814 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #69 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:29.919 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:29.919 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #69 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:31.074 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 16049169"
+18:16:31.075 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #69 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:32.230 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 8765092"
+18:16:32.230 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:32.231 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (38.00s) trying #70 <-algorithm TEASER/ECECrun -maxLen 450 -minLen 3 -nClassifiers 20 -nFolds 5 -ratio 0.8>
+18:16:32.231 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #70 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:33.335 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:33.336 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #70 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:34.491 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 16049169"
+18:16:34.492 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #70 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:35.597 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 8765092"
+18:16:35.597 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:35.598 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (41.00s) trying #71 <-algorithm ECTS/bin/ects -min_support 0.85 -version strict>
+18:16:35.598 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #71 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:35.651 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:35.651 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #71 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:35.704 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:35.704 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #71 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:35.757 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:35.757 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:35.758 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (41.30s) trying #72 <-algorithm ECTS/bin/ects -min_support 0.93 -version strict>
+18:16:35.758 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #72 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:35.811 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:35.811 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #72 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:35.864 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.914336, 0.0], 16049169"
+18:16:35.864 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #72 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:35.917 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:35.917 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:35.918 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (41.60s) trying #73 <-algorithm ECTS/bin/ects -min_support 0.12 -version strict>
+18:16:35.918 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #73 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:35.971 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.809599, 0.0], 5320365"
+18:16:35.971 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #73 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:36.024 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:36.024 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #73 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:36.077 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:36.078 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:36.078 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (41.90s) trying #74 <-algorithm ECTS/bin/ects -min_support 1.0 -version strict>
+18:16:36.078 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #74 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:36.131 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:36.132 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #74 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:36.185 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.914336, 0.0], 16049169"
+18:16:36.185 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #74 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:36.238 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:36.238 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:36.239 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (42.20s) trying #75 <-algorithm ECTS/bin/ects -min_support 0.17 -version strict>
+18:16:36.239 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #75 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:36.292 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:36.292 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #75 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:36.345 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:36.345 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #75 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:36.398 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:36.398 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:36.399 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (42.50s) trying #76 <-algorithm ECTS/bin/ects -min_support 0.42 -version strict>
+18:16:36.399 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #76 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:36.452 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:36.452 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #76 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:36.505 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:36.505 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #76 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:36.558 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:36.558 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:36.559 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (42.80s) trying #77 <-algorithm ECTS/bin/ects -min_support 0.69 -version strict>
+18:16:36.559 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #77 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:36.612 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:36.612 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #77 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:36.665 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:36.665 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #77 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:36.718 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:36.719 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:36.719 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (43.10s) trying #78 <-algorithm ECTS/bin/ects -min_support 0.46 -version strict>
+18:16:36.719 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #78 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:36.772 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:36.772 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #78 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:36.825 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:36.826 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #78 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:36.879 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:36.879 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:36.879 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (43.40s) trying #79 <-algorithm ECTS/bin/ects -min_support 0.04 -version strict>
+18:16:36.879 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #79 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:36.932 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:36.932 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #79 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:36.985 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:36.986 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #79 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:37.039 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:37.039 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:37.039 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (43.70s) trying #80 <-algorithm ECTS/bin/ects -min_support 0.15 -version strict>
+18:16:37.039 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #80 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:37.092 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.809599, 0.0], 5320365"
+18:16:37.092 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #80 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:37.145 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:37.146 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #80 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:37.199 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.836618, 0.0], 8765092"
+18:16:37.199 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:37.200 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (44.00s) trying #81 <-algorithm SR-CF/run -alpha 0.8 -distance euclidean -kernel iprod -optimizer ga -sr sr1>
+18:16:37.200 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #81 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:38.254 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  
+18:16:38.255 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Execution halted
+18:16:38.306 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 5320365"
+18:16:38.307 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #81 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:39.362 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR] Execution halted
+18:16:39.363 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 16049169"
+18:16:39.363 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #81 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:40.418 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  
+18:16:40.418 [CLI TAE (STDERR Thread - #0)] WARN  c.u.c.b.a.t.b.c.CommandLineAlgorithmRun - [PROCESS-ERR]  Execution halted
+18:16:40.469 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "TIMEOUT, 1.0, -1.0, [1.0001, 1.0001], 8765092"
+18:16:40.469 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:40.470 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (47.00s) trying #82 <-algorithm ECTS/bin/ects -min_support 0.25 -version strict>
+18:16:40.470 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #82 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:40.523 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:40.523 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #82 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:40.576 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:40.576 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #82 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:40.629 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:40.630 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:40.630 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (47.30s) trying #83 <-algorithm ECTS/bin/ects -min_support 0.64 -version strict>
+18:16:40.630 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #83 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:40.683 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:40.683 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #83 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:40.736 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:40.736 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #83 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:40.789 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:40.789 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:40.790 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (47.60s) trying #84 <-algorithm ECTS/bin/ects -min_support 0.68 -version strict>
+18:16:40.790 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #84 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:40.843 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:40.843 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #84 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:40.896 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:40.896 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #84 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:40.949 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:40.950 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:40.950 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (47.90s) trying #85 <-algorithm ECTS/bin/ects -min_support 0.43 -version strict>
+18:16:40.950 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #85 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:41.003 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:41.003 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #85 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:41.057 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.874603, 0.0], 16049169"
+18:16:41.057 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #85 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:41.118 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:41.118 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:41.119 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (48.20s) trying #86 <-algorithm ECTS/bin/ects -min_support 0.66 -version strict>
+18:16:41.119 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #86 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:41.172 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:41.172 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #86 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:41.225 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:41.225 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #86 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:41.278 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:41.278 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:41.279 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (48.50s) trying #87 <-algorithm ECTS/bin/ects -min_support 0.97 -version strict>
+18:16:41.279 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #87 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:41.332 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:41.332 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #87 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:41.385 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.914336, 0.0], 16049169"
+18:16:41.385 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #87 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:41.438 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:41.438 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:41.438 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (48.80s) trying #88 <-algorithm ECTS/bin/ects -min_support 0.34 -version strict>
+18:16:41.438 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #88 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:41.491 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:41.491 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #88 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:41.544 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.874603, 0.0], 16049169"
+18:16:41.544 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #88 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:41.597 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:41.597 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:41.598 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (49.10s) trying #89 <-algorithm ECTS/bin/ects -min_support 0.41 -version strict>
+18:16:41.598 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #89 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:41.651 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:41.651 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #89 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:41.704 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:41.704 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #89 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:41.757 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:41.757 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:41.758 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (49.40s) trying #90 <-algorithm ECTS/bin/ects -min_support 0.4 -version strict>
+18:16:41.758 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #90 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:41.811 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:41.811 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #90 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:41.864 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:41.864 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #90 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:41.917 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:41.917 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:41.918 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (49.70s) trying #91 <-algorithm ECTS/bin/ects -min_support 0.37 -version strict>
+18:16:41.918 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #91 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:41.971 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:41.972 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #91 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:42.026 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.874603, 0.0], 16049169"
+18:16:42.027 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #91 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:42.080 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:42.080 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:42.081 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (50.00s) trying #92 <-algorithm ECTS/bin/ects -min_support 0.58 -version strict>
+18:16:42.081 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #92 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:42.134 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:42.134 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #92 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:42.187 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:42.187 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #92 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:42.240 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:42.240 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:42.241 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (50.30s) trying #93 <-algorithm ECTS/bin/ects -min_support 0.33 -version strict>
+18:16:42.241 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #93 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:42.294 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:42.294 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #93 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:42.347 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:42.347 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #93 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:42.400 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:42.400 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:42.400 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (50.60s) trying #94 <-algorithm ECTS/bin/ects -min_support 0.49 -version strict>
+18:16:42.400 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #94 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:42.453 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:42.453 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #94 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:42.506 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:42.506 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #94 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:42.559 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:42.559 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:42.559 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (50.90s) trying #95 <-algorithm ECTS/bin/ects -min_support 0.27 -version strict>
+18:16:42.560 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #95 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:42.612 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:42.612 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #95 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:42.665 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:42.665 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #95 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:42.718 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:42.718 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:42.719 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (51.20s) trying #96 <-algorithm ECTS/bin/ects -min_support 0.09 -version strict>
+18:16:42.719 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #96 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:42.771 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:42.772 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #96 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:42.825 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.833757, 0.0], 16049169"
+18:16:42.825 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #96 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:42.878 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.836618, 0.0], 8765092"
+18:16:42.878 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:42.878 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (51.50s) trying #97 <-algorithm ECTS/bin/ects -min_support 0.24 -version strict>
+18:16:42.878 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #97 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:42.931 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:42.931 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #97 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:42.984 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:42.984 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #97 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:43.037 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.846313, 0.0], 8765092"
+18:16:43.037 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:43.038 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (51.80s) trying #98 <-algorithm ECTS/bin/ects -min_support 0.9 -version strict>
+18:16:43.038 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #98 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:43.091 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:43.091 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #98 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:43.144 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:43.144 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #98 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:43.197 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:43.197 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:43.197 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (52.10s) trying #99 <-algorithm ECTS/bin/ects -min_support 0.26 -version strict>
+18:16:43.198 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #99 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:43.250 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:43.250 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #99 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:43.303 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.874603, 0.0], 16049169"
+18:16:43.304 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #99 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:43.356 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:43.356 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:43.357 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (52.40s) trying #100 <-algorithm ECTS/bin/ects -min_support 0.02 -version strict>
+18:16:43.357 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #100 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:43.410 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:43.410 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #100 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:43.463 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:43.463 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #100 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:43.515 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:43.516 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:43.516 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (52.70s) trying #101 <-algorithm ECTS/bin/ects -min_support 0.03 -version strict>
+18:16:43.516 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #101 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:43.569 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.809599, 0.0], 5320365"
+18:16:43.569 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #101 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:43.622 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.833757, 0.0], 16049169"
+18:16:43.622 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #101 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:43.675 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:43.675 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:43.675 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (53.00s) trying #102 <-algorithm ECTS/bin/ects -min_support 0.13 -version strict>
+18:16:43.675 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #102 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:43.728 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:43.728 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #102 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:43.781 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.833757, 0.0], 16049169"
+18:16:43.781 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #102 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:43.834 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:43.835 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:43.835 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (53.30s) trying #103 <-algorithm ECTS/bin/ects -min_support 0.73 -version strict>
+18:16:43.835 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #103 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:43.888 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.810394, 0.0], 5320365"
+18:16:43.888 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #103 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:43.941 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.909568, 0.0], 16049169"
+18:16:43.941 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #103 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:43.994 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:43.994 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:43.995 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (53.60s) trying #104 <-algorithm ECTS/bin/ects -min_support 0.2 -version strict>
+18:16:43.995 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #104 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:44.047 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.810394, 0.0], 5320365"
+18:16:44.048 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #104 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:44.100 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.874603, 0.0], 16049169"
+18:16:44.101 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #104 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:44.153 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.846313, 0.0], 8765092"
+18:16:44.154 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... capped after 3/4 runs
+18:16:44.154 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (53.90s) trying #105 <-algorithm ECTS/bin/ects -min_support 0.0 -version loose>
+18:16:44.154 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #105 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:44.207 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.809599, 0.0], 5320365"
+18:16:44.207 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #105 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:44.260 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.784647, 0.0], 16049169"
+18:16:44.260 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #105 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:44.313 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.836618, 0.0], 8765092"
+18:16:44.313 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #105 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-004.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-004.tsv with seed 7163446
+18:16:44.366 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.728067, 0.0], 7163446"
+18:16:44.366 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... intensifying #105
+18:16:44.366 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #105 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-002.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-002.tsv with seed 8435516
+18:16:44.419 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.01, -1.0, [0.719962, 0.0], 8435516"
+18:16:44.419 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - 1 bonus run on #105
+18:16:44.420 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #1 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-002.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-002.tsv with seed 8435516
+18:16:44.473 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0, -1.0, [0.719962, 0.0], 8435516"
+18:16:44.473 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #54 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-002.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-002.tsv with seed 8435516
+18:16:45.177 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.0114059, -1.0, [0.0, 0.5], 8435516"
+18:16:45.177 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Incumbent archive updated!
+18:16:45.177 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - size: 2
+18:16:45.178 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #54 with 5 runs: <-algorithm fixed/run.py -percLen 0.0>
+18:16:45.178 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0, 0.5]
+18:16:45.178 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #1 with 5 runs: <-algorithm ECTS/bin/ects -min_support 0.0 -version strict>
+18:16:45.178 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0.7856, 0]
+18:16:45.178 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - New incumbent! #105
+18:16:45.179 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - No more incumbent: #1
+18:16:45.181 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - size: 2
+18:16:45.181 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #54 with 5 runs: <-algorithm fixed/run.py -percLen 0.0>
+18:16:45.181 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0, 0.5]
+18:16:45.181 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #105 with 5 runs: <-algorithm ECTS/bin/ects -min_support 0.0 -version loose>
+18:16:45.181 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0.7758, 0]
+18:16:45.181 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... new local best!
+18:16:45.181 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  [0.7856, 0] -> [0.7758, 0] (based on 5 and 5 runs)
+18:16:45.181 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - -- archive --
+18:16:45.181 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - -- cleaning --
+18:16:45.181 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - -- selection --
+18:16:45.182 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - -- exploration --
+18:16:45.182 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (54.60s) trying #106 <-algorithm fixed/run.py -percLen 0.1>
+18:16:45.183 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #106 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:45.887 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.112252, -1.0, [0.101399, 0.166667], 5320365"
+18:16:45.887 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #106 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:46.742 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.112164, -1.0, [0.101399, 0.5], 16049169"
+18:16:46.743 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #106 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:47.597 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.112843, -1.0, [0.101399, 0.333333], 8765092"
+18:16:47.597 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #106 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-004.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-004.tsv with seed 7163446
+18:16:48.402 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.112152, -1.0, [0.101399, 0.166667], 7163446"
+18:16:48.402 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #106 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-002.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-002.tsv with seed 8435516
+18:16:49.257 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.112364, -1.0, [0.101399, 0.5], 8435516"
+18:16:49.257 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - New incumbent! #106
+18:16:49.259 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - size: 3
+18:16:49.259 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #54 with 5 runs: <-algorithm fixed/run.py -percLen 0.0>
+18:16:49.259 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0, 0.5]
+18:16:49.259 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #106 with 5 runs: <-algorithm fixed/run.py -percLen 0.1>
+18:16:49.259 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0.1014, 0.3333]
+18:16:49.259 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #105 with 5 runs: <-algorithm ECTS/bin/ects -min_support 0.0 -version loose>
+18:16:49.259 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0.7758, 0]
+18:16:49.259 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... new neutral local best!
+18:16:49.260 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  [0, 0.5] -> [0.1014, 0.3333] (based on 5 and 5 runs)
+18:16:49.260 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (55.16s) trying #107 <-algorithm fixed/run.py -percLen 0.79>
+18:16:49.260 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #107 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:50.115 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.112305, -1.0, [0.79021, 0.0], 5320365"
+18:16:50.115 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #107 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:50.970 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.112397, -1.0, [0.79021, 0.0], 16049169"
+18:16:50.970 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #107 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:51.825 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.116314, -1.0, [0.79021, 0.0], 8765092"
+18:16:51.826 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #107 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-004.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-004.tsv with seed 7163446
+18:16:52.681 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.116508, -1.0, [0.79021, 0.0], 7163446"
+18:16:52.681 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #107 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-002.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-002.tsv with seed 8435516
+18:16:53.536 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.112488, -1.0, [0.79021, 0.0], 8435516"
+18:16:53.537 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... new neutral local best!
+18:16:53.537 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  [0, 0.5] -> [0.7902, 0] (based on 5 and 5 runs)
+18:16:53.537 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (55.73s) trying #81 <-algorithm SR-CF/run -alpha 0.8 -distance euclidean -kernel iprod -optimizer ga -sr sr1>
+18:16:53.537 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  ... tabu
+18:16:53.538 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - (55.73s) trying #108 <-algorithm fixed/run.py -percLen 0.18>
+18:16:53.538 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #108 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv with seed 5320365
+18:16:54.393 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.116261, -1.0, [0.178322, 0.0], 5320365"
+18:16:54.393 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #108 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-003.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-003.tsv with seed 16049169
+18:16:55.248 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.116253, -1.0, [0.178322, 0.5], 16049169"
+18:16:55.248 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #108 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-001.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-001.tsv with seed 8765092
+18:16:56.103 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.112231, -1.0, [0.178322, 0.0], 8765092"
+18:16:56.103 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Train run for #108 on instance /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-004.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-004.tsv with seed 7163446
+18:16:56.958 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  = "SAT, 0.116327, -1.0, [0.178322, 0.0], 7163446"
+18:16:56.958 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - MOParamILS completed
+18:16:56.959 [main] INFO  c.u.c.b.p.executors.ParamILSExecutor - ========================================================================
+18:16:56.959 [main] INFO  c.u.c.b.p.executors.ParamILSExecutor - ParamILS has finished. Reason: wall-clock time limit (60.051 s) has been reached.   
+18:16:56.959 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Total number of runs performed: 317 (317), total configurations tried: 108
+18:16:56.960 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Total CPU time used: 56 s, total wallclock time used: 60 s
+18:16:56.960 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Final archive:
+18:16:56.960 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - size: 3
+18:16:56.960 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #54 with 5 runs: <-algorithm fixed/run.py -percLen 0.0>
+18:16:56.960 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0, 0.5]
+18:16:56.960 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #106 with 5 runs: <-algorithm fixed/run.py -percLen 0.1>
+18:16:56.960 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0.1014, 0.3333]
+18:16:56.960 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -  #105 with 5 runs: <-algorithm ECTS/bin/ects -min_support 0.0 -version loose>
+18:16:56.960 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS -   -> [0.7758, 0]
+18:16:56.961 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Callstring for #54: <-algorithm fixed/run.py -percLen 0.0>
+cd /home/ottervanger/earlytsc/MultiETSC; /home/ottervanger/earlytsc/MultiETSC/wrapper /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv 0 1.0 2147483647 5320365 -algorithm 'fixed/run.py' -percLen '0.0' 
+18:16:56.962 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Callstring for #105: <-algorithm ECTS/bin/ects -min_support 0.0 -version loose>
+cd /home/ottervanger/earlytsc/MultiETSC; /home/ottervanger/earlytsc/MultiETSC/wrapper /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv 0 1.0 2147483647 5320365 -algorithm 'ECTS/bin/ects' -min_support '0.0' -version 'loose' 
+18:16:56.962 [main] INFO  c.u.c.b.p.configurator.MOFocusedILS - Callstring for #106: <-algorithm fixed/run.py -percLen 0.1>
+cd /home/ottervanger/earlytsc/MultiETSC; /home/ottervanger/earlytsc/MultiETSC/wrapper /scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/TRAIN-000.tsv:/scratch/ottervanger/MultiETSC/Coffee_TRAIN-1/VALID-000.tsv 0 1.0 2147483647 5320365 -algorithm 'fixed/run.py' -percLen '0.1' 
+18:16:56.963 [main] INFO  c.u.c.b.p.executors.ParamILSExecutor - ========================================================================
+18:16:56.963 [main] INFO  c.u.c.b.p.executors.ParamILSExecutor - Additional information about run 1 in: /home/ottervanger/earlytsc/MultiETSC/output/configurator/Coffee_TRAIN/run_1

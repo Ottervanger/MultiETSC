@@ -1,0 +1,3 @@
+-algorithm 'fixed/run.py' -percLen '0.0'
+-algorithm 'ECTS/bin/ects' -min_support '0.0' -version 'loose'
+-algorithm 'fixed/run.py' -percLen '0.1'

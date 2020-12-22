@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+for data in {"Coffee","Herring"}; do
+    train="../../test/data/${data}_TRAIN.tsv"
+    test="../../test/data/${data}_TEST.tsv"
+    ./run -data $train $test -tau 1e-30 -constr 'boxco' -ldg 1
+    ./run -data $train $test -tau 1e-16 -constr 'Cheby' -ldg 1
+done
