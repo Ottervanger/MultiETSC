@@ -1,3 +1,9 @@
+# TEASER and ECEC
+This direcory contains the source files for the TEASER and ECEC algorithms.
+ECEC is included here since it shares a large portion of source code with TEASER.
+The sources can be compiled with gradle using the `gradle build` command.
+The remainder of this readme file consists of the original readme documentation of TEASER.
+
 # Time Series Data Analytics
 
 Working with time series is difficult due to the high dimensionality of the data, erroneous or extraneous data, 

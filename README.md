@@ -7,8 +7,13 @@ multi-objective algorithm configurator MO-ParamILS.
 The search space of this optimization consists of the set of ETSC algorithms and 
 their hyper-parameters.
 
+MultiETSC produces a set of configurations (i.e.: algorithm choice and hyper-parameter setting) that optimally
+trade off earliness and accuracy for a specific data set.
+This allows you to choose the best trade-off point for the problem at hand,
+knowing exactly how much earliness a bit more accuracy would cost and vice versa.
 
-The following algorithms are included:
+
+The following ETSC algorithms are included:
 
 | Algorithm | code | Publication |
 | --------- | ---- | ----------- |
@@ -19,16 +24,17 @@ The following algorithms are included:
 | SR-CF | R | [U. Mori, A. Mendiburu, S. Dasgupta, and J. A. Lozano (2018). “Early classifi-cation of time series by simultaneously optimizing the accuracy and ear-liness”](https://doi.org/10.1109/TNNLS.2017.2764939) |
 | SR-CF MO | R | [ U. Mori, A. Mendiburu, I. Miranda, and J. Lozano (2019). “Early classification of time series using multi-objective optimization techniques”](http://www.sciencedirect.com/science/article/pii/S0020025519303317) |
 | ECEC | Java| [ J. Lv, X. Hu, L. Li, and P. Li (2019). “An effective confidence-based early classification of time series”](https://doi.org/10.1109/ACCESS.2019.2929644) |
-| TEASER | Java | [P. Sch ̈afer and U. Leser (2019). “Teaser: Early and accurate time series classification”](https://arxiv.org/abs/1908.03405) |
+| TEASER | Java | [P. Sch&auml;fer and U. Leser (2019). “Teaser: Early and accurate time series classification”](https://arxiv.org/abs/1908.03405) |
 | EARLIEST | Python | [T. Hartvigsen, C. Sen, X. Kong, and E. Rundensteiner (2019). “Adaptive-haltingpolicy network for early classification”](https://web.cs.wpi.edu/~xkong/publications/papers/kdd19.pdf) |
 
 ## Installation
-MultiETSC is mainly built as a combination of python and bash scripts and in itself requires no installation.
-However, the set of ETSC algorithms as well as the algorithm configurator(s) do each have their own dependencies.
+MultiETSC is built upon a set of original implementations of ETSC algorithms as well as algorithm configurators,
+each algorithm and configurator having its own dependencies.
 In order to set up all dependencies of MultiETSC run the following command:
 ```bash
-$ make build # TODO: not implemeted
+$ make build
 ```
+This script might instruct to install required software or packages.
 
 ## Usage
 Included is the main script that can be used to find optimal algorithm configurations for a specific dataset.
