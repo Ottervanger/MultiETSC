@@ -710,7 +710,7 @@ def cdTestAndGraph(df, methods, metric):
 def percentWins(df, methods, metric):
     df['type'] = df['dataset'].map(UCR_TYPE_MAP)
     d = df.pivot_table(columns=['method'], index=[df.index, df['dataset'], df['type']])[metric]
-    dbest = (d.rank(axis=1, na_option='bottom', ascending=(metric != 'HV')) == 1)
+    dbest = (d.rank(axis=1, method='min', na_option='bottom', ascending=(metric != 'HV')) == 1)
     pbest = dbest.groupby('type').mean() * 100
     pbest['Counts'] = dbest.groupby('type').size()
     ptotal = dbest.mean() * 100
