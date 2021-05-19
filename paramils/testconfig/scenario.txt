@@ -1,5 +1,5 @@
 # algorithm path
-execdir = testconfig
+execdir = ../paramils/testconfig
 # any output is put in the "output" folder
 #outdir = output
 
