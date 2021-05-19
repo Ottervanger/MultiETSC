@@ -2,15 +2,16 @@ TESTDIR:=./output/test/
 TABLEDIR:=./output/tex/
 PLOTDIR:=./output/plot/
 REPORT:=./report/report.pdf
+PLOTS:=./report/plots.pdf
 
 # find the tables and plots that can be made using the results
 TABLES=$(wildcard $(TABLEDIR)*/table.tex)
 SCATTER=$(wildcard $(PLOTDIR)*/scatter.pdf)
 PARETO=$(wildcard $(PLOTDIR)*/pareto.tex)
 
-all: $(REPORT)
+all: $(REPORT) $(PLOTS)
 
-%.pdf: %.tex $(TABLES) $(SCATTER) $(PARETO)
+%.pdf: %.tex $(TABLES) $(SCATTER) $(PARETO) plot.py
 	export TEXINPUTS="./report/theme:$$TEXINPUTS"
 	pdflatex -shell-escape -output-directory ./report $<
 

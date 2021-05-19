@@ -1,0 +1,42 @@
+\batchmode
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{pgffor}
+\usepackage{float}
+\usepackage[font=small,labelfont=bf]{caption}
+% For pandas df tables
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+
+\title{EarlyECTS}
+
+% get dataset names
+\begingroup\makeatletter\endlinechar=\m@ne\everyeof{\noexpand}
+\edef\x{\endgroup\def\noexpand\plots{\@@input|"ls -m output/plot/*/method-plot.pdf" }}\x
+
+\begin{document}
+\foreach \plot in \plots {%
+    \begin{figure}[H]%
+        \makebox[\textwidth][c]{\includegraphics[width=\textwidth]{\plot}}%
+        \caption{Example of the performance of the proposed approach.
+        Points represent algorithm configurations in the earliness-accuracy space, colors indicate different algorithms.
+        Left: 
+        	Current standard approach: manual tuning of only the single hyper-parameter controling the earliness-accuracy tradeoff on single algorithms.
+        	It is time consuming, only provides limited control over and no insight into the earliness-accuracy tradeoff.
+        	The image shows that tuning the dedicated hyper-parameter of a single algorithm does not necessarily translate to finding a wide range of tradeoff points. 
+        	The Pareto set that can be constructed from the configurations of a single algorithm typically provides very little choice of tradeoff points.
+        Centre: 
+        	Combined automated tuning of all hyper-paramerer and algorithm selection (MO-CASH) finds more and better solutions and gives the user insight into the tradeoff by providing a unified Pareto front.
+        Right:
+        	Due to the configurator, ill performing algorithms are ignored while well performing algorithms are exploited.
+        	This allows us to consider additional algorithms that would not make sense without automated configuration or that are designed with optimisationin mind.
+        	These additional algorithms may improve on or fill the gaps left by existing algorithms.
+        	This figure shows the addition of a naive 1NN ED fixed-time classifier to the portfolio, slightly improving the Pareto front.}%
+    \end{figure}%
+    \pagebreak
+}
+\end{document}

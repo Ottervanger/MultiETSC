@@ -20,14 +20,14 @@ def colors(alpha=None):
     while True:
         for c in ['#1f77b4',  # blue
                   '#ff7f0e',  # orange
-                  '#2ca02c',  # green
+                  '#17becf',  # cyan
                   '#d62728',  # red
                   '#9467bd',  # purple
                   '#8c564b',  # brown
                   '#e377c2',  # pink
                   '#7f7f7f',  # grey
+                  '#2ca02c',  # green
                   '#bcbd22',  # olive
-                  '#17becf'   # cyan
                   ]:
             yield c if not alpha else c + alpha
 
@@ -205,6 +205,18 @@ UCR_TYPE_NAMES = {
     'IMAGE': 'Image Outlines',
 }
 
+ALG_NAMES = {
+    "EDSC/bin/edsc": "EDSC",
+    "ECDIRE/run": "ECDIRE",
+    "SR-CF/run": "SR-CF",
+    "ECTS/bin/ects": "ECTS",
+    "TEASER/ECECrun": "ECEC",
+    "RelClass/run": "RelClass",
+    "EARLIEST/run.py": "EARLIEST",
+    "TEASER/TEASERrun": "TEASER",
+    "fixed/run.py": "Fixed"
+}
+
 
 class Pareto:
     def __init__(self, Y, metadata=None, label=None):
@@ -325,8 +337,8 @@ def best(metric, val, l):
 
 def formatCell(x, metric=None, spec=None):
     formats = dict(int=     '{:8d}'+' '*4,
-                   float=   '{:12.3f}',
-                   float64= '{:12.3f}',
+                   float=   '{:12.5f}',
+                   float64= '{:12.5f}',
                    str=     ' {:>11s}')
     if 'str' not in x.__class__.__name__:
         if metric == 'HV' and x == 0:
@@ -378,7 +390,7 @@ def metName(m):
     }.get(m, m[3:].upper())
 
 
-def processData(dataset, methods):
+def combinedRunsPlot(dataset, methods):
     files = [os.path.basename(p) for p in glob.glob(f'output/test/{dataset}/*')]
     if not (set(methods) <= set(files)):
         print('some files are missing')
@@ -489,6 +501,117 @@ def randomSample(dataset, methods):
         f.write(latexMetricTable(metricTable))
 
 
+def rmDominated(Y):
+    inp = np.ones(len(Y), dtype="bool")
+    for i in range(len(Y)):
+        if inp[i]:
+            inp = inp & np.any(Y < Y[i], 1)
+            inp[i] = True
+    return Y[inp]
+
+
+def plotFront(ax, f, **args):
+    Y = rmDominated(f[np.argsort(f[:,0])])
+    ax.step(np.hstack((0, Y[:, 0], 1)),
+            np.hstack((1, Y[:, 1], 0)),
+            where='post', **args)
+    ref = np.array([1., 1.])
+    s = 0
+    for y in Y:
+        s += np.prod(ref-y)
+        ref[1] = y[1]
+    return s, len(Y)
+
+
+def methodPlot(dataset, methods, idx=0, combinded=False):
+    fig, axs = plt.subplots(ncols=len(methods),figsize=(10, 3.5), sharex='row', sharey='row')
+    color = colors()
+    colMap = {
+        "EDSC/bin/edsc": next(color),
+        "ECDIRE/run": next(color),
+        "SR-CF/run": next(color),
+        "ECTS/bin/ects": next(color),
+        "TEASER/ECECrun": next(color),
+        "RelClass/run": next(color),
+        "EARLIEST/run.py": next(color),
+        "TEASER/TEASERrun": next(color),
+        "fixed/run.py": next(color)
+    }
+    limitMap = {
+        'CBF': (1., .8),
+        'ECG200': (1., .4),
+        'GunPoint': (.8, .6),
+        'OliveOil': (1., .8),
+        'Wafer': (.6, .125),
+    }
+    by_label = {}
+
+    for i, (method, ax) in enumerate(zip(methods, axs)):
+        if method == 'mo-man-sep':
+            method = 'mo-man'
+            separate = True
+        else:
+            separate = False
+        Y, metadata = getData(f'output/test/{dataset}/{method}/test.csv')
+        if combinded:
+            s = np.array(list(map(lambda x: cleanConfStr(x).split()[1], metadata)))
+            f = Y
+        else:
+            # match config strings from json with test performance from test.csv
+            with open(f'output/test/{dataset}/{method}/fronts.json', 'r') as f:
+                effSets = json.load(f)
+            idx = idx % len(effSets)
+            s = np.array(list(map(lambda x: cleanConfStr(x).split()[1], effSets[idx])))
+            f = np.array([Y[np.where(metadata == c)[0][0]] for c in effSets[idx]])
+
+        y = 1 if not dataset in limitMap else limitMap[dataset][1]
+        y += .01
+
+        if separate:
+            # plot separate Pareto fronts per algorithm
+            hv, size = 0, 0
+            for alg in np.unique(s):
+                # breakpoint()
+                tmphv, tmpsize = plotFront(ax, f[s == alg], c=colMap[alg])
+                if tmphv > hv:
+                    hv, size = tmphv, tmpsize
+
+        else:
+            # plot the Pareto front
+            hv, size = plotFront(ax, f, c='#000000aa')
+            ax.text(0, y, f"{size} solutions\nHV = {hv:.2f}", size=11)
+
+        # plot the individual confs
+        for (x, y), alg  in zip(f, s):
+            (marker, s) = ('o', 5) if alg != "fixed/run.py" else ('+', 100)
+            ax.scatter(x, y, marker=marker, c=colMap[alg], label=ALG_NAMES[alg], s=s)
+
+        ax.set_xlim([0, 1])
+        ax.set_ylim([0, 1])
+        if dataset in limitMap:
+            ax.set_xlim([0, limitMap[dataset][0]])
+            ax.set_ylim([0, limitMap[dataset][1]])
+        ax.grid()
+        ax.title.set_text(chr(ord('A') + i)+"\n\n")
+
+        handles, labels = ax.get_legend_handles_labels()
+        by_label.update(dict(zip(labels, handles)))
+
+    fig.add_subplot(111, frameon=False)
+    plt.tick_params(labelcolor='none', top=False, bottom=False, left=False, right=False)
+    
+    fig.legend(by_label.values(), by_label.keys(), loc='upper center', bbox_to_anchor=(0.5, 0.1), ncol=9, handlelength=1)
+    # plt.title(f'Earliness-Accuracy tradeoff\n{dataset}\n\n\n')
+    plt.xlabel("Earliness")
+    plt.ylabel("Error rate")
+
+    fig.tight_layout(rect=(-.03,0,1.02,1.0))
+    # save plot
+    plt.savefig(f'output/plot/{dataset}/method-plot.pdf')
+    fig.clear()
+    plt.close(fig)
+
+
 def bootstrap(datasets, methods, metrics, df, algCounts):
     print('Bootstrapping')
     if df is None:
@@ -496,8 +619,8 @@ def bootstrap(datasets, methods, metrics, df, algCounts):
     algCountsValid = algCounts[0]
     algCountsTest = algCounts[1]
     for dataset in datasets:
-        if dataset in ['Crop', 'ElectricDevices', 'FordB', 'FordA', 'InsectWingbeatSound']:
-            continue
+        # if dataset in ['Crop', 'ElectricDevices', 'FordB', 'FordA', 'InsectWingbeatSound']:
+        #     continue
         if 'dataset' in df and dataset in df['dataset'].values:
             continue
         for method in methods:
@@ -546,18 +669,7 @@ def plotAlgCounts(algCountsValid, algCountsTest):
     bars2 = bars2 / np.sum(bars2)
     order = np.argsort(bars1)[::-1]
 
-    algName = {
-        "EDSC/bin/edsc": "EDSC",
-        "ECDIRE/run": "ECDIRE",
-        "SR-CF/run": "SR-CF",
-        "ECTS/bin/ects": "ECTS",
-        "TEASER/ECECrun": "ECEC",
-        "RelClass/run": "RelClass",
-        "EARLIEST/run.py": "EARLIEST",
-        "TEASER/TEASERrun": "TEASER",
-        "fixed/run.py": "Fixed"
-    }
-    xlabels = np.array([algName[k] for k in xlabels])
+    xlabels = np.array([ALG_NAMES[k] for k in xlabels])
 
     r1 = np.arange(len(bars1))
     r2 = [x + barWidth for x in r1]
@@ -611,7 +723,7 @@ def violins(df, metric):
 def fmt(vp, metric=None):
     v = vp[0]
     p = vp[1]
-    s = f'{v:.3f}'
+    s = f'{v:.5f}'
     if ((metric == 'HV' and v > 0.) or
             (metric == 'delta' and v < 0.)):
         s = f'\\bft{{{s}}}'
@@ -730,8 +842,13 @@ def percentWins(df, methods, metric):
 
 
 def makeBigTables(df, methods, metric, testFn=sign_test):
-    # compute pairwise differences
     d = df.pivot(columns=['method', 'dataset'])[metric]
+    # just the median metrics
+    meds = d.median().unstack('method')[methods]
+    with open(f'output/tex/dataset-{metric}.tex', 'w') as f:
+        f.write(to_latex(meds, metric))
+     
+    # compute pairwise differences
     diff = d.sub(d[metName('mo-all')], axis='index').drop(columns=[metName('mo-all')], level=0)
     diffa = diff.stack('dataset')
     # compute medians and p values of Wilcoxon rank-sum test
@@ -755,12 +872,72 @@ def makeBigTables(df, methods, metric, testFn=sign_test):
     with open(f'output/tex/stats-{metric}.tex', 'w') as f:
         f.write(dfPrint.to_latex(escape=False, column_format='l'+'r'*len(dfPrint.columns)))
 
-    # just the median metrics
-    meds = d.median().unstack('method')[methods]
-    with open(f'output/tex/dataset-{metric}.tex', 'w') as f:
-        f.write(to_latex(meds, metric))
+
 
     return res
+
+
+def nrSearchedConfs(datasets, methods):
+    """
+    Result:
+    {
+      "mo-fixed": 99.98846828943869,
+      "mo-ects": 198.14141613250422,
+      "mo-edsc": 706.7960821265945,
+      "mo-ecdire": 45.42471811586604,
+      "mo-srcf": 50.35429728137417,
+      "mo-relclass": 79.69192723789588,
+      "mo-teaser": 61.274130083423444,
+      "mo-ecec": 41.297369409535655,
+      "mo-earliest": 55.78036489339299,
+      "so-all": 63.830689655172414,
+      "mo-all": 109.63705318710898
+    }
+    """
+
+    print('Calculating average number of evaluated configurations')
+    pat = re.compile('^(?:\"(.*?)\",\"(.*?)\",){2}.*$', re.MULTILINE)
+    nconfs = {
+        'mo-ects': 200,
+        'mo-relclass': 606,
+        'mo-ecdire': 16000,
+        'mo-srcf': 1184000,
+        'mo-earliest': 16800000,
+        'mo-teaser': 90720,
+        'mo-ecec': 252000,
+        'mo-edsc': 102400,
+        'mo-fixed': 100,
+        'so-all': 18446026,
+        'mo-all': 18446026
+    }
+    avgNConfs = {}
+    for method in methods:
+        print(f'Method: {method}')
+        avgNConfs[method] = 0
+        count = 0
+        for dataset in datasets:
+            trajFileGlob = f'output/configurator/{dataset}/{method}/*/detailed-traj-run-*.csv'
+            if method == 'so-all':
+                trajFileGlob = f'output/configurator/{dataset}/{method}/*/runhistory.json'
+            trajFiles = glob.glob(trajFileGlob)
+            for traj in trajFiles:
+                count += 1
+                if method == 'so-all':
+                    with open(traj) as f:
+                        avgNConfs[method] += len(json.load(f)['configs'])
+                    continue
+                with open(traj) as f:
+                    data = np.array(re.findall(pat, f.read()))[1:].astype(float)
+                samp = data[np.argmax(data[:,1])]
+                if samp[0] == 0:
+                    # all confs timed out
+                    avgNConfs[method] += min(7200 / 180, nconfs[method])
+                    continue
+                avgNConfs[method] += min(7200 * samp[1] / samp[0], nconfs[method])
+        avgNConfs[method] /= count
+        print(avgNConfs[method])
+    print(json.dumps(avgNConfs, indent=2))
+                    
 
 
 def main():
@@ -770,6 +947,15 @@ def main():
     if not len(datasetDirs):
         sys.exit('No files found in output/test/. Nothing to be done.')
     datasets = [os.path.basename(p) for p in sorted(datasetDirs)]
+    datasets = [
+        "CBF",
+        "ECG200",
+        "GunPoint",
+        "OliveOil",
+        "SyntheticControl",
+        "TwoPatterns",
+        "Wafer",
+    ]
     methods = ['mo-fixed',
                'mo-ects',
                'mo-edsc',
@@ -780,10 +966,13 @@ def main():
                'mo-ecec',
                'mo-earliest',
                'so-all',
-               'mo-all']
+               'mo-all',
+               'mo-lit']
     filterDatasets = []
     for dataset in datasets:
         for method in methods:
+            if os.path.isdir(f'output/plot/{dataset}/'):
+                continue
             cFile = f'output/test/{dataset}/{method}/confs.txt'
             tFile = f'output/test/{dataset}/{method}/test.csv'
             try:
@@ -800,7 +989,7 @@ def main():
             os.makedirs(f'output/plot/{dataset}/', exist_ok=True)
             os.makedirs(f'output/tex/{dataset}/', exist_ok=True)
     datasets = filterDatasets
-    metrics = ['HV', 'delta', 'hmean']
+    metrics = ['HV', 'delta', 'hmean', 'size']
     try:
         with open(datacache, 'rb') as f:
             df, algCounts = pickle.load(f)
@@ -814,22 +1003,25 @@ def main():
     methodnames = [metName(m) for m in methods]
 
     print(methodnames)
+    methodPlot('GunPoint', ['mo-man-sep','mo-man','mo-lit','mo-all'], idx=1, combinded=True)
+    makeBigTables(df, ['LIT','MultiETSC'], 'HV')
+    return
     # Scatter plots
     # plotDistributions(df, datasets)
     random.seed(3)
+    # nrSearchedConfs(datasets, methods)
     for dataset in datasets:
-        # load raw results; plot Pareto front; make table
-        # processData(dataset, methods)
-        randomSample(dataset, methods)
+        # combinedRunsPlot(dataset, methods)
+        # randomSample(dataset, methods)
         pass
 
     for metric in metrics:
         # CD graphs for desired metrics
         cdTestAndGraph(df, methodnames, metric)
         # median table; difference table
-        makeBigTables(df, methodnames, metric)
+        # makeBigTables(df, methodnames, metric)
         # violin plots
-        violins(df, metric)
+        # violins(df, metric)
         # table with percentages where each method performed best
         percentWins(df, methodnames, metric)
 
