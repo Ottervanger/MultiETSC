@@ -11,17 +11,18 @@ ALG=$3
 SEED=0
 
 echo "$(date "+%F %T.%3N") on $HOSTNAME"
-./pareto.py "$DATASET/$METHOD-$ALG" "$GLOBAL_SEED"
+# ./pareto.py "$DATASET/$METHOD-$ALG" "$GLOBAL_SEED"
 
 # now run test on all configurations in output/pareto/$DATASET/$METHOD-$ALG/confs.txt
 # quite similar to validation
 CONF_FILE="output/test/$DATASET/$METHOD-$ALG/confs.txt"
 TEST_FILE="output/test/$DATASET/$METHOD-$ALG/test.csv"
+TEST_LOG="output/test/$DATASET/$METHOD-$ALG/test.log"
 >$TEST_FILE
 
 INSTANCE="${UCR_ROOT}${DATASET}/${DATASET}_TRAIN.tsv:${UCR_ROOT}${DATASET}/${DATASET}_TEST.tsv"
 
 N_ARRAY=$(( $(wc -l < $CONF_FILE)))
-JOB=$( sbatch --parsable -a 1-$N_ARRAY -o /dev/null --nice=100 \
+JOB=$( sbatch --parsable -a 1-$N_ARRAY -o $TEST_LOG --nice=100 \
               --partition=$PARTITION --exclude=$EXCLUDE \
               slurm/run-test-batch $INSTANCE $TEST_FILE $CONF_FILE $SEED )

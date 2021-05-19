@@ -1,0 +1,100 @@
+# algorithms
+algorithm {ECTS/bin/ects, RelClass/run, ECDIRE/run, SR-CF/run, EARLIEST/run.py, TEASER/TEASERrun, TEASER/ECECrun, EDSC/bin/edsc}[ECTS/bin/ects]
+
+# ects parameters
+min_support {0.0,0.01..1.0}[0.0]
+version {strict,loose}[strict]
+min_support | algorithm in {ECTS/bin/ects}
+version | algorithm in {ECTS/bin/ects}
+
+# RelClass parameters
+tau {7.89e-31,1.58e-30,3.16e-30,6.31e-30,1.26e-29,2.52e-29,5.05e-29,1.01e-28,2.02e-28,4.04e-28,8.08e-28,1.62e-27,3.23e-27,6.46e-27,1.29e-26,2.58e-26,5.17e-26,1.03e-25,2.07e-25,4.14e-25,8.27e-25,1.65e-24,3.31e-24,6.62e-24,1.32e-23,2.65e-23,5.29e-23,1.06e-22,2.12e-22,4.24e-22,8.47e-22,1.69e-21,3.39e-21,6.78e-21,1.36e-20,2.71e-20,5.42e-20,1.08e-19,2.17e-19,4.34e-19,8.67e-19,1.73e-18,3.47e-18,6.94e-18,1.39e-17,2.78e-17,5.55e-17,1.11e-16,2.22e-16,4.44e-16,8.88e-16,1.78e-15,3.55e-15,7.11e-15,1.42e-14,2.84e-14,5.68e-14,1.14e-13,2.27e-13,4.55e-13,9.09e-13,1.82e-12,3.64e-12,7.28e-12,1.46e-11,2.91e-11,5.82e-11,1.16e-10,2.33e-10,4.66e-10,9.31e-10,1.86e-09,3.73e-09,7.45e-09,1.49e-08,2.98e-08,5.96e-08,1.19e-07,2.38e-07,4.77e-07,9.54e-07,1.91e-06,3.81e-06,7.63e-06,1.53e-05,3.05e-05,6.1e-05,0.000122,0.000244,0.000488,0.000977,0.00195,0.00391,0.00781,0.0156,0.0312,0.0625,0.125,0.25,0.5,1.0}[8.88e-16]
+constr {boxco,Naive,Cheby}[boxco]
+ldg {0,1}[0]
+tau | algorithm in {RelClass/run}
+constr | algorithm in {RelClass/run}
+ldg | algorithm in {RelClass/run}
+
+# ECDIRE parameters
+acc_perc {0,1..100}[100]
+doHPO {TRUE,FALSE}[TRUE]
+acc_perc | algorithm in {ECDIRE/run}
+doHPO | algorithm in {ECDIRE/run}
+
+# SR-CF parameters
+optimizer {ga, optim, sa, pso}[ga]
+alpha {0.0,0.01..1.0}[0.8]
+sr {sr1, sr2}[sr1]
+# according to the paper regularization should not be applied when sr1 is used
+reg {none, L0, L1}[none]
+lambda {0.01,0.02,0.05,0.1,0.2,0.5,1,2,5,10,20,50}[0.5]
+reg | sr in {sr2}
+lambda | sr in {sr2}
+optimizer | algorithm in {SR-CF/run}
+alpha | algorithm in {SR-CF/run}
+sr | algorithm in {SR-CF/run}
+
+# ECDIRE and SR-CF shared parameters
+kernel {gauss,iprod,cauchy,laplace}[iprod]
+kernel | algorithm in {ECDIRE/run,SR-CF/run}
+distance {euclidean,dtw,edr,fourier}[euclidean]
+distance | algorithm in {ECDIRE/run,SR-CF/run}
+dSigma {.01,.02,.05,.1,.2,.5,1,1.5,2,3}[.2]
+dSigma | distance in {edr}
+dN {1,2,5,10,20,50}[20]
+dN | distance in {fourier}
+
+# EARLIEST
+hiddenDim {1,2..20} [10]
+hiddenDim | algorithm in {EARLIEST/run.py}
+cellType {LSTM,GRU,RNN,RNN_TANH,RNN_RELU} [LSTM]
+cellType | algorithm in {EARLIEST/run.py}
+nLayers {1,2..4} [1]
+nLayers | algorithm in {EARLIEST/run.py}
+LAMBDA {0.0,0.0015..0.15}[0.0]
+LAMBDA | algorithm in {EARLIEST/run.py}
+lr {1e-4,1e-3,1e-2,2e-2,3e-2}[1e-3]
+lr | algorithm in {EARLIEST/run.py}
+lrf {1.,.999,.995,.99,.975,.95,.9}[1.]
+lrf | algorithm in {EARLIEST/run.py}
+epochs {3,10,20,40,60,80,100,150,200,400,800,1000} [20]
+epochs | algorithm in {EARLIEST/run.py}
+
+# TEASER
+threshold {1,2..10} [2]
+threshold | algorithm in {TEASER/TEASERrun}
+svmKernelType { LINEAR, POLY, RBF, SIGMOID } [RBF]
+svmKernelType | algorithm in {TEASER/TEASERrun}
+nu {0.5,0.2,0.1,0.05,0.02,0.01,0.005,0.002,0.001} [0.05]
+nu | algorithm in {TEASER/TEASERrun}
+
+# ECEC
+nFolds {1,2..10} [5]
+nFolds | algorithm in {TEASER/ECECrun}
+ratio {0.01,0.02..1.00} [0.8]
+ratio | algorithm in {TEASER/ECECrun}
+
+# TEASER and ECEC shared
+nClassifiers {10, 15, 20, 30, 50, 100} [20]
+nClassifiers | algorithm in {TEASER/TEASERrun,TEASER/ECECrun}
+minLen {3,5,10,20,50,100} [3]
+minLen | algorithm in {TEASER/TEASERrun,TEASER/ECECrun}
+maxLen {50,75,100,150,200,300,450} [450]
+maxLen | algorithm in {TEASER/TEASERrun,TEASER/ECECrun}
+
+# edsc parameters
+alph {1,2,3,4,5,10,20,50,100,200}[3]
+alph | algorithm in {EDSC/bin/edsc}
+minK {3,5,10,20,50,60,70,100} [3]
+minK | algorithm in {EDSC/bin/edsc}
+maxK {20,30,50,60,70,80,100,150}[50]
+maxK | algorithm in {EDSC/bin/edsc}
+recallThreshold {0.5,0.2,0.1,0.05,0.02,0.01,0.005,0.002,0.001,0.0} [0.0]
+recallThreshold | algorithm in {EDSC/bin/edsc}
+method {ALL, KDE}[ALL]
+method | algorithm in {EDSC/bin/edsc}
+boundThreshold {1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0}[3.0]
+boundThreshold | method in {ALL}
+probablityThreshold {0.5,0.7,0.8,0.9,0.95,0.975,0.99}[0.95]
+probablityThreshold | method in {KDE}
+

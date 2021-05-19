@@ -50,11 +50,12 @@ echo
 # Add validation runs as separate jobs to the queue
 CONF_FILE="output/configurator/${DATASET}/${METHOD}-${ALGO}/run_${SEED}/configs${SEED}.txt"
 VALID_FILE="output/configurator/${DATASET}/${METHOD}-${ALGO}/run_${SEED}/validation.csv"
+VALID_LOG="output/configurator/${DATASET}/${METHOD}-${ALGO}/run_${SEED}/validation.log"
 >$VALID_FILE
 
 N_FOLDS=5
 N_ARRAY=$(( $(wc -l < $CONF_FILE) * $N_FOLDS - 1))
-JOB=$( sbatch --parsable -a 0-$N_ARRAY -o /dev/null --nice=300 \
+JOB=$( sbatch --parsable -a 0-$N_ARRAY -o $VALID_LOG --nice=300 \
               --partition=$PARTITION --exclude=$EXCLUDE \
               slurm/run-validate-batch $VALID_FILE $N_FOLDS $INSTANCE_FILE $CONF_FILE $SEED $((CUTOFF + 60)) )
 

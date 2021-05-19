@@ -3,6 +3,7 @@
 #SBATCH -c 4
 #SBATCH --mem=10G
 set -e
+echo "pwd: $(pwd)"
 
 # required positional arguments
 VALID_FILE=$1
@@ -16,5 +17,5 @@ CONF_ID=$((SLURM_ARRAY_TASK_ID / $N_FOLDS + 1))
 INSTANCE_ID=$((SLURM_ARRAY_TASK_ID % $N_FOLDS + 1))
 INSTANCE=$(sed "${INSTANCE_ID}q;d" $INSTANCE_FILE)
 CONF=$(sed "${CONF_ID}q;d" $CONF_FILE)
-OUT="$(./wrapper --MO "true" $INSTANCE 0 $CUTOFF 0 $SEED $CONF), $CONF"
+OUT="$(../MultiETSC/wrapper --MO "true" $INSTANCE 0 $CUTOFF 0 $SEED $CONF), $CONF"
 flock -x "$VALID_FILE" echo "$OUT" >> "$VALID_FILE"
