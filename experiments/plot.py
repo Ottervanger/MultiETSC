@@ -873,7 +873,6 @@ def makeBigTables(df, methods, metric, testFn=sign_test):
         f.write(dfPrint.to_latex(escape=False, column_format='l'+'r'*len(dfPrint.columns)))
 
 
-
     return res
 
 
