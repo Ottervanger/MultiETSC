@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -35,6 +36,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import java.lang.reflect.Method;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -397,13 +400,32 @@ public abstract class MOParamILS extends AbstractAlgorithmFramework {
     return pop;
   }
 
+  // this function moves all configs in nbh that are different from config on the tradeoffParams to the fromt of nbh
+  public void prioritizeTradeoffParameters(ParameterConfiguration config, ArrayList<ParameterConfiguration> nbh) {
+    for (int i = 0, j = nbh.size()-1; i < j; i++) {
+      Boolean priority = false;
+      for (String param : options.tradeoffParams) {
+        if (nbh.get(i).get(param) != config.get(param)) {
+          // priority
+          priority = true;
+          break;
+        }
+      }
+      if (!priority) {
+        Collections.swap(nbh, i, j);
+        i--;
+        j--;
+      }
+    }
+  }
+
   protected ArrayList<ParameterConfiguration> exploration(ParameterConfiguration config,
                                                           List<ParameterConfiguration> tabuList) {
     Random configRandLS = pool.getRandom("PARAMILS_LOCAL_SEARCH_NEIGHBOURS");
     ArrayList<ParameterConfiguration> pop = new ArrayList<>();
     ArrayList<ParameterConfiguration> nbh = getNeighborhood(config);
     Collections.shuffle(nbh, configRandLS);
-    log.info("TEST");
+    prioritizeTradeoffParameters(config, nbh);
     if (options.nLocalSearch > 0 && options.nLocalSearch < nbh.size()) {
       nbh = new ArrayList(nbh.subList(0, options.nLocalSearch));
     }

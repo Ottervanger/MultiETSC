@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
-import java.util.Arrays;
 import java.util.SortedMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -419,20 +418,6 @@ public abstract class AbstractAlgorithmFramework {
     ArrayList<ParameterConfiguration> pop = getNeighborhood(config);
     Collections.shuffle(pop, configRandN);
     return pop.get(0);
-  }
-
-  // gets random neighbor from priority space
-  protected ParameterConfiguration randomNeighborPriority(ParameterConfiguration config) {
-    Random configRandN = pool.getRandom("PARAMILS_RANDOM_NEIGHBOR");
-    ArrayList<ParameterConfiguration> pop = getNeighborhood(config);
-    Collections.shuffle(pop, configRandN);
-    ParameterConfiguration nextConfig = pop.get(0);
-    log.info("Value array: {}", Arrays.toString(nextConfig.toValueArray()));
-    Set<String> set = nextConfig.keySet();
-    String[] myArray = new String[set.size()];
-    set.toArray(myArray);
-    log.info("Key Set: {}", Arrays.toString(myArray));
-    return nextConfig;
   }
 
   int stagCounter = 0;

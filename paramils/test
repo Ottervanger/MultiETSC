@@ -2,7 +2,7 @@
 set -e
 cd "${0%/*}"
 SEED=0
-../paramils-rev/paramils --n-local-search 0 --MO TRUE --scenario-file testconfig/scenario.txt --seed $SEED --outdir output
+../paramils-rev/paramils --n-tradeoff-params 2 --MO TRUE --scenario-file testconfig/scenario.txt --seed $SEED --outdir output
 
 # get output file
 OUTFILE="output/testconfig/detailed-traj-run-$SEED.csv"

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
 
 import ca.ubc.cs.beta.aeatk.acquisitionfunctions.AcquisitionFunctions;
 import ca.ubc.cs.beta.aeatk.algorithmexecutionconfiguration.AlgorithmExecutionConfiguration;
@@ -110,6 +111,8 @@ public class ParamILSOptions extends AbstractOptions {
   @UsageTextField(level=OptionLevel.ADVANCED)
   @Parameter(names={"--n-tradeoff-params"}, description="The number of parameters dedicated to controlling the MO trade-off. The first n parameters in the pcs-file are searched more exploratorive.")
   public int nTradeoffParams = 0;
+  
+  public ArrayList<String> tradeoffParams;
 
   /* ======================================================================
    * Capping options

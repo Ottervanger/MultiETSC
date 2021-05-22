@@ -34,6 +34,10 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.ArrayList;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,6 +112,33 @@ public class ParamILSExecutor {
     System.exit(returnValue);
   }
 
+  private static ArrayList<String> getTradeoffParams(String pcsFile, Integer n) {
+    ArrayList<String> tradeoffParams = new ArrayList<String>();
+    for (String line : pcsFile.split("\\r?\\n")) {
+      if (n == 0) {
+        break;
+      }
+      line = line.trim();
+      int commentStart = line.indexOf("#");
+      if (commentStart == 0) {
+        continue;
+      }
+      if (commentStart > 0) {
+        line = line.substring(0, commentStart).trim();
+      }
+      // use regex to extract n unique parameter names and then break
+      // push each name to the returned array
+      Pattern variablePatern = Pattern.compile("^\\s*(\\S+)\\s*(\\{(.+)\\}\\s*\\[\\s*(\\S+)\\s*\\]|\\[(.+)\\]\\s*\\[\\s*(\\S+)\\s*]\\s*([il]*[il]*))\\s*$");
+      Matcher variableMatcher = variablePatern.matcher(line);
+      if (variableMatcher.find()) {
+        tradeoffParams.add(variableMatcher.group(1));
+        log.info(variableMatcher.group(1));
+        n--;
+      }
+    }
+    return tradeoffParams;
+  }
+
 
   /**
    * Executes ParamILS according to the given arguments
@@ -128,6 +159,7 @@ public class ParamILSExecutor {
       AbstractAlgorithmFramework paramils = paramilsBuilder.getAutomaticConfigurator(execConfig, trainingILWS, options, taeOptions, outputDir, pool);
       log.info("This version of ParamILS has been revised by Gilles Ottervanger on 17-05-2021");
       log.info("The first {} parameters in the pcs file are treated as trade-off parameters.", options.nTradeoffParams);
+      options.tradeoffParams = getTradeoffParams(execConfig.getParameterConfigurationSpace().getPCSFile(), options.nTradeoffParams);
 
       try {
         paramils.run();
