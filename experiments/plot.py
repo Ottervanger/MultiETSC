@@ -337,8 +337,8 @@ def best(metric, val, l):
 
 def formatCell(x, metric=None, spec=None):
     formats = dict(int=     '{:8d}'+' '*4,
-                   float=   '{:12.5f}',
-                   float64= '{:12.5f}',
+                   float=   '{:10.3f}',
+                   float64= '{:10.3f}',
                    str=     ' {:>11s}')
     if 'str' not in x.__class__.__name__:
         if metric == 'HV' and x == 0:
@@ -386,7 +386,10 @@ def metName(m):
      'mo-relclass': 'RelClass',
      'mo-earliest-long': 'EARLIEST 10m',
      'so-all': 'SO-All',
-     'mo-all': 'MultiETSC'
+     'mo-all': 'MultiETSC-o',
+     'mo-allp': 'MultiETSC',
+     'mo-lit': 'MultiETSC-o\\Fixed',
+     'mo-litp': 'MultiETSC w/o Fixed',
     }.get(m, m[3:].upper())
 
 
@@ -463,8 +466,8 @@ def randomSample(dataset, methods):
         except IndexError:
             continue
         pareto = Pareto(np.array(f+[np.ones(2)]), np.array(s+['default']), label=metName(method))
-        ls = '-' if method[-3:] == 'all' else '--'
-        lw = 2 if method[-3:] == 'all' else 1.5
+        ls = '-' if method[3:6] == 'all' else '--'
+        lw = 2 if method[3:6] == 'all' else 1.5
         pareto.plot(ax, c=next(color), ls=ls, linewidth=lw)
         metrics = dict(
             method=metName(method),
@@ -571,7 +574,6 @@ def methodPlot(dataset, methods, idx=0, combinded=False):
             # plot separate Pareto fronts per algorithm
             hv, size = 0, 0
             for alg in np.unique(s):
-                # breakpoint()
                 tmphv, tmpsize = plotFront(ax, f[s == alg], c=colMap[alg])
                 if tmphv > hv:
                     hv, size = tmphv, tmpsize
@@ -619,8 +621,8 @@ def bootstrap(datasets, methods, metrics, df, algCounts):
     algCountsValid = algCounts[0]
     algCountsTest = algCounts[1]
     for dataset in datasets:
-        # if dataset in ['Crop', 'ElectricDevices', 'FordB', 'FordA', 'InsectWingbeatSound']:
-        #     continue
+        if dataset in ['Crop', 'ElectricDevices', 'FordB', 'FordA', 'InsectWingbeatSound']:
+            continue
         if 'dataset' in df and dataset in df['dataset'].values:
             continue
         for method in methods:
@@ -638,7 +640,7 @@ def bootstrap(datasets, methods, metrics, df, algCounts):
             # Extracting test Pareto fronts
             paretos = [Pareto(np.array(f+[np.ones(2)]), np.array(s+['alg ref'])) for f, s in zip(fronts, effSets)]
 
-            if method == 'mo-all':
+            if method == 'mo-allp':
                 for pareto in paretos:
                     for conf in pareto.metadata:
                         alg = conf.split()[1]
@@ -808,7 +810,7 @@ def nemenyiCD(k, n):
 def cdTestAndGraph(df, methods, metric):
     d = df.pivot(columns=['method', 'dataset'])
     obs = d[metric].stack('dataset')
-    ranks = obs.rank(axis=1, na_option='bottom', ascending=(metric != 'HV'))
+    ranks = obs[methods].rank(axis=1, na_option='bottom', ascending=(metric != 'HV'))
     _, p = friedmanchisquare(*(obs[c] for c in methods))
     print(f'friedmanchisquare: p = {p:f}')
 
@@ -822,7 +824,7 @@ def cdTestAndGraph(df, methods, metric):
 def percentWins(df, methods, metric):
     df['type'] = df['dataset'].map(UCR_TYPE_MAP)
     d = df.pivot_table(columns=['method'], index=[df.index, df['dataset'], df['type']])[metric]
-    dbest = (d.rank(axis=1, method='min', na_option='bottom', ascending=(metric != 'HV')) == 1)
+    dbest = (d[methods].rank(axis=1, method='min', na_option='bottom', ascending=(metric != 'HV')) == 1)
     pbest = dbest.groupby('type').mean() * 100
     pbest['Counts'] = dbest.groupby('type').size()
     ptotal = dbest.mean() * 100
@@ -836,7 +838,7 @@ def percentWins(df, methods, metric):
             escape=False,
             column_format='l'+'r'*len(pbest.columns),
             float_format="{:0.2f}".format))
-    pBetterSO = (d[metName('mo-all')] > d[metName('so-all')]).mean() * 100
+    pBetterSO = (d[metName('mo-allp')] > d[metName('so-all')]).mean() * 100
     print(f'MO-All     > SO-All:     {pBetterSO:.3f}')
     df.drop('type', axis=1, inplace=True)
 
@@ -849,7 +851,7 @@ def makeBigTables(df, methods, metric, testFn=sign_test):
         f.write(to_latex(meds, metric))
      
     # compute pairwise differences
-    diff = d.sub(d[metName('mo-all')], axis='index').drop(columns=[metName('mo-all')], level=0)
+    diff = d.sub(d[metName('mo-allp')], axis='index').drop(columns=[metName('mo-allp')], level=0)
     diffa = diff.stack('dataset')
     # compute medians and p values of Wilcoxon rank-sum test
     # (test symmetric distribution of differences about 0)
@@ -890,7 +892,8 @@ def nrSearchedConfs(datasets, methods):
       "mo-ecec": 41.297369409535655,
       "mo-earliest": 55.78036489339299,
       "so-all": 63.830689655172414,
-      "mo-all": 109.63705318710898
+      "mo-all": 109.63705318710898,
+      "mo-allp": 159.4029394934662
     }
     """
 
@@ -907,7 +910,9 @@ def nrSearchedConfs(datasets, methods):
         'mo-edsc': 102400,
         'mo-fixed': 100,
         'so-all': 18446026,
-        'mo-all': 18446026
+        'mo-all': 18446026,
+        'mo-allp': 18446026,
+        'mo-litp': 18445926,
     }
     avgNConfs = {}
     for method in methods:
@@ -946,15 +951,15 @@ def main():
     if not len(datasetDirs):
         sys.exit('No files found in output/test/. Nothing to be done.')
     datasets = [os.path.basename(p) for p in sorted(datasetDirs)]
-    datasets = [
-        "CBF",
-        "ECG200",
-        "GunPoint",
-        "OliveOil",
-        "SyntheticControl",
-        "TwoPatterns",
-        "Wafer",
-    ]
+    # datasets = [
+    #     "CBF",
+    #     "ECG200",
+    #     "GunPoint",
+    #     "OliveOil",
+    #     "SyntheticControl",
+    #     "TwoPatterns",
+    #     "Wafer",
+    # ]
     methods = ['mo-fixed',
                'mo-ects',
                'mo-edsc',
@@ -965,8 +970,11 @@ def main():
                'mo-ecec',
                'mo-earliest',
                'so-all',
+               # 'mo-lit',
+               'mo-litp',
                'mo-all',
-               'mo-lit']
+               'mo-allp',
+               ]
     filterDatasets = []
     for dataset in datasets:
         for method in methods:
@@ -996,33 +1004,38 @@ def main():
         df = pd.DataFrame()
         algCounts = (dict(), dict())
     df, algCounts = bootstrap(datasets, methods, metrics, df, algCounts)
-    plotAlgCounts(*algCounts)
+    # plotAlgCounts(*algCounts)
+    df.method.replace('MultiETSC\\Fixed', 'MultiETSC w/o Fixed', inplace=True)
     with open(datacache, 'wb') as f:
         pickle.dump((df, algCounts), f)
+    # return
     methodnames = [metName(m) for m in methods]
 
     print(methodnames)
-    methodPlot('GunPoint', ['mo-man-sep','mo-man','mo-lit','mo-all'], idx=1, combinded=True)
-    makeBigTables(df, ['LIT','MultiETSC'], 'HV')
-    return
+    methodPlot('GunPoint', ['mo-man-sep','mo-man','mo-litp','mo-allp'], idx=1, combinded=True)
+    
     # Scatter plots
     # plotDistributions(df, datasets)
-    random.seed(3)
-    # nrSearchedConfs(datasets, methods)
+    random.seed(4)
+    # nrSearchedConfs(datasets, methods[-3:])
+    randomSample('BME', methods)
     for dataset in datasets:
         # combinedRunsPlot(dataset, methods)
         # randomSample(dataset, methods)
         pass
-
+    
     for metric in metrics:
         # CD graphs for desired metrics
-        cdTestAndGraph(df, methodnames, metric)
+        cdTestAndGraph(df, [metName(m) for m in ['mo-all','mo-litp','mo-allp']], metric)
+
         # median table; difference table
         # makeBigTables(df, methodnames, metric)
+
         # violin plots
         # violins(df, metric)
+
         # table with percentages where each method performed best
-        percentWins(df, methodnames, metric)
+        # percentWins(df, methodnames, metric)
 
 
 if __name__ == '__main__':

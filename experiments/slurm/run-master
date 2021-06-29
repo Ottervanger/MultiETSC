@@ -14,7 +14,7 @@ DATASETS=(
   BirdChicken
   BME
   Car
-  CBF
+  # CBF
   Chinatown
   ChlorineConcentration
   CinCECGTorso
@@ -23,8 +23,8 @@ DATASETS=(
   CricketX
   CricketY
   CricketZ
-  Crop                # out of mem 20GB
-  DiatomSizeReduction # Failed to split
+  # Crop                # out of mem 20GB
+  # DiatomSizeReduction # Failed to split
   DistalPhalanxOutlineAgeGroup
   DistalPhalanxOutlineCorrect
   DistalPhalanxTW
@@ -32,29 +32,29 @@ DATASETS=(
   DodgerLoopGame
   DodgerLoopWeekend
   Earthquakes
-  ECG200
+  # ECG200
   ECG5000
   ECGFiveDays
-  ElectricDevices     # out of mem 20GB
+  # ElectricDevices     # out of mem 20GB
   EOGHorizontalSignal
   EOGVerticalSignal
   EthanolLevel
   FaceAll
   FaceFour
   FacesUCR
-  FiftyWords          # Failed to split
+  # FiftyWords          # Failed to split
   Fish
-  FordA               # out of mem 20GB
-  FordB               # out of mem 20GB
+  # FordA               # out of mem 20GB
+  # FordB               # out of mem 20GB
   FreezerRegularTrain
   FreezerSmallTrain
-  Fungi               # Failed to split
+  # Fungi               # Failed to split
   GestureMidAirD1
   GestureMidAirD2
   GestureMidAirD3
   GesturePebbleZ1
   GesturePebbleZ2
-  GunPoint
+  # GunPoint
   GunPointAgeSpan
   GunPointMaleVersusFemale
   GunPointOldVersusYoung
@@ -83,14 +83,14 @@ DATASETS=(
   MoteStrain
   NonInvasiveFetalECGThorax1
   NonInvasiveFetalECGThorax2
-  OliveOil
+  # OliveOil
   OSULeaf
   PhalangesOutlinesCorrect
-  Phoneme             # Failed to split
+  # Phoneme             # Failed to split
   PickupGestureWiimoteZ
-  PigAirwayPressure   # Failed to split
-  PigArtPressure      # Failed to split
-  PigCVP              # Failed to split
+  # PigAirwayPressure   # Failed to split
+  # PigArtPressure      # Failed to split
+  # PigCVP              # Failed to split
   PLAID
   Plane
   PowerCons
@@ -113,43 +113,43 @@ DATASETS=(
   StarLightCurves
   Strawberry
   SwedishLeaf
-  Symbols             # Failed to split
-  SyntheticControl
+  # Symbols             # Failed to split
+  # SyntheticControl
   ToeSegmentation1
   ToeSegmentation2
   Trace
   TwoLeadECG
-  TwoPatterns
+  # TwoPatterns
   UMD
   UWaveGestureLibraryAll
   UWaveGestureLibraryX
   UWaveGestureLibraryY
   UWaveGestureLibraryZ
-  Wafer
+  # Wafer
   Wine
   WordSynonyms
   Worms
   WormsTwoClass
   Yoga
 )
-DATASETS=(
-  CBF
-  ECG200
-  GunPoint
-  OliveOil
-  SyntheticControl
-  TwoPatterns
-  Wafer)
+# DATASETS=(
+#   CBF
+#   ECG200
+#   GunPoint
+#   OliveOil
+#   SyntheticControl
+#   TwoPatterns
+#   Wafer)
 ALGS=(all all fixed ects edsc ecdire srcf relclass teaser ecec earliest)
 METHODS=(mo so mo mo mo mo mo mo mo mo mo)
-ALGS=(man)
+ALGS=(litp)
 METHODS=(mo)
 CONFJOBS=()
 TESTJOBS=()
 REPS=25
 export UCR_ROOT="/scratch/ottervanger/UCR/"
-export PARTITION="graceCPU,graceTST"
-export EXCLUDE="ethnode[01-02]"
+export PARTITION="graceCPU"
+# export EXCLUDE="ethnode[01-02]"
 export GLOBAL_SEED=0
 START=$GLOBAL_SEED
 

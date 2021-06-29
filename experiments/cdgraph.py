@@ -13,7 +13,7 @@ Changes by Gilles Ottervanger:
 """
 
 def cdGraph(avranks, names, cd, filename,
-            width=6, textspace=1, **kwargs):
+            width=7, textspace=1.7, **kwargs):
     """
     Draws a CD graph, which is used to display  the differences in methods'
     performance. See Janez Demsar, Statistical Comparisons of Classifiers over

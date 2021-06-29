@@ -64,7 +64,8 @@ done
 SMAC="python ../smac/smac \
         --verbose_level DEBUG \
         --maxR ${MAX_R}"
-PARAMILS="../paramils/paramils \
+PARAMILS="../paramils-rev/paramils \
+        --n-tradeoff-params 8 \
         --validation false \
         --MO true \
         --rungroup run_${SEED} \

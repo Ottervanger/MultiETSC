@@ -11,7 +11,7 @@ ALG=$3
 SEED=0
 
 echo "$(date "+%F %T.%3N") on $HOSTNAME"
-# ./pareto.py "$DATASET/$METHOD-$ALG" "$GLOBAL_SEED"
+./pareto.py "$DATASET/$METHOD-$ALG" "$GLOBAL_SEED"
 
 # now run test on all configurations in output/pareto/$DATASET/$METHOD-$ALG/confs.txt
 # quite similar to validation
