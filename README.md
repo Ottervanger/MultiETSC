@@ -12,6 +12,8 @@ trade off earliness and accuracy for a specific data set.
 This allows you to choose the best trade-off point for the problem at hand,
 knowing exactly how much earliness a bit more accuracy would cost and vice versa.
 
+For a more detailed description of MultiETSC, check out our [Project Page](https://ada.liacs.nl/projects/MultiETSC_page) and look for the "Papers" section.
+
 
 The following ETSC algorithms are included:
 
