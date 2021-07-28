@@ -16,7 +16,7 @@ For a more detailed description of MultiETSC, check out our [Project Page](https
 
 When using our code or results, please make sure to cite our work using the following `.bib` entry:
 
-'''
+```
 @article{OttEtAl21,
     author = "Ottervanger, Gilles and Baratchi, Mitra and Hoos, Holger H.",
     year = "2021, to appear",
@@ -26,7 +26,7 @@ When using our code or results, please make sure to cite our work using the foll
     publisher = "Springer",
     tags = "Early Classification, Time Series Classification, Automated Machine Learning"
 }
-'''
+```
 
 The following ETSC algorithms are included:
 
