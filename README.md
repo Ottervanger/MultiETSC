@@ -12,8 +12,21 @@ trade off earliness and accuracy for a specific data set.
 This allows you to choose the best trade-off point for the problem at hand,
 knowing exactly how much earliness a bit more accuracy would cost and vice versa.
 
-For a more detailed description of MultiETSC, check out our [Project Page](https://ada.liacs.nl/projects/MultiETSC_page) and look for the "Papers" section.
+For a more detailed description of MultiETSC, check out our [Project Page](https://ada.liacs.nl/projects/MultiETSC) and look for the "Papers" section.
 
+When using our code or results, please make sure to cite our work using the following `.bib` entry:
+
+'''
+@article{OttEtAl21,
+    author = "Ottervanger, Gilles and Baratchi, Mitra and Hoos, Holger H.",
+    year = "2021, to appear",
+    pages = "(25 manuscript pages)",
+    title = "{MultiETSC}: Automated Machine Learning for Early Time Series Classification",
+    journal = "Accepted for publication in Data Mining and Knowledge Discovery",
+    publisher = "Springer",
+    tags = "Early Classification, Time Series Classification, Automated Machine Learning"
+}
+'''
 
 The following ETSC algorithms are included:
 
